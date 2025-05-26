@@ -1,0 +1,40 @@
+@startuml
+actor User
+participant "_Layout.cshtml" as Layout
+participant "FavoriteDrinks.cshtml" as RazorView
+participant "FavoriteDrinksController" as WebUIController
+participant "ProxyDrinkService" as ProxyService
+participant "DrinkController (API)" as ApiController
+participant "DrinkService" as Service
+participant "DrinkRepository" as Repository
+database "Database" as DB
+
+User -> Layout : Clicks "My Favorite Drinks" in navbar
+Layout --> WebUIController : GET /FavoriteDrinks/FavoriteDrinks
+WebUIController -> ProxyService : drinkService.GetUserPersonalDrinkList(userId = 1)
+ProxyService -> ApiController : POST /Drink/get-user-drink-list { userId: 1 }
+activate ApiController
+
+ApiController -> Service : drinkService.GetUserPersonalDrinkList(userId)
+activate Service
+
+Service -> Repository : drinkRepository.GetPersonalDrinkList(userId)
+activate Repository
+
+Repository -> DB : SELECT * FROM UserDrinks WHERE UserId = 1
+DB --> Repository : Returns DrinkIds for user
+
+
+Repository --> Service : Maps to List<DrinkDTO>
+deactivate Repository
+
+Service --> ApiController : Returns List<DrinkDTO>
+deactivate Service
+
+ApiController --> ProxyService : Returns JSON List<DrinkDTO>
+deactivate ApiController
+
+ProxyService --> WebUIController : Returns List<DrinkDTO>
+WebUIController -> RazorView : Passes ViewModel with drinks
+RazorView -> User : Renders favorite drinks using Bootstrap cards
+@enduml

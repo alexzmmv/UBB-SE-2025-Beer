@@ -1,0 +1,29 @@
+@startuml
+actor User
+participant SearchPage
+participant SearchPageViewModel
+participant ProxyDrinkService
+participant WebAPI.DrinkController
+participant WebAPI.DrinkService
+participant WebAPI.DrinkRepository
+database Database
+
+User -> SearchPage: Navigates to SearchPage or Input in Searchbar
+User -> SearchPage: Input Search Term
+SearchPage -> SearchPageViewModel: SetSearchedTerms(searchKeyword)
+User -> SearchPage: Clicks Search Button
+
+SearchPage -> SearchPageViewModel: GetDrinks()
+SearchPageViewModel -> ProxyDrinkService: GetDrinks(searchKeyword)
+ProxyDrinkService -> WebAPI.DrinkController: HTTP get-all request
+WebAPI.DrinkController -> WebAPI.DrinkService: GetDrinks(searchKeyword)
+WebAPI.DrinkService -> WebAPI.DrinkRepository: GetDrinks()
+WebAPI.DrinkRepository -> Database: Query
+Database -> WebAPI.DrinkRepository: Query Result
+WebAPI.DrinkRepository --> WebAPI.DrinkService: Drink list
+WebAPI.DrinkService --> WebAPI.DrinkController: Drink list
+WebAPI.DrinkController --> ProxyDrinkService: Drink list
+ProxyDrinkService --> SearchPageViewModel: Drink list
+SearchPageViewModel -> SearchPage: Update UI with Drink list
+SearchPage -> User: Display Results
+@enduml

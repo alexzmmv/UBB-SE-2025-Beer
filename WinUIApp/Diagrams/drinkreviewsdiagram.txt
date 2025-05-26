@@ -1,0 +1,41 @@
+@startuml
+actor User
+    participant DrinkDetailPage
+    participant DrinkDetailViewModel
+    participant ProxyRatingService
+    participant ProxyReviewService
+    participant RatingController
+    participant ReviewController
+    participant RatingService
+    participant ReviewService
+    participant RatingRepository
+    participant ReviewRepository
+    participant Database
+
+    User->>DrinkDetailPage: Click any Drink
+    DrinkDetailPage->>DrinkDetailViewModel: Trigger ActionResult (DrinkDetail)
+    DrinkDetailViewModel->>ProxyRatingService: GetRatingsByProduct(drinkId)
+    ProxyRatingService->>RatingController: HTTP GET Rating/get-ratings-by-drink?drinkId={productId}
+    RatingController->>RatingService: GetRatingsByDrink(drinkId)
+        RatingService->>RatingRepository: GetRatingsByDrinkId(userId)
+    RatingRepository->>Database: Query Ratings by drinkId
+    Database-->>RatingRepository: List<Rating>
+    RatingRepository-->>RatingService: List<Rating>
+    RatingService-->>RatingController: List<Rating>
+    RatingController-->>ProxyRatingService: List<Rating> (JSON)
+    ProxyRatingService-->>DrinkDetailViewModel: List<Rating>
+    
+    DrinkDetailViewModel->>ProxyReviewService: for each rating GetReviewsByRating(ratingId)
+    ProxyReviewService->>ReviewController: HTTP GET Review/get-by-rating?ratingId={ratingId}
+    ReviewController->>ReviewService: GetReviewsByRating(ratingId)
+        ReviewService->>ReviewRepository: GetReviewsByRatingId(ratingId)
+    ReviewRepository->>Database: Query Reviews by ratingId
+    Database-->>ReviewRepository: List<Review>
+    ReviewRepository-->>ReviewService: List<Review>
+    ReviewService-->>ReviewController: List<Review>
+    ReviewController-->>ProxyReviewService: List<Review> (JSON)
+    ProxyReviewService-->>DrinkDetailViewModel: List<Review>
+    
+    DrinkDetailViewModel-->>DrinkDetailPage: Bind combined list of reviews
+    DrinkDetailPage-->>User: Display drink reviews
+@enduml
