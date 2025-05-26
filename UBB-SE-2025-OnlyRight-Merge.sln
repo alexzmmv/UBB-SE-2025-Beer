@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "WinUIApp.Data\DataAccess.csproj", "{8FC0E1F7-A26A-1C1C-C8D8-AC28BBB51EDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "Class Library\DataAccess.csproj", "{8FC0E1F7-A26A-1C1C-C8D8-AC28BBB51EDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinUIApplication", "Beer\WinUIApplication.csproj", "{473E5DFB-C492-C3F5-FCC2-E08FFE038B69}"
 EndProject
