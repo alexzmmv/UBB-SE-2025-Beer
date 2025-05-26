@@ -152,7 +152,7 @@
       <Compile Remove="Review.cs" />
     </ItemGroup>
     <ItemGroup>
-		<ProjectReference Include="..\WinUIApp.Data\WinUIApp.Data.csproj" />
+		<ProjectReference Include="..\WinUIApp.Data\DataAccess.csproj" />
 		<ProjectReference Include="..\WinUIApp.ProxyServices\WinUIApp.ProxyServices.csproj" />
     </ItemGroup>
 </Project>

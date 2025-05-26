@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WinUIApp.Data\WinUIApp.Data.csproj" />
+    <ProjectReference Include="..\WinUIApp.Data\DataAccess.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
