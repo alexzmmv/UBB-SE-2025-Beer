@@ -1,0 +1,70 @@
+<UserControl
+    x:Class="WinUIApp.Views.Components.DrinkListComponent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:WinUIApp.ProxyServices.Models"
+    x:Name="Root">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                  VerticalScrollBarVisibility="Disabled" 
+                  Padding="0,0,0,15">
+        <ItemsRepeater ItemsSource="{x:Bind Drinks, Mode=OneWay}"
+                       Margin="0,0,0,10">
+            <ItemsRepeater.Layout>
+                <StackLayout Orientation="Horizontal" Spacing="20"/>
+            </ItemsRepeater.Layout>
+
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="models:Drink">
+                    <!-- Drink Card - Maintains original style but with better interaction -->
+                    <Button Background="Transparent"
+                            Padding="0"
+                            Click="DrinkItem_Click"
+                            Tag="{x:Bind DrinkId}"
+                            Margin="0,0,0,5">
+                        <Border Width="200"
+                                Height="300"
+                                Background="White"
+                                CornerRadius="10"
+                                Padding="15"
+                                BorderBrush="Yellow"
+                                BorderThickness="2">
+                            <StackPanel Spacing="10">
+                                <!-- Image Container -->
+                                <Border Background="Gray"
+                                        Height="150"
+                                        CornerRadius="5">
+                                    <Image Source="{x:Bind DrinkImageUrl, Mode=OneWay}"
+                                           Stretch="UniformToFill"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+
+                                <!-- Drink Info -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{x:Bind DrinkName, Mode=OneWay}"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               Foreground="Black"
+                                               TextWrapping="Wrap"
+                                               MaxLines="2"
+                                               TextTrimming="CharacterEllipsis"/>
+
+                                    <TextBlock Text="{x:Bind DrinkBrand.BrandName, Mode=OneWay}"
+                                               FontSize="14"
+                                               Foreground="Black"
+                                               TextWrapping="Wrap"/>
+
+                                    <TextBlock Text="{x:Bind AlcoholContent, Mode=OneWay}"
+                                               FontSize="12"
+                                               Foreground="Black"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Button>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
+    </ScrollViewer>
+</UserControl>
