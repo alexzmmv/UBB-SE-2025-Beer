@@ -1,34 +1,19 @@
-// <copyright file="UpdateDrinkFlyout.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using WinUIApp.ProxyServices;
+using WinUIApp.ProxyServices.Models;
+using WinUIApp.Services.DummyServices;
+using WinUIApp.ViewModels;
 
 namespace WinUIApp.Views.Components
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using Microsoft.UI;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Media;
-    using Org.BouncyCastle.Asn1.Ocsp;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Services;
-    using WinUIApp.Services.DummyServices;
-    using WinUIApp.ViewModels;
-
-    /// <summary>
-    /// A flyout control for updating a drink. It includes fields for entering the drink's name, image URL, brand, alcohol content, and categories.
-    /// </summary>
     public sealed partial class UpdateDrinkFlyout : UserControl
     {
         private UpdateDrinkMenuViewModel viewModel;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UpdateDrinkFlyout"/> class.
-        /// </summary>
         public UpdateDrinkFlyout()
         {
             this.InitializeComponent();
@@ -39,7 +24,7 @@ namespace WinUIApp.Views.Components
             {
                 string query = this.SearchBox.Text.ToLower();
 
-                var filteredCategories = this.viewModel.AllCategories
+                List<string> filteredCategories = this.viewModel.AllCategories
                     .Where(category => category.ToLower().Contains(query))
                     .ToList();
 
@@ -61,14 +46,8 @@ namespace WinUIApp.Views.Components
             };
         }
 
-        /// <summary>
-        /// Gets or sets the drink to be updated. This property is used to bind the drink object to the flyout.
-        /// </summary>
         public Drink DrinkToUpdate { get; set; }
 
-        /// <summary>
-        /// Gets or sets the ID of the user who is updating the drink. This is used to determine if the user is an admin or not.
-        /// </summary>
         public int UserId { get; set; }
 
         private void UpdateDrinkFlyout_Loaded(object sender, RoutedEventArgs eventArguments)
@@ -93,7 +72,7 @@ namespace WinUIApp.Views.Components
                 BrandName = this.DrinkToUpdate.DrinkBrand?.BrandName ?? string.Empty,
             };
 
-            foreach (var category in this.DrinkToUpdate.CategoryList)
+            foreach (Category category in this.DrinkToUpdate.CategoryList)
             {
                 this.viewModel.SelectedCategoryNames.Add(category.CategoryName);
             }
@@ -111,7 +90,7 @@ namespace WinUIApp.Views.Components
 
             this.CategoryList.ItemsSource = this.viewModel.AllCategories;
 
-            foreach (var category in this.viewModel.AllCategories)
+            foreach (string category in this.viewModel.AllCategories)
             {
                 if (this.viewModel.SelectedCategoryNames.Contains(category))
                 {
@@ -127,12 +106,12 @@ namespace WinUIApp.Views.Components
                 return;
             }
 
-            foreach (var removedCategory in eventArguments.RemovedItems.Cast<string>())
+            foreach (string removedCategory in eventArguments.RemovedItems.Cast<string>())
             {
                 this.viewModel.SelectedCategoryNames.Remove(removedCategory);
             }
 
-            foreach (var addedCategory in eventArguments.AddedItems.Cast<string>())
+            foreach (string addedCategory in eventArguments.AddedItems.Cast<string>())
             {
                 if (!this.viewModel.SelectedCategoryNames.Contains(addedCategory))
                 {
@@ -153,7 +132,7 @@ namespace WinUIApp.Views.Components
                 this.viewModel.ValidateUpdatedDrinkDetails();
                 this.DrinkToUpdate.CategoryList = this.viewModel.GetSelectedCategories();
 
-                var adminService = new WinUIApp.Services.DummyServices.AdminService();
+                var adminService = new AdminService();
                 bool isAdmin = adminService.IsAdmin(UserId);
 
                 string message;
@@ -169,7 +148,7 @@ namespace WinUIApp.Views.Components
                     message = "A request was sent to the admin.";
                 }
 
-                var dialog = new ContentDialog
+                ContentDialog dialog = new ContentDialog
                 {
                     Title = "Success",
                     Content = message,
@@ -180,7 +159,7 @@ namespace WinUIApp.Views.Components
             }
             catch (Exception exception)
             {
-                var dialog = new ContentDialog
+                ContentDialog dialog = new ContentDialog
                 {
                     Title = "Error",
                     Content = exception.Message,

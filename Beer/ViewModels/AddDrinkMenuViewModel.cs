@@ -1,8 +1,4 @@
-﻿// <copyright file="AddDrinkMenuViewModel.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
-namespace WinUIApp.ViewModels
+﻿namespace WinUIApp.ViewModels
 {
     using System;
     using System.Collections.Generic;
@@ -15,19 +11,7 @@ namespace WinUIApp.ViewModels
     using WinUIApp.ProxyServices.Models;
     using WinUIApp.Services.DummyServices;
 
-    /// <summary>
-    /// ViewModel for the AddDrinkMenu page. Displays a form for adding a new drink, including name, image URL, brand, alcohol content, and categories.
-    /// </summary>
-    /// <remarks>
-    /// initializes a new instance of the <see cref="AddDrinkMenuViewModel"/> class.
-    /// </remarks>
-    /// <param name="drinkService">The drink service used to manage drinks.</param>
-    /// <param name="userService">The user service used to manage users.</param>
-    /// <param name="adminService">The admin service used to manage admin actions.</param>
-    public partial class AddDrinkMenuViewModel(
-        IDrinkService drinkService,
-        IUserService userService,
-        IAdminService adminService) : INotifyPropertyChanged
+    public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService, IAdminService adminService) : INotifyPropertyChanged
     {
         private const float MaxAlcoholContent = 100.0f;
         private const float MinAlcoholContent = 0.0f;
@@ -39,34 +23,16 @@ namespace WinUIApp.ViewModels
         private string newDrinkBrandName = string.Empty;
         private string newDrinkAlcoholContent = string.Empty;
 
-        /// <summary>
-        /// Event handler for property changes. This is used for data binding in the UI.
-        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Gets or sets the list of all available drink categories.
-        /// </summary>
         public List<string> AllCategories { get; set; } = new ();
 
-        /// <summary>
-        /// Gets or sets the list of selected drink categories.
-        /// </summary>
         public ObservableCollection<string> SelectedCategoryNames { get; set; } = new ();
 
-        /// <summary>
-        /// Gets or sets the list of all available drink categories as objects.
-        /// </summary>
         public List<Category> AllCategoryObjects { get; set; } = new ();
 
-        /// <summary>
-        /// Gets or sets the list of all available drink brands.
-        /// </summary>
         public List<Brand> AllBrands { get; set; } = new ();
 
-        /// <summary>
-        /// Gets or sets the name of the drink to be added.
-        /// </summary>
         public string DrinkName
         {
             get => this.newDrinkName;
@@ -80,9 +46,6 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets or sets the URL of the image for the drink to be added.
-        /// </summary>
         public string DrinkURL
         {
             get => this.newDrinkURL;
@@ -96,9 +59,6 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets or sets the name of the brand of the drink to be added.
-        /// </summary>
         public string BrandName
         {
             get => this.newDrinkBrandName;
@@ -112,9 +72,6 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets or sets the alcohol content of the drink to be added.
-        /// </summary>
         public string AlcoholContent
         {
             get => this.newDrinkAlcoholContent;
@@ -128,10 +85,6 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Retrieves the list of all available drink categories from the drink service.
-        /// </summary>
-        /// <returns> List. </returns>
         public List<Category> GetSelectedCategories()
         {
             return this.SelectedCategoryNames
@@ -140,10 +93,6 @@ namespace WinUIApp.ViewModels
                 .ToList();
         }
 
-        /// <summary>
-        /// Validates the input data for adding a drink.
-        /// The drink name must not be empty, the brand must exist, the alcohol content must be a valid number between 0 and 100, and at least one drinkCategory must be selected.
-        /// </summary>
         public void ValidateUserDrinkInput()
         {
             if (string.IsNullOrWhiteSpace(this.DrinkName))
@@ -167,15 +116,11 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Adds a new drink to the system.
-        /// </summary>
-        /// <exception cref="ArgumentException">Thrown when the drink name, brand, or alcohol content is invalid.</exception>"
         public void InstantAddDrink()
         {
             try
             {
-                var categories = this.GetSelectedCategories();
+                List<Category> categories = this.GetSelectedCategories();
                 float alcoholContent = float.Parse(this.AlcoholContent);
 
                 this.drinkService.AddDrink(
@@ -193,10 +138,6 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Sends a request to the admin to add a new drink.
-        /// </summary>
-        /// <exception cref="Exception">Thrown when there is an error sending the request.</exception>"
         public void SendAddDrinkRequest()
         {
             try
@@ -215,9 +156,6 @@ namespace WinUIApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Clears the form fields after adding a drink.
-        /// </summary>
         public void ClearForm()
         {
             this.DrinkName = string.Empty;
@@ -227,10 +165,6 @@ namespace WinUIApp.ViewModels
             this.SelectedCategoryNames.Clear();
         }
 
-        /// <summary>
-        /// Notifies the UI that a property has changed.
-        /// </summary>
-        /// <param name="propertyName"> Name. </param>
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (this.PropertyChanged != null)

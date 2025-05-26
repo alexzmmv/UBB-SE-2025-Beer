@@ -1,7 +1,3 @@
-// <copyright file="AIReviewWindow.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace WinUIApp.Views.Windows
 {
     using System;
@@ -15,9 +11,6 @@ namespace WinUIApp.Views.Windows
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media.Imaging;
 
-    /// <summary>
-    /// Represents a window for generating AI reviews using OpenRouter API.
-    /// </summary>
     public sealed partial class AIReviewWindow : Window
     {
         private const string ApiUrl = "https://openrouter.ai/api/v1/chat/completions";
@@ -36,12 +29,6 @@ namespace WinUIApp.Views.Windows
         private readonly HttpClient client;
         private readonly Action<string> onReviewGenerated;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AIReviewWindow"/> class.
-        /// </summary>
-        /// <param name="configuration">Injected configuration file used for the api key.</param>
-        /// <param name="onReviewGenerated">Action to invoke once review is generated.</param>
-        /// <exception cref="InvalidOperationException">Exception called if config api key is missing.</exception>
         public AIReviewWindow(IConfiguration configuration, Action<string> onReviewGenerated)
         {
             this.apiKey = configuration["OPENROUTER_API_KEY"] ?? throw new InvalidOperationException("API key is missing or empty.");
@@ -50,11 +37,6 @@ namespace WinUIApp.Views.Windows
             this.onReviewGenerated = onReviewGenerated;
         }
 
-        /// <summary>
-        /// Handles the click event for the SubmitReview button.
-        /// </summary>
-        /// <param name="sender">Sender object for the event.</param>
-        /// <param name="e">Arguments of event.</param>
         private async void SubmitReview_Click(object sender, RoutedEventArgs e)
         {
             string userKeywords = this.AIReviewTextBox.Text.ToLower();
@@ -80,11 +62,6 @@ namespace WinUIApp.Views.Windows
             }
         }
 
-        /// <summary>
-        /// Generates a review using the OpenRouter API based on the provided keywords.
-        /// </summary>
-        /// <param name="keywords">The keywords used for the prompt.</param>
-        /// <returns>A string task since async.</returns>
         private async Task<string> GenerateReviewFromOpenRouter(string keywords)
         {
             try
@@ -101,7 +78,7 @@ namespace WinUIApp.Views.Windows
                 };
 
                 string jsonRequest = JsonSerializer.Serialize(requestBody);
-                var request = new HttpRequestMessage(HttpMethod.Post, ApiUrl)
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ApiUrl)
                 {
                     Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json"),
                 };
