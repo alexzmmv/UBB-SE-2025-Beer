@@ -19,8 +19,10 @@ namespace WinUiApp.Data.Configurations
             builder.Property(review => review.UserId)
                    .IsRequired();
 
+            // Added IsRequired
             builder.Property(review => review.Content)
-                   .HasColumnType("text");
+                   .HasColumnType("text")
+                   .IsRequired();
 
             builder.Property(review => review.CreationDate)
                    .HasColumnType("datetime");
@@ -34,10 +36,15 @@ namespace WinUiApp.Data.Configurations
                    .HasForeignKey(review => review.RatingId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            // Leaving this as it was from 923
             builder.HasOne(review => review.User)
                    .WithMany()
                    .HasForeignKey(review => review.UserId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(currentReview => currentReview.CreatedDate).IsRequired();
+            builder.Property(currentReview => currentReview.NumberOfFlags).IsRequired();
+            builder.Property(currentReview => currentReview.IsHidden).IsRequired();
         }
     }
 }

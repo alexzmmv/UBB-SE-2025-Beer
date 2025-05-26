@@ -1,5 +1,3 @@
-using System;
-
 namespace WinUiApp.Data.Data
 {
     public class Rating
