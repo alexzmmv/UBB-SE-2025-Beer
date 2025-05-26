@@ -1,7 +1,3 @@
-// <copyright file="SearchPage.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace WinUIApp.Views.Pages
 {
     using System.Collections.Generic;
@@ -14,25 +10,15 @@ namespace WinUIApp.Views.Pages
     using WinUIApp.ViewModels;
     using WinUIApp.Views.Components.SearchPageComponents;
 
-    /// <summary>
-    /// SearchPage.xaml's interaction logic.
-    /// </summary>
     public sealed partial class SearchPage : Page
     {
         private SearchPageViewModel searchPageViewModel;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SearchPage"/> class.
-        /// </summary>
         public SearchPage()
         {
             this.InitializeComponent();
         }
 
-        /// <summary>
-        /// Handles the navigation to this page.
-        /// </summary>
-        /// <param name="eventArguments">Event arguments.</param>
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
             base.OnNavigatedTo(eventArguments);

@@ -1,32 +1,19 @@
-// <copyright file="AddDrinkFlyout.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace WinUIApp.Views.Components
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.UI;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Media;
     using WinUIApp.ProxyServices;
-    using WinUIApp.Services;
     using WinUIApp.Services.DummyServices;
     using WinUIApp.ViewModels;
 
-    /// <summary>
-    /// A flyout control for adding a new drink. It includes fields for entering the drink's name, image URL, brand, alcohol content, and categories.
-    /// </summary>
     public sealed partial class AddDrinkFlyout : UserControl
     {
         private readonly AdminService adminService;
         private AddDrinkMenuViewModel viewModel;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AddDrinkFlyout"/> class.
-        /// </summary>
         public AddDrinkFlyout()
         {
             this.adminService = new AdminService();
@@ -38,7 +25,7 @@ namespace WinUIApp.Views.Components
             {
                 string query = this.SearchBox.Text.ToLower();
 
-                var filteredCategories = this.viewModel.AllCategories
+                List<string> filteredCategories = this.viewModel.AllCategories
                     .Where(category => category.ToLower().Contains(query))
                     .ToList();
 
@@ -60,9 +47,6 @@ namespace WinUIApp.Views.Components
             };
         }
 
-        /// <summary>
-        /// Gets or sets for the ID of the user who is adding the drink. This is used to determine if the user is an admin or not.
-        /// </summary>
         public int UserId { get; set; }
 
         private void AddDrinkFlyout_Loaded(object sender, RoutedEventArgs eventArguments)
@@ -140,7 +124,7 @@ namespace WinUIApp.Views.Components
                     message = "A request was sent to the admin.";
                 }
 
-                var dialog = new ContentDialog
+                ContentDialog dialog = new ContentDialog
                 {
                     Title = "Success",
                     Content = message,
@@ -153,7 +137,7 @@ namespace WinUIApp.Views.Components
             }
             catch (Exception exception)
             {
-                var dialog = new ContentDialog
+                ContentDialog dialog = new ContentDialog
                 {
                     Title = "Error",
                     Content = exception.Message,

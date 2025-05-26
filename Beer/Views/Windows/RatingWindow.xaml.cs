@@ -1,39 +1,25 @@
-// <copyright file="RatingWindow.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace WinUIApp.Views.Windows
 {
-    using WinUIApp.ViewHelpers;
-    using WinUIApp.ViewModels;
+    using System.Diagnostics;
+    using System.Linq;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Input;
-    using System.Diagnostics;
-    using System.Linq;
+    using WinUIApp.ViewHelpers;
+    using WinUIApp.ViewModels;
 
     public sealed partial class RatingWindow : Window
     {
         private const int BottleRatingToIndexOffset = 1;
         private readonly RatingViewModel ratingViewModel;
-        private readonly int productId; // Add this field to store the product ID
+        private readonly int productId;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RatingWindow"/> class.
-        /// </summary>
-        /// <param name="viewModel">The rating view model.</param>
-        /// <param name="productId">The ID of the product being rated.</param>
         public RatingWindow(RatingViewModel viewModel, int productId)
         {
             this.InitializeComponent();
-            Debug.WriteLine($"Bottle count: {viewModel.Bottles?.Count ?? 0}");
-            foreach (var bottle in viewModel.Bottles ?? Enumerable.Empty<BottleAsset>())
-            {
-                Debug.WriteLine($"Bottle image source: {bottle.ImageSource}");
-            }
 
             this.ratingViewModel = viewModel;
-            this.productId = productId; // Store the product ID
+            this.productId = productId;
             this.rootGrid.DataContext = viewModel;
         }
 
@@ -55,7 +41,7 @@ namespace WinUIApp.Views.Windows
 
         private void RateButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ratingViewModel.AddRating(this.productId); // Pass the productId to AddRating
+            this.ratingViewModel.AddRating(this.productId);
             this.Close();
         }
     }
