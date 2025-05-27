@@ -17,6 +17,11 @@ using WinUIApp.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddHttpClient("DrinkDbClient", client =>
 {
     client.BaseAddress = new Uri("http://localhost:5078/");
@@ -33,6 +38,12 @@ builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IReviewsRepository, ReviewsRepository>();
 
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.MigrationsAssembly("DataAccess")
+    ));
 
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 
@@ -101,18 +112,6 @@ builder.Services.AddScoped<IGitHubLocalOAuthServer>(sp =>
 
 builder.Services.AddScoped<IFacebookLocalOAuthServer>(sp =>
     new FacebookLocalOAuthServer("http://localhost:8888/"));
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sql => sql.MigrationsAssembly("WinUIApp.Data")
-    ));
-
 
 var app = builder.Build();
 
