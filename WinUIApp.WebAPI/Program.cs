@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddScoped<IDrinkDTOService, DrinkService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();

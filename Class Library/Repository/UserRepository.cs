@@ -10,11 +10,12 @@
     using Microsoft.EntityFrameworkCore;
     using WinUiApp.Data;
     using WinUiApp.Data.Data;
+    using WinUiApp.Data.Interfaces;
 
     public class UserRepository : IUserRepository
     {
-        private readonly AppDbContext dataContext;
-        public UserRepository(AppDbContext context)
+        private readonly IAppDbContext dataContext;
+        public UserRepository(IAppDbContext context)
         {
             dataContext = context;
         }

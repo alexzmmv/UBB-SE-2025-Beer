@@ -14,7 +14,7 @@ namespace WinUIApp.WebAPI.Services
     /// <summary>
     /// Drink service for managing drink-related operations.
     /// </summary>
-    public class DrinkService : IDrinkService
+    public class DrinkService : IDrinkDTOService
     {
         private const int DefaultPersonalDrinkCount = 1;
         private const int NoDrinkBrand = 0;
@@ -215,7 +215,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="maximumDrinkCount"> Not sure. </param>
         /// <returns> Personal list. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public List<DrinkDTO> GetUserPersonalDrinkList(int userId, int maximumDrinkCount = DefaultPersonalDrinkCount)
+        public List<DrinkDTO> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = DefaultPersonalDrinkCount)
         {
             try
             {
@@ -234,7 +234,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> true, if yes, false otherwise. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public bool IsDrinkInUserPersonalList(int userId, int drinkId)
+        public bool IsDrinkInUserPersonalList(Guid userId, int drinkId)
         {
             try
             {
@@ -253,7 +253,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if successfull, false otherwise. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public bool AddToUserPersonalDrinkList(int userId, int drinkId)
+        public bool AddToUserPersonalDrinkList(Guid userId, int drinkId)
         {
             try
             {
@@ -272,7 +272,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if successfull, false otherwise. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public bool DeleteFromUserPersonalDrinkList(int userId, int drinkId)
+        public bool DeleteFromUserPersonalDrinkList(Guid userId, int drinkId)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> The drink. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public DrinkDTO VoteDrinkOfTheDay(int userId, int drinkId)
+        public DrinkDTO VoteDrinkOfTheDay(Guid userId, int drinkId)
         {
             try
             {

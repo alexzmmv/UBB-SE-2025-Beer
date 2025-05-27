@@ -26,7 +26,7 @@ namespace WinUIApp.WebAPI.Models
         /// <summary>
         /// Gets or sets the identifier of the user who submitted the review.
         /// </summary>
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the content of the review.

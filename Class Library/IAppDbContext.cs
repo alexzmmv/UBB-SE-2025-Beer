@@ -35,5 +35,7 @@ namespace WinUiApp.Data.Interfaces
         DbSet<OffensiveWord> OffensiveWords { get; set; }
 
         int SaveChanges();
+
+        Task<int> SaveChangesAsync();
     }
 }

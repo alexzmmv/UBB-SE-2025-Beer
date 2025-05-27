@@ -28,10 +28,16 @@
 
         Task UpdateNumberOfFlagsForReview(int reviewID, int numberOfFlags);
 
+        // From 923 this returns a Review
         Task<int> AddReview(Review review);
+
+        // Changed this to bool
+        Task<bool> UpdateReview(Review review);
 
         Task RemoveReviewById(int reviewID);
 
         Task<List<Review>> GetHiddenReviews();
+
+        Task<List<Review>> GetReviewsByRatingId(int ratingId);
     }
 }

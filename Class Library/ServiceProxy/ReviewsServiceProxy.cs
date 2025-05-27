@@ -60,7 +60,7 @@ namespace DataAccess.ServiceProxy
             {
                 if (review.IsHidden == false)
                 {
-                    average += review.Rating;
+                    average += (double)review.Rating.RatingValue;
                     numberOfVisibleReviews++;
                 }
             }
@@ -169,6 +169,12 @@ namespace DataAccess.ServiceProxy
         {
             List<Review> reviews = await GetAllReviews();
             return reviews.Where(review => review.Content.Contains(content, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        Task<IEnumerable<Review>> IReviewService.GetReviewsByRating(int ratingId)
+        {
+            // Make the new route
+            throw new NotImplementedException();
         }
     }
 }
