@@ -1,0 +1,123 @@
+@model WinUIApp.WebUI.Models.AddDrinkViewModel;
+@{
+    ViewData["Title"] = "Add Drink";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header bg-gradient text-white p-4" style="background-color: #6c63ff;">
+                    <h2 class="mb-0">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Add a New Drink
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Drink" asp-controller="Add" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+
+                        <div class="row">
+                            <!-- Left Column: Form Fields -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label asp-for="DrinkName" class="form-label fw-bold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-cup-straw"></i></span>
+                                        <input asp-for="DrinkName" class="form-control" placeholder="Enter drink name" />
+                                    </div>
+                                    <span asp-validation-for="DrinkName" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="DrinkBrandName" class="form-label fw-bold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                        <input asp-for="DrinkBrandName" class="form-control" placeholder="Enter brand name" />
+                                    </div>
+                                    <span asp-validation-for="DrinkBrandName" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="DrinkAlcoholPercentage" class="form-label fw-bold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-percent"></i></span>
+                                        <input asp-for="DrinkAlcoholPercentage" class="form-control" type="number" step="0.1" min="0" max="100" />
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <span asp-validation-for="DrinkAlcoholPercentage" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Image & Categories -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label asp-for="DrinkImagePath" class="form-label fw-bold"></label>
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                        <input asp-for="DrinkImagePath" class="form-control" id="imageUrlInput" placeholder="Enter image URL" />
+                                    </div>
+                                    <div class="image-preview-container text-center p-3 border rounded mb-2" style="height: 200px; background-color: #f8f9fa;">
+                                        <img id="imagePreview" src="/Assets/DefaultDrink.jpg" class="img-fluid h-100" style="object-fit: contain;" alt="Drink Preview">
+                                    </div>
+                                    <span asp-validation-for="DrinkImagePath" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="DrinkCategories" class="form-label fw-bold"></label>
+                                    <div class="category-selection border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                        <select asp-for="DrinkCategories" asp-items="Model.AvailableCategories" multiple class="form-select"
+                                                data-placeholder="Select categories" style="width: 100%;">
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="DrinkCategories" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-circle me-2"></i>Add Drink
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Image preview functionality
+            const imageUrlInput = document.getElementById('imageUrlInput');
+            const imagePreview = document.getElementById('imagePreview');
+
+            imageUrlInput.addEventListener('input', function() {
+                const imageUrl = this.value.trim();
+                if (imageUrl) {
+                    imagePreview.src = imageUrl;
+                } else {
+                    imagePreview.src = '/Assets/DefaultDrink.jpg';
+                }
+            });
+
+            // Handle image error
+            imagePreview.addEventListener('error', function() {
+                this.src = '/Assets/DefaultDrink.jpg';
+            });
+
+            // Initialize select2 for better category selection
+            if ($.fn.select2) {
+                $('select[multiple]').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: $(this).data('placeholder')
+                });
+            }
+        });
+    </script>
+}

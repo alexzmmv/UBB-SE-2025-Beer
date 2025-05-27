@@ -1,0 +1,284 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid bg-primary text-white py-3 mb-4 rounded shadow-sm">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <div class="d-flex align-items-center mb-2 mb-lg-0">
+
+            @* <img src="~/images/beers-logo.png" alt="Logo" width="32" height="32" class="me-3" /> *@
+            <h3 class="mb-0 fw-semibold">Admin Dashboard</h3>
+        </div>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-light fw-semibold shadow-sm">
+            Go Back
+        </a>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row g-4">
+        <!-- g?4 = bootstrap gap -->
+        <!-- ????????? LEFT COL : REVIEWS ????????? -->
+        <div class="col-lg-4">
+            <h5 class="fw-bold mb-3">List of all reviews</h5>
+
+            <input type="text" class="form-control mb-2" placeholder="Search reviews…" />
+
+            <ul class="list-group mb-3 shadow-sm" style="height: 250px; overflow-y: auto;">
+                @foreach (Review review in Model.Reviews)
+                {
+                    <li class="list-group-item review-item" ondblclick="toggleReviewActions(@review.ReviewId)">
+                        <div>
+                            <strong>@review.ReviewId</strong>: @review.Content
+                        </div>
+                        <div class="review-actions" id="actions-@review.ReviewId" style="display: none">
+                            <div class="btn-group btn-group-sm mt-2" role="group">
+                                <form asp-controller="Admin" asp-action="AcceptReview" method="post" style="display: inline;">
+                                    <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                                    <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="HideReview" method="post" style="display: inline;">
+                                    <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                                    <button type="submit" class="btn btn-warning btn-sm">Hide</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="AICheckReview" method="post" style="display: inline;">
+                                    <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                                    <button type="submit" class="btn btn-info btn-sm">AI Check</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div class="btn-group w-100 review-btn-group" role="group">
+                <form asp-controller="Admin" asp-action="AutomaticallyCheckReviews" method="post">
+                    <button type="submit"
+                            class="btn btn-primary w-100 fw-semibold rounded-0 rounded-start">
+                        Automatically check reviews
+                    </button>
+                </form>
+                <button type="button"
+                        class="btn btn-secondary w-50 fw-semibold"
+                        data-bs-toggle="modal"
+                        data-bs-target="#forbiddenWordsModal"
+                        style="border-top-left-radius:0;border-bottom-left-radius:0;">
+                    Modify offensive words list
+                </button>
+            </div>
+        </div>
+
+        <!-- ????????? MID COL : ROLE UPGRADE ????????? -->
+        <div class="col-lg-4">
+            <h5 class="fw-bold mb-3">Role Upgrade Requests</h5>
+
+            <ul class="list-group shadow-sm" style="max-height:300px;overflow-y:auto">
+                @foreach (UpgradeRequest request in Model.UpgradeRequests)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>@request.RequestingUserDisplayName</span>
+                        <div class="btn-group" role="group" style="height:38px;">
+                            <form asp-controller="Admin" asp-action="Accept" method="post" style="display: inline;">
+                                <input type="hidden" name="id" value="@request.UpgradeRequestId" />
+                                <button type="submit" class="btn btn-success btn-sm fw-semibold"
+                                        style="border-top-right-radius:0; border-bottom-right-radius:0; height:100%;">
+                                    Accept
+                                </button>
+                            </form>
+                            <form asp-controller="Admin" asp-action="Decline" method="post" style="display: inline;">
+                                <input type="hidden" name="id" value="@request.UpgradeRequestId" />
+                                <button type="submit" class="btn btn-danger btn-sm fw-semibold"
+                                        style="border-top-left-radius:0; border-bottom-left-radius:0; height:100%;">
+                                    Decline
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                }
+                @if (!Model.UpgradeRequests.Any())
+                {
+                    <li class="list-group-item text-center text-muted">
+                        No pending upgrade requests
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- ????????? RIGHT COL : APPEALS ????????? -->
+        <div class="col-lg-4">
+            <h5 class="fw-bold mb-3">List of all appeals</h5>
+
+            <input id="appealSearch" type="text" class="form-control mb-2" placeholder="Search appeals…" />
+
+            <div class="list-group" id="appealsList">
+                @foreach (var appeal in Model.AppealsWithDetails)
+                {
+                    <!-- Collapsed header: shows ID and Email -->
+                    <button type="button"
+                            class="list-group-item list-group-item-action bg-dark text-white appeal-header text-start"
+                            data-userid="@appeal.User.UserId">
+                        <strong>ID:</strong> @appeal.User.UserId,
+                        <strong>Email:</strong> @appeal.User.EmailAddress
+                    </button>
+                    <div class="list-group-item bg-dark text-white appeal-body" style="display:none;">
+                        <p><strong>Status:</strong> @appeal.User.AssignedRole</p>
+                        <p><strong>User Reviews:</strong></p>
+                        @if (appeal.Reviews.Any())
+                        {
+                            <ul class="mb-2">
+                                @foreach (var r in appeal.Reviews)
+                                {
+                                    <li><strong>#@r.ReviewId</strong>: @r.Content</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p><em>No reviews.</em></p>
+                        }
+                        <div class="d-grid gap-2 mt-2">
+                            <!-- Keep Ban -->
+                            <form asp-controller="Admin" asp-action="KeepBan" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@appeal.User.UserId" />
+                                <button type="submit" class="btn btn-danger w-100">Keep Ban</button>
+                            </form>
+                            <!-- Accept Appeal -->
+                            <form asp-controller="Admin" asp-action="AcceptAppeal" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@appeal.User.UserId" />
+                                <button type="submit" class="btn btn-success w-100">Accept Appeal</button>
+                            </form>
+                            <!-- Close Appeal Case -->
+                            <form asp-controller="Admin" asp-action="CloseAppealCase" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@appeal.User.UserId" />
+                                <button type="submit" class="btn btn-secondary w-100">Close Appeal Case</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                @if (!Model.AppealsWithDetails.Any())
+                {
+                    <div class="list-group-item text-center text-muted">No pending appeals</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ????????? MODAL : FORBIDDEN WORDS ????????? -->
+<div class="modal fade" id="forbiddenWordsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title">Forbidden Words</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <ul class="list-group mb-3" id="offensiveWordsList">
+                    @foreach (var word in Model.OffensiveWords)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @word
+                            <button class="btn btn-danger btn-sm delete-word-button" data-word="@word">Delete</button>
+                        </li>
+                    }
+                </ul>
+
+                <div class="d-flex">
+                    <input type="text" id="newWordInput" class="form-control me-2" placeholder="Add new word…">
+                    <button class="btn btn-primary" id="addWordButton">Add</button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleReviewActions(reviewId) {
+            $('.review-actions').hide();
+            $('#actions-' + reviewId).show();
+        }
+    </script>
+
+    <script>
+        $(function() {
+            $('.appeal-body').hide();
+            $(document).on('click', '.appeal-header', function () {
+                var $body = $(this).next('.appeal-body');
+                if ($body.is(':visible')) {
+                    $body.slideUp();
+                } else {
+                    $('.appeal-body').slideUp();
+                    $body.slideDown();
+                }
+            });
+            $('#appealSearch').on('keyup', function () {
+                var term = $(this).val().toLowerCase();
+                $('.appeal-header').each(function () {
+                    var text = $(this).text().toLowerCase();
+                    var match = text.indexOf(term) !== -1;
+                    $(this).toggle(match);
+                    if (!match) {
+                        $(this).next('.appeal-body').hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Add offensive word
+            $('#addWordButton').click(function () {
+                var word = $('#newWordInput').val().trim();
+                if (word === "") return;
+
+                $.post('/Admin/AddOffensiveWord', { word: word }, function (data) {
+                    updateOffensiveWordsList(data);
+                    $('#newWordInput').val('');
+                });
+            });
+
+            // Delete offensive word
+            $(document).on('click', '.delete-word-button', function () {
+                var word = $(this).data('word');
+
+                $.post('/Admin/DeleteOffensiveWord', { word: word }, function (data) {
+                    updateOffensiveWordsList(data);
+                });
+            });
+
+            // Refresh the offensive word list in real time
+            function updateOffensiveWordsList(words) {
+                var list = $('#offensiveWordsList');
+                list.empty();
+
+                words.forEach(function (word) {
+                    list.append(`
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${word}
+                                    <button class="btn btn-danger btn-sm delete-word-button" data-word="${word}">Delete</button>
+                                </li>
+                            `);
+                });
+            }
+        });
+    </script>
+}
+
+<script>
+    function toggleReviewActions(reviewId) {
+        $('.review-actions').hide();
+        $('#actions-' + reviewId).show();
+    }
+</script>
