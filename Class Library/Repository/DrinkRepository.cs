@@ -20,7 +20,7 @@ namespace WinUIApp.WebAPI.Repositories
     /// <summary>
     /// Repository for managing drink-related operations.
     /// </summary>
-    internal class DrinkRepository : IDrinkRepository
+    public class DrinkRepository : IDrinkRepository
     {
         private const int NoCategoriesCount = 0;
         IAppDbContext dbContext;

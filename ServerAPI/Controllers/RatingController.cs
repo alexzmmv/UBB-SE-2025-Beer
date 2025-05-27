@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WinUIApp.ProxyServices;
 using WinUIApp.WebAPI.Models;
 using WinUIApp.WebAPI.Requests.Rating;
 using WinUIApp.WebAPI.Services;
@@ -11,9 +12,9 @@ namespace WinUIApp.WebAPI.Controllers
     [Route("[controller]")]
     public class RatingController : ControllerBase
     {
-        private readonly IRatingService ratingService;
+        private readonly IRatingDTOService ratingService;
 
-        public RatingController(IRatingService ratingService)
+        public RatingController(IRatingDTOService ratingService)
         {
             this.ratingService = ratingService;
         }
