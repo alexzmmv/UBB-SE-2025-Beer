@@ -53,7 +53,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Class Library\DataAccess.csproj" />
-    <ProjectReference Include="..\WinUIApp.Data\DataAccess.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
