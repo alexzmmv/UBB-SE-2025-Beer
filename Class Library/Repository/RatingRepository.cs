@@ -19,7 +19,7 @@ namespace WinUIApp.WebAPI.Repositories
     /// <summary>
     /// Repository for managing rating-related operations.
     /// </summary>
-    internal class RatingRepository : IRatingRepository
+    public class RatingRepository : IRatingRepository
     {
         private readonly IAppDbContext dbContext;
 

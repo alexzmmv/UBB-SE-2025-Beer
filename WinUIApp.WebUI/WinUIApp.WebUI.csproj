@@ -8,6 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\WinUIApp.WebAPI\WinUIApp.WebAPI.csproj" />
+        <ProjectReference Include="..\WinUIApp.WebAPI\ServerAPI.csproj" />
     </ItemGroup>
 </Project>
