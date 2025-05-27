@@ -4,13 +4,14 @@
 
 namespace WinUIApp.WebAPI.Services
 {
+    using System;
     using System.Collections.Generic;
     using WinUIApp.WebAPI.Models;
 
     /// <summary>
     /// Interface for managing drink-related operations.
     /// </summary>
-    public interface IDrinkService
+    public interface IDrinkDTOService
     {
         /// <summary>
         /// Adds a drink to the database.
@@ -30,7 +31,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if successfull, false otherwise. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        bool AddToUserPersonalDrinkList(int userId, int drinkId);
+        bool AddToUserPersonalDrinkList(Guid userId, int drinkId);
 
         /// <summary>
         /// Deletes a drink from the database.
@@ -46,7 +47,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if successfull, false otherwise. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        bool DeleteFromUserPersonalDrinkList(int userId, int drinkId);
+        bool DeleteFromUserPersonalDrinkList(Guid userId, int drinkId);
 
         /// <summary>
         /// Retrieves a list of drink brands.
@@ -97,7 +98,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="maximumDrinkCount"> Not sure. </param>
         /// <returns> Personal list. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        List<DrinkDTO> GetUserPersonalDrinkList(int userId, int maximumDrinkCount = 1);
+        List<DrinkDTO> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = 1);
 
         /// <summary>
         /// Checks if a drink is already in the user's personal drink list.
@@ -106,7 +107,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> true, if yes, false otherwise. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        bool IsDrinkInUserPersonalList(int userId, int drinkId);
+        bool IsDrinkInUserPersonalList(Guid userId, int drinkId);
 
         /// <summary>
         /// Updates a drink in the database.
@@ -122,6 +123,6 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> The drink. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        DrinkDTO VoteDrinkOfTheDay(int userId, int drinkId);
+        DrinkDTO VoteDrinkOfTheDay(Guid userId, int drinkId);
     }
 }

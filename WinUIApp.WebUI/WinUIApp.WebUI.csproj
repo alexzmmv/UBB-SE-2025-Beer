@@ -10,8 +10,4 @@
     <ItemGroup>
         <ProjectReference Include="..\WinUIApp.WebAPI\WinUIApp.WebAPI.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-        <ProjectReference Include="..\WinUIApp.ProxyServices\WinUIApp.ProxyServices.csproj" />
-    </ItemGroup>
 </Project>

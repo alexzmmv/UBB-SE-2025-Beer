@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
+using WinUiApp.Data.Data;
 
 namespace DataAccess.ServiceProxy
 {

@@ -307,7 +307,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="userId">The unique ID of the user casting the vote.</param>
         /// <param name="drinkId">The ID of the drink being voted for.</param>
         /// <param name="voteTime">The timestamp when the vote is cast.</param>
-        private void AddNewVote(int userId, int drinkId, DateTime voteTime)
+        private void AddNewVote(Guid userId, int drinkId, DateTime voteTime)
         {
             var newVote = new Vote
             {
@@ -338,7 +338,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// </summary>
         /// <param name="userId"> User id. </param>
         /// <param name="drinkId"> Drink id. </param>
-        public void VoteDrinkOfTheDay(int userId, int drinkId)
+        public void VoteDrinkOfTheDay(Guid userId, int drinkId)
         {
             DateTime voteTime = DateTime.UtcNow;
 
@@ -358,7 +358,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// </summary>
         /// <param name="userId"> User id. </param>
         /// <returns> The list of drinks for the user. </returns>
-        public List<Models.DrinkDTO> GetPersonalDrinkList(int userId)
+        public List<Models.DrinkDTO> GetPersonalDrinkList(Guid userId)
         {
             var drinkIds = dbContext.UserDrinks
             .Where(ud => ud.UserId == userId)
@@ -399,7 +399,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="userId"> User id. </param>
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if it is in the list, false otherwise. </returns>
-        public bool IsDrinkInPersonalList(int userId, int drinkId)
+        public bool IsDrinkInPersonalList(Guid userId, int drinkId)
         {
             return dbContext.UserDrinks
                 .Any(userDrink => 
@@ -413,7 +413,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="userId"> User id. </param>
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if successfull, false otherwise. </returns>
-        public bool AddToPersonalDrinkList(int userId, int drinkId)
+        public bool AddToPersonalDrinkList(Guid userId, int drinkId)
         {
             bool alreadyExists = dbContext.UserDrinks
             .Any(userDrink => userDrink.UserId == userId && userDrink.DrinkId == drinkId);
@@ -437,7 +437,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="userId"> User id. </param>
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> True, if successfull, false otherwise. </returns>
-        public bool DeleteFromPersonalDrinkList(int userId, int drinkId)
+        public bool DeleteFromPersonalDrinkList(Guid userId, int drinkId)
         {
             var userDrink = dbContext.UserDrinks
            .FirstOrDefault(userDrink => userDrink.UserId == userId && userDrink.DrinkId == drinkId);

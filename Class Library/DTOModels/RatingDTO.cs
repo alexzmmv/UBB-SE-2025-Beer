@@ -17,7 +17,7 @@ public class RatingDTO
     /// <summary>
     /// Gets or sets the identifier of the user who submitted the rating.
     /// </summary>
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>
     /// Gets or sets the rating value, ranging from 1 to 5 stars.

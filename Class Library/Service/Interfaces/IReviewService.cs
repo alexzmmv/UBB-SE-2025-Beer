@@ -42,6 +42,6 @@
 
         Task<List<Review>> FilterReviewsByContent(string content);
 
-        public IEnumerable<Review> GetReviewsByRating(int ratingId);
+        Task<IEnumerable<Review>> GetReviewsByRating(int ratingId);
     }
 }

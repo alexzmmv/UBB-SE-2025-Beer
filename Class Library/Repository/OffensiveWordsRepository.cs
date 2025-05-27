@@ -7,12 +7,13 @@
     using DataAccess.Model.AdminDashboard;
     using IRepository;
     using WinUiApp.Data;
+    using WinUiApp.Data.Interfaces;
 
     public class OffensiveWordsRepository : IOffensiveWordsRepository
     {
-        private AppDbContext databaseContext;
+        private IAppDbContext databaseContext;
 
-        public OffensiveWordsRepository(AppDbContext databaseContext)
+        public OffensiveWordsRepository(IAppDbContext databaseContext)
         {
             this.databaseContext = databaseContext;
         }

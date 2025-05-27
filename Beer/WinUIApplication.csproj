@@ -153,6 +153,5 @@
     </ItemGroup>
     <ItemGroup>
 		<ProjectReference Include="..\WinUIApp.Data\DataAccess.csproj" />
-		<ProjectReference Include="..\WinUIApp.ProxyServices\WinUIApp.ProxyServices.csproj" />
     </ItemGroup>
 </Project>

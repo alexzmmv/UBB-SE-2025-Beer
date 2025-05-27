@@ -35,6 +35,8 @@ public class AppDbContext : DbContext, IAppDbContext
 
     public override int SaveChanges() => base.SaveChanges();
 
+    public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);

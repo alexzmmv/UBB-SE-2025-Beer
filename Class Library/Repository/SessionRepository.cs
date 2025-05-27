@@ -2,14 +2,15 @@ using DataAccess.Model.Authentication;
 using IRepository;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data;
+using WinUiApp.Data.Interfaces;
 
 namespace DataAccess.Repository
 {
     public class SessionRepository : ISessionRepository
     {
-        private AppDbContext dataContext;
+        private IAppDbContext dataContext;
 
-        public SessionRepository(AppDbContext context)
+        public SessionRepository(IAppDbContext context)
         {
             dataContext = context;
         }

@@ -6,8 +6,8 @@ namespace WinUIApp.WebAPI.Extensions
 {
     using System;
     using WinUiApp.Data.Data;
+    using WinUIApp.ProxyServices.Constants;
     using WinUIApp.WebAPI.Models;
-    using WinUIApp.WebAPI.Constants;
 
     /// <summary>
     /// Extension methods for the <see cref="Rating"/> class.

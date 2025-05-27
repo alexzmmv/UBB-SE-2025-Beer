@@ -233,9 +233,17 @@
             }
         }
 
-        public IEnumerable<Review> GetReviewsByRating(int ratingId)
+        // I think I broke something, I don't know why the namespace would be required
+        async Task<IEnumerable<Review>> IReviewService.GetReviewsByRating(int ratingId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await this.reviewsRepository.GetReviewsByRatingId(ratingId);
+            }
+            catch
+            {
+                return new List<Review>();
+            }
         }
     }
 }

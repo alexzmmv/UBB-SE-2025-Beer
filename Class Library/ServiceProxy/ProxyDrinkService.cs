@@ -237,7 +237,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="maximumDrinkCount"> not sure. </param>
         /// <returns> personal list. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public List<Drink> GetUserPersonalDrinkList(int userId, int maximumDrinkCount = DefaultPersonalDrinkCount)
+        public List<Drink> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = DefaultPersonalDrinkCount)
         {
             try
             {
@@ -259,7 +259,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkId"> drink id. </param>
         /// <returns> true, if yes, false otherwise. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public bool IsDrinkInUserPersonalList(int userId, int drinkId)
+        public bool IsDrinkInUserPersonalList(Guid userId, int drinkId)
         {
             try
             {
@@ -279,7 +279,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkId"> drink id. </param>
         /// <returns> true, if successfull, false otherwise. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public bool AddToUserPersonalDrinkList(int userId, int drinkId)
+        public bool AddToUserPersonalDrinkList(Guid userId, int drinkId)
         {
             try
             {
@@ -305,7 +305,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkId"> drink id. </param>
         /// <returns> true, if successfull, false otherwise. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public bool DeleteFromUserPersonalDrinkList(int userId, int drinkId)
+        public bool DeleteFromUserPersonalDrinkList(Guid userId, int drinkId)
         {
             try
             {
@@ -335,7 +335,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkId"> drink id. </param>
         /// <returns> the drink. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public Drink VoteDrinkOfTheDay(int userId, int drinkId)
+        public Drink VoteDrinkOfTheDay(Guid userId, int drinkId)
         {
             try
             {

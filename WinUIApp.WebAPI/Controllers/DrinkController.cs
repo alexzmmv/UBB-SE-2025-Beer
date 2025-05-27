@@ -10,9 +10,9 @@ namespace WinUIApp.WebAPI.Controllers
     [Route("[controller]")]
     public class DrinkController : ControllerBase
     {
-        private readonly IDrinkService drinkService;
+        private readonly IDrinkDTOService drinkService;
 
-        public DrinkController(IDrinkService drinkService)
+        public DrinkController(IDrinkDTOService drinkService)
         {
             this.drinkService = drinkService;
         }

@@ -2,7 +2,7 @@
 {
     public class UserDrink
     {
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public int DrinkId { get; set; }
 
         public User User { get; set; }

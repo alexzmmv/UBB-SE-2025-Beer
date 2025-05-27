@@ -6,12 +6,13 @@
     using IRepository;
     using Microsoft.EntityFrameworkCore;
     using WinUiApp.Data;
+    using WinUiApp.Data.Interfaces;
 
     public class UpgradeRequestsRepository : IUpgradeRequestsRepository
     {
-        private readonly AppDbContext dataContext;
+        private readonly IAppDbContext dataContext;
 
-        public UpgradeRequestsRepository(AppDbContext context)
+        public UpgradeRequestsRepository(IAppDbContext context)
         {
             dataContext = context;
         }

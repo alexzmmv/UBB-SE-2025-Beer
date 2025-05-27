@@ -12,7 +12,7 @@ namespace WinUIApp.WebAPI.Services
     /// <summary>
     /// Interface for managing rating-related operations.
     /// </summary>
-    public interface IRatingService
+    public interface IRatingDTOService
     {
         /// <summary>
         /// Retrieves a rating by its unique identifier.

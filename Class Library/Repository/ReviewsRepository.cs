@@ -1,4 +1,8 @@
-﻿namespace DataAccess.Repository
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("WinUIApp.Tests")]
+
+namespace DataAccess.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -10,12 +14,14 @@
     using Microsoft.Data.SqlClient;
     using WinUiApp.Data;
     using WinUiApp.Data.Data;
+    using WinUiApp.Data.Interfaces;
+    using Microsoft.VisualBasic;
 
     public class ReviewsRepository : IReviewsRepository
     {
-        private readonly AppDbContext dataContext;
+        private readonly IAppDbContext dataContext;
 
-        public ReviewsRepository(AppDbContext context)
+        public ReviewsRepository(IAppDbContext context)
         {
             dataContext = context;
         }
@@ -50,8 +56,14 @@
                 return 0.0;
             }
 
-            // Fix this warning, I am too tired to think of this :(
-            return Math.Round((double)visibleReviews.Average(r => r.Rating.RatingValue), 1);
+            float? average = visibleReviews.Average(r => r.Rating?.RatingValue);
+
+            if (average == null)
+            {
+                return 0.0;
+            }
+
+            return Math.Round((double)average, 1);
         }
 
         public async Task<List<Review>> GetMostRecentReviews(int count)
@@ -142,6 +154,36 @@
             return await dataContext.Reviews
                 .Where(review => review.IsHidden)
                 .ToListAsync();
+        }
+
+        public async Task<bool> UpdateReview(Review review)
+        {
+            // This should be in the service !!!! (also no throws in the service)
+            //if (string.IsNullOrWhiteSpace(review.Content))
+            //    throw new ArgumentException(RepositoryErrorMessages.EmptyReviewContent, nameof(review.Content));
+
+            Review? existingReview = this.dataContext.Reviews.FirstOrDefault(existingReview => existingReview.ReviewId == review.ReviewId);
+
+            if (existingReview == null)
+            {
+                // Returning false cause there shouldn't be a reason to return back the updated review
+                return false;
+            }
+
+            existingReview.RatingId = review.RatingId;
+            existingReview.UserId = review.UserId;
+            existingReview.Content = review.Content;
+            existingReview.CreationDate = review.CreationDate ?? existingReview.CreationDate;
+            existingReview.IsActive = review.IsActive ?? existingReview.IsActive;
+
+            await this.dataContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<List<Review>> GetReviewsByRatingId(int ratingId)
+        {
+            return await this.dataContext.Reviews.Where(review => review.RatingId == ratingId).ToListAsync();
         }
     }
 }

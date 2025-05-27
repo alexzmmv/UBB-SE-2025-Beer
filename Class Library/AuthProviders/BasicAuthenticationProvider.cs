@@ -23,9 +23,6 @@ namespace DataAccess.AuthProviders
 
         public async Task<bool> AuthenticateAsync(string username, string password)
         {
-            // I changed this function to return both false if the user password is not correct and if he is not in the database
-            // changes will be made in desktop at the very least
-
             User? user = await userService.GetUserByUsername(username);
             if (user == null)
             {

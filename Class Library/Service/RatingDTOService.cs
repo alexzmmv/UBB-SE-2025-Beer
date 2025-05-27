@@ -16,7 +16,7 @@ namespace WinUIApp.WebAPI.Services
     /// <summary>
     /// Implementation of the rating service.
     /// </summary>
-    public class RatingService : IRatingService
+    public class RatingDTOService : IRatingDTOService
     {
         private readonly IRatingRepository ratingRepository;
 
@@ -24,7 +24,7 @@ namespace WinUIApp.WebAPI.Services
         /// Initializes a new instance of the <see cref="RatingService"/> class.
         /// </summary>
         /// <param name="ratingRepository">The rating repository dependency.</param>
-        public RatingService(IRatingRepository ratingRepository)
+        public RatingDTOService(IRatingRepository ratingRepository)
         {
             this.ratingRepository = ratingRepository;
         }

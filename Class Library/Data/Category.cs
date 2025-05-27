@@ -12,5 +12,9 @@
             CategoryName = categoryName;
             DrinkCategories = new List<DrinkCategory>();
         }
+
+        public Category()
+        {
+        }
     }
 }
