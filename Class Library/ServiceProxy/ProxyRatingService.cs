@@ -18,11 +18,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ProxyRatingService"/> class.
         /// </summary>
-        public ProxyRatingService()
+        public ProxyRatingService(string baseUrl)
         {
             this.httpClient = new HttpClient
             {
-                BaseAddress = new Uri(this.GetApiUrl()),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 
@@ -52,7 +52,7 @@
         /// <param name="productId">The product identifier.</param>
         /// <returns>A collection of <see cref="Rating"/> instances for the product.</returns>
         /// <exception cref="Exception">Exceptions.</exception>
-        public IEnumerable<Rating> GetRatingsByProduct(int productId)
+        public IEnumerable<Rating> GetRatingsByDrink(int productId)
         {
             try
             {
@@ -105,7 +105,7 @@
             {
                 var request = new UpdateRatingRequest
                 {
-                    ratingDto = rating
+                    Rating = rating
                 };
 
                 var response = this.httpClient.PutAsJsonAsync("Rating/update", request).Result;
@@ -154,15 +154,6 @@
             {
                 throw new Exception($"Error happened while getting average rating for product with ID {productId}:", exception);
             }
-        }
-
-        private string GetApiUrl()
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-            return configuration.GetValue<string>("ApiUrl");
         }
     }
 }

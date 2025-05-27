@@ -1,9 +1,12 @@
 ﻿using System;
+using DataAccess.Service;
+using DataAccess.Service.Interfaces;
+using DataAccess.ServiceProxy;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using WinUIApp.ProxyServices;
-using WinUIApp.Services.DummyServices;
 
 namespace WinUIApp
 {
@@ -31,7 +34,7 @@ namespace WinUIApp
                 .Build();
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<IRatingService, ProxyRatingService>();
-            services.AddSingleton<IReviewService, ProxyReviewService>();
+            services.AddSingleton<IReviewService, ReviewsServiceProxy>();
             services.AddSingleton<IUserService, UserService>();
 
             serviceProvider = services.BuildServiceProvider();

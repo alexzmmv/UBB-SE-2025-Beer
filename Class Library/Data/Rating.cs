@@ -8,8 +8,5 @@ namespace WinUiApp.Data.Data
         public float? RatingValue { get; set; }
         public DateTime? RatingDate { get; set; }
         public bool? IsActive { get; set; }
-
-        public User User { get; set; }
-        public Drink Drink { get; set; }
     }
 }

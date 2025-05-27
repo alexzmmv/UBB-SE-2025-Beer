@@ -1,13 +1,14 @@
 ﻿namespace WinUIApp.Views.ViewModels
 {
+    using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Services.DummyServices;
 
     public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService, IAdminService adminService) : INotifyPropertyChanged
     {
@@ -40,9 +41,9 @@
         {
             get
             {
-                if (this.Drink != null && this.Drink.CategoryList != null)
+                if (this.Drink != null && this.Drink.DrinkCategories != null)
                 {
-                    return string.Join(CategorySeparator, this.Drink.CategoryList.Select(drinkCategory => drinkCategory.CategoryName));
+                    return string.Join(CategorySeparator, this.Drink.DrinkCategories.Select(drinkCategory => drinkCategory.Category.CategoryName));
                 }
                 else
                 {
@@ -94,7 +95,7 @@
 
         public void VoteForDrink()
         {
-            int userId = this.userService.GetCurrentUserId();
+            Guid userId = this.userService.GetCurrentUserId();
             try
             {
                 this.drinkService.VoteDrinkOfTheDay(userId, this.Drink.DrinkId);

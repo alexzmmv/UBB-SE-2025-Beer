@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices.Models;
 
 namespace WinUIApp.Views.Components

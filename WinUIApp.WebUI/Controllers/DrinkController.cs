@@ -1,6 +1,9 @@
 using System.Diagnostics;
+using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebUI.Models;
@@ -21,7 +24,7 @@ namespace WinUIApp.WebUI.Controllers
             this.ratingService = ratingService;
         }
 
-        public IActionResult DrinkDetail(int id)
+        public async Task<IActionResult> DrinkDetail(int id)
         {
             var drink = drinkService.GetDrinkById(id);
             if (drink == null)
@@ -29,27 +32,27 @@ namespace WinUIApp.WebUI.Controllers
                 return NotFound();
             }
             
-            var ratings = ratingService.GetRatingsByProduct(id);
+            var ratings = ratingService.GetRatingsByDrink(id);
             var reviews = new List<Review>();
             var reviewsByRating = new Dictionary<int, List<Review>>();
             
             foreach (var rating in ratings)
             {
-                var ratingReviews = reviewService.GetReviewsByRating(rating.RatingId).ToList();
+                var ratingReviews = (await reviewService.GetReviewsByRating(rating.RatingId)).ToList();
                 reviews.AddRange(ratingReviews);
                 
                 // Group reviews by rating ID
                 reviewsByRating[rating.RatingId] = ratingReviews;
             }
 
-            const int CurrentUserId = 1; // Using a default user ID for now
+            Guid CurrentUserId = new Guid(); // Using a default user ID for now
             bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
             var viewModel = new DrinkDetailViewModel
             {
                 Drink = drink,
-                CategoriesDisplay = drink.CategoryList != null 
-                    ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName)) 
+                CategoriesDisplay = drink.DrinkCategories != null 
+                    ? string.Join(", ", drink.DrinkCategories.Select(c => c.Category.CategoryName)) 
                     : string.Empty,
                 AverageRatingScore = ratingService.GetAverageRating(id),
                 Ratings = ratings.ToList(),
@@ -159,7 +162,7 @@ namespace WinUIApp.WebUI.Controllers
         {
             try
             {
-                const int CurrentUserId = 1; // Using a default user ID for now
+                Guid CurrentUserId = new Guid(); // Using a default user ID for now
                 bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
                 
                 if (isInFavorites)

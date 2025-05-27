@@ -1,3 +1,4 @@
+using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WinUIApp.ProxyServices;
 using WinUIApp.WebUI.Models;
@@ -15,7 +16,7 @@ namespace WinUIApp.WebUI.Controllers
 
         public IActionResult FavoriteDrinks()
         {
-            const int CurrentUserId = 1;
+            Guid CurrentUserId = new Guid();
 
             var favoriteDrinks = this.drinkService.GetUserPersonalDrinkList(CurrentUserId);
 

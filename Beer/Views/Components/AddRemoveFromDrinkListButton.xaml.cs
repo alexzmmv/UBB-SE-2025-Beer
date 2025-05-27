@@ -1,9 +1,10 @@
 namespace WinUIApp.Views.Components
 {
+    using DataAccess.Service;
+    using DataAccess.Service.Interfaces;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using WinUIApp.ProxyServices;
-    using WinUIApp.Services.DummyServices;
     using WinUIApp.ViewModels;
 
     public sealed partial class AddRemoveFromDrinkListButton : UserControl

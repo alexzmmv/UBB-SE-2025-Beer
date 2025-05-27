@@ -9,7 +9,7 @@ namespace WinUIApp.ProxyServices.Models
 {
     public class UpdateRatingRequest
     {
-        public Rating ratingDto { get; set; }
+        public Rating Rating { get; set; }
     }
 
 }

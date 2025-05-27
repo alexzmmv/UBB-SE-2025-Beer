@@ -14,6 +14,7 @@ using WinUiApp.Data;
 using WinUiApp.Data.Interfaces;
 using WinUIApp.WebAPI.Repositories;
 using WinUIApp.WebAPI.Services;
+using WinUIApp.ProxyServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services.AddHttpClient("DrinkDbClient", client =>
 
 builder.Services.AddScoped<IDrinkDTOService, DrinkService>();
 builder.Services.AddScoped<IReviewService, ReviewsService>();
-builder.Services.AddScoped<IRatingDTOService, RatingDTOService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
 
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();

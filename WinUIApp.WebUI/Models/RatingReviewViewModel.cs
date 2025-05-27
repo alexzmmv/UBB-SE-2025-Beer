@@ -21,6 +21,6 @@ namespace WinUIApp.WebUI.Models
         public string? ReviewContent { get; set; }
         
         // Default user ID for simplicity (in real app would come from authentication)
-        public int UserId { get; set; } = 1;
+        public Guid UserId { get; set; } = new Guid(); // emtpy guid for now
     }
 }

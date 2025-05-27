@@ -1,9 +1,10 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
+using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebAPI.Models;
-using WinUIApp.WebAPI.Requests.Rating;
 using WinUIApp.WebAPI.Services;
 
 namespace WinUIApp.WebAPI.Controllers
@@ -12,9 +13,9 @@ namespace WinUIApp.WebAPI.Controllers
     [Route("[controller]")]
     public class RatingController : ControllerBase
     {
-        private readonly IRatingDTOService ratingService;
+        private readonly IRatingService ratingService;
 
-        public RatingController(IRatingDTOService ratingService)
+        public RatingController(IRatingService ratingService)
         {
             this.ratingService = ratingService;
         }
@@ -40,7 +41,7 @@ namespace WinUIApp.WebAPI.Controllers
         [HttpPost("add")]
         public IActionResult AddRating([FromBody] AddRatingRequest request)
         {
-            ratingService.CreateRating(request.RatingDto);
+            ratingService.CreateRating(request.Rating);
             
             return Ok();
         }
@@ -48,7 +49,7 @@ namespace WinUIApp.WebAPI.Controllers
         [HttpPut("update")]
         public IActionResult UpdateRating([FromBody] UpdateRatingRequest request)
         {
-            ratingService.UpdateRating(request.RatingDto);
+            ratingService.UpdateRating(request.Rating);
             
             return Ok();
         }

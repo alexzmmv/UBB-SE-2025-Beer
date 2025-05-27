@@ -152,6 +152,6 @@
       <Compile Remove="Review.cs" />
     </ItemGroup>
     <ItemGroup>
-		<ProjectReference Include="..\WinUIApp.Data\DataAccess.csproj" />
+      <ProjectReference Include="..\Class Library\DataAccess.csproj" />
     </ItemGroup>
 </Project>

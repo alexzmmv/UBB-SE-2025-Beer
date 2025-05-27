@@ -9,6 +9,7 @@ namespace WinUIApp.WebAPI.Services
     using System;
     using System.Collections.Generic;
     using WinUiApp.Data.Data;
+    using WinUIApp.ProxyServices;
     using WinUIApp.WebAPI.Constants.ErrorMessages;
     using WinUIApp.WebAPI.Extensions;
     using WinUIApp.WebAPI.Repositories;
@@ -16,7 +17,7 @@ namespace WinUIApp.WebAPI.Services
     /// <summary>
     /// Implementation of the rating service.
     /// </summary>
-    public class RatingDTOService : IRatingDTOService
+    public class RatingService : IRatingService
     {
         private readonly IRatingRepository ratingRepository;
 
@@ -24,7 +25,7 @@ namespace WinUIApp.WebAPI.Services
         /// Initializes a new instance of the <see cref="RatingService"/> class.
         /// </summary>
         /// <param name="ratingRepository">The rating repository dependency.</param>
-        public RatingDTOService(IRatingRepository ratingRepository)
+        public RatingService(IRatingRepository ratingRepository)
         {
             this.ratingRepository = ratingRepository;
         }
@@ -34,49 +35,45 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <param name="ratingId">The rating identifier.</param>
         /// <returns>The corresponding rating or null if it doesnt exist.<see cref="RatingDTO"/>.</returns>
-        public RatingDTO? GetRatingById(int ratingId) =>
-            this.ratingRepository.GetRatingById(ratingId).ToModel();
+        public Rating? GetRatingById(int ratingId) =>
+            this.ratingRepository.GetRatingById(ratingId);
 
         /// <summary>
         /// Retrieves all ratings associated with a specific drink.
         /// </summary>
         /// <param name="drinkId">The drink identifier.</param>
         /// <returns>A collection of <see cref="RatingDTO"/> instances for the drink.</returns>
-        public IEnumerable<RatingDTO> GetRatingsByDrink(int drinkId) => 
-            this.ratingRepository.GetRatingsByDrinkId(drinkId).ToModels();
+        public IEnumerable<Rating> GetRatingsByDrink(int drinkId) => 
+            this.ratingRepository.GetRatingsByDrinkId(drinkId);
 
         /// <summary>
         /// Creates a new rating.
         /// </summary>
-        /// <param name="ratingDto">The rating to create.</param>
+        /// <param name="rating">The rating to create.</param>
         /// <returns>The created <see cref="RatingDTO"/> instance.</returns>
         /// <exception cref="System.ArgumentException">Thrown when the rating is invalid.</exception>
-        public RatingDTO CreateRating(RatingDTO ratingDto)
+        public Rating CreateRating(Rating rating)
         {
-            var rating = ratingDto.ToDataModel();
-
             if (!rating.IsValid())
                 throw new ArgumentException(ServiceErrorMessages.InvalidRatingValue);
 
             var createdRating = this.ratingRepository.AddRating(rating);
-            return createdRating.ToModel();
+            return createdRating;
         }
 
         /// <summary>
         /// Updates an existing rating.
         /// </summary>
-        /// <param name="ratingDto">The rating to update.</param>
+        /// <param name="rating">The rating to update.</param>
         /// <returns>The updated <see cref="RatingDTO"/> instance.</returns>
         /// <exception cref="System.ArgumentException">Thrown when the rating is invalid.</exception>
-        public RatingDTO UpdateRating(RatingDTO ratingDto)
+        public Rating UpdateRating(Rating rating)
         {
-            var rating = ratingDto.ToDataModel();
-
             if (!rating.IsValid())
                 throw new ArgumentException(ServiceErrorMessages.InvalidRatingValue);
 
             var updatedRating = this.ratingRepository.UpdateRating(rating);
-            return updatedRating.ToModel();
+            return updatedRating;
         }
 
         /// <summary>

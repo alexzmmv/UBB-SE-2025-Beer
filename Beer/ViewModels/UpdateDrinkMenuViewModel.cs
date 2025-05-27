@@ -1,5 +1,6 @@
 ﻿namespace WinUIApp.ViewModels
 {
+    using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -7,9 +8,9 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Services.DummyServices;
 
     public partial class UpdateDrinkMenuViewModel(Drink drinkToUpdate, IDrinkService drinkService,
         IUserService userService, IAdminService adminService) : INotifyPropertyChanged
@@ -56,12 +57,12 @@
 
         public string DrinkURL
         {
-            get => this.DrinkToUpdate.DrinkImageUrl;
+            get => this.DrinkToUpdate.DrinkURL;
             set
             {
-                if (this.DrinkToUpdate.DrinkImageUrl != value)
+                if (this.DrinkToUpdate.DrinkURL != value)
                 {
-                    this.DrinkToUpdate.DrinkImageUrl = value;
+                    this.DrinkToUpdate.DrinkURL = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -71,19 +72,19 @@
         {
             get
             {
-                if (this.DrinkToUpdate.DrinkBrand == null)
+                if (this.DrinkToUpdate.DrinkURL == null)
                 {
                     return string.Empty;
                 }
 
-                return this.DrinkToUpdate.DrinkBrand.BrandName;
+                return this.DrinkToUpdate.Brand.BrandName;
             }
 
             set
             {
-                if (this.DrinkToUpdate.DrinkBrand == null || this.DrinkToUpdate.DrinkBrand.BrandName != value)
+                if (this.DrinkToUpdate.Brand == null || this.DrinkToUpdate.Brand.BrandName != value)
                 {
-                    this.DrinkToUpdate.DrinkBrand = new Brand(0, value);
+                    this.DrinkToUpdate.Brand = new Brand { BrandId = 0, BrandName = value };
                     this.OnPropertyChanged();
                 }
             }
@@ -94,7 +95,7 @@
             get => this.DrinkToUpdate.AlcoholContent.ToString();
             set
             {
-                if (float.TryParse(value, out float parsedAlcoholContent) && this.DrinkToUpdate.AlcoholContent != parsedAlcoholContent)
+                if (decimal.TryParse(value, out decimal parsedAlcoholContent) && this.DrinkToUpdate.AlcoholContent != parsedAlcoholContent)
                 {
                     this.DrinkToUpdate.AlcoholContent = parsedAlcoholContent;
                     this.OnPropertyChanged();
@@ -128,7 +129,7 @@
                 throw new ArgumentException("The brand you entered does not exist.");
             }
 
-            this.DrinkToUpdate.DrinkBrand = validBrand;
+            this.DrinkToUpdate.Brand = validBrand;
 
             if (!float.TryParse(this.AlcoholContent, out var alcoholContent) || alcoholContent < MinAlcoholContent || alcoholContent > MaxAlcoholContent)
             {
@@ -145,8 +146,8 @@
         {
             try
             {
-                this.DrinkToUpdate.DrinkBrand = this.FindBrandByName(this.BrandName);
-                this.DrinkToUpdate.CategoryList = this.GetSelectedCategories();
+                this.DrinkToUpdate.Brand = this.FindBrandByName(this.BrandName);
+                this.DrinkToUpdate.DrinkCategories = this.GetSelectedCategories();
                 this.drinkService.UpdateDrink(this.DrinkToUpdate);
                 Debug.WriteLine("Drink updated successfully (admin).");
             }

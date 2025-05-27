@@ -1,10 +1,10 @@
 namespace WinUIApp.Views.Pages
 {
+    using DataAccess.Service;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Navigation;
     using WinUIApp.ProxyServices;
-    using WinUIApp.Services.DummyServices;
     using WinUIApp.ViewModels;
 
     public sealed partial class MainPage : Page

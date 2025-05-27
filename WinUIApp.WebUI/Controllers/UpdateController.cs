@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebUI.Models;
@@ -25,15 +27,15 @@ namespace WinUIApp.WebUI.Controllers
                     DrinkId = id,
                     //OldDrink = drink,
                     DrinkName = drink.DrinkName ?? string.Empty,
-                    DrinkImagePath = drink.DrinkImageUrl,
-                    DrinkCategoriesIds = [.. drink.CategoryList.Select(category => category.CategoryId)],
-                    DrinkBrandName = drink.DrinkBrand.BrandName,
+                    DrinkImagePath = drink.DrinkURL,
+                    DrinkCategoriesIds = [.. drink.DrinkCategories.Select(category => category.CategoryId)],
+                    DrinkBrandName = drink.Brand.BrandName,
                     DrinkAlcoholPercentage = drink.AlcoholContent,
                     AvailableCategories = [.. allCategories.Select(category => new SelectListItem
                     {
                         Value = category.CategoryId.ToString(),
                         Text = category.CategoryName,
-                        Selected = drink.CategoryList.Any(drinkCategory => drinkCategory.CategoryId == category.CategoryId)
+                        Selected = drink.DrinkCategories.Any(drinkCategory => drinkCategory.CategoryId == category.CategoryId)
                     })]
                 };
                 return View(updateDrinkViewModel);
@@ -57,11 +59,10 @@ namespace WinUIApp.WebUI.Controllers
                     {
                         DrinkId = updateDrinkViewModel.DrinkId,
                         DrinkName = updateDrinkViewModel.DrinkName,
-                        DrinkImageUrl = updateDrinkViewModel.DrinkImagePath,
-                        CategoryList = [.. updateDrinkViewModel.DrinkCategoriesIds.Select((categoryId) =>
-                            {
-                                return categories.FirstOrDefault(category => category.CategoryId == categoryId);
-                            }).OfType<Category>()],
+                        DrinkURL = updateDrinkViewModel.DrinkImagePath,
+                        DrinkCategories = updateDrinkViewModel.DrinkCategoriesIds
+                            .Select(id => categories.FirstOrDefault(c => c.CategoryId == id))
+                            .Where(c => c != null),
                         AlcoholContent = updateDrinkViewModel.DrinkAlcoholPercentage,
                         DrinkBrand = new Brand(-1, updateDrinkViewModel.DrinkBrandName)
                     });

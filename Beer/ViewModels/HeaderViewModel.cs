@@ -1,6 +1,8 @@
 ﻿namespace WinUIApp.Views.ViewModels
 {
+    using DataAccess.Service.Interfaces;
     using System.Collections.Generic;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
 
