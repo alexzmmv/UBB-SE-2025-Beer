@@ -4,6 +4,7 @@ namespace WinUIApp.Views.Pages
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Navigation;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
     using WinUIApp.Utils.NavigationParameters;

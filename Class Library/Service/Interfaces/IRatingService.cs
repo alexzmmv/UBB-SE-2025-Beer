@@ -19,7 +19,7 @@ namespace WinUIApp.ProxyServices
         /// 
         /// ">The product identifier.</param>
         /// <returns>A collection of <see cref="Rating"/> instances for the product.</returns>
-        public IEnumerable<Rating> GetRatingsByProduct(int productId);
+        public IEnumerable<Rating> GetRatingsByDrink(int drinkId);
 
         /// <summary>
         /// Creates a new rating.

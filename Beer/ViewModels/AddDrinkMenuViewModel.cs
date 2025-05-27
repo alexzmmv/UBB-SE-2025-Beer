@@ -1,5 +1,6 @@
 ﻿namespace WinUIApp.ViewModels
 {
+    using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -7,9 +8,9 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Services.DummyServices;
 
     public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService, IAdminService adminService) : INotifyPropertyChanged
     {
@@ -142,7 +143,7 @@
         {
             try
             {
-                int userId = this.userService.GetCurrentUserId();
+                Guid userId = this.userService.GetCurrentUserId();
                 this.adminService.SendNotificationFromUserToAdmin(
                     senderUserId: userId,
                     userModificationRequestType: "New Drink Request",

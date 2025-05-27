@@ -3,10 +3,11 @@ namespace WinUIApp.Views.Components
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DataAccess.Service;
+    using DrinkDb_Auth.ServiceProxy;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using WinUIApp.ProxyServices;
-    using WinUIApp.Services.DummyServices;
     using WinUIApp.ViewModels;
 
     public sealed partial class AddDrinkFlyout : UserControl
@@ -52,7 +53,7 @@ namespace WinUIApp.Views.Components
         private void AddDrinkFlyout_Loaded(object sender, RoutedEventArgs eventArguments)
         {
             var drinkService = new ProxyDrinkService();
-            var userService = new UserService();
+            var userService = new UserServiceProxy();
             bool isAdmin = this.adminService.IsAdmin(this.UserId);
 
             var allBrands = drinkService.GetDrinkBrandNames();

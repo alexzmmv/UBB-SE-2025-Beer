@@ -5,6 +5,7 @@
 namespace WinUIApp.Utils.NavigationParameters
 {
     using System.Collections.Generic;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
 
     /// <summary>

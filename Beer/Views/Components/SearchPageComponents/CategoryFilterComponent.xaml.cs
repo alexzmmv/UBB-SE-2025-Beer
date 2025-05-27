@@ -7,6 +7,7 @@ namespace WinUIApp.Views.Components.SearchPageComponents
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.UI.Xaml.Controls;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
 
     public sealed partial class CategoryFilterComponent : UserControl

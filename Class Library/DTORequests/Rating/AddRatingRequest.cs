@@ -1,6 +1,6 @@
-namespace WinUIApp.WebAPI.Requests.Rating;
+namespace WinUiApp.Data.Data;
 
 public class AddRatingRequest
 {
-    public Models.RatingDTO RatingDto { get; set; }
+    public Rating Rating { get; set; }
 }

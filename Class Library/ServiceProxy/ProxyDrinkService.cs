@@ -29,11 +29,11 @@ namespace WinUIApp.ProxyServices
         /// <summary>
         /// Initializes a new instance of the <see cref="ProxyDrinkService"/> class.
         /// </summary>
-        public ProxyDrinkService()
+        public ProxyDrinkService(string baseUrl)
         {
             httpClient = new HttpClient
             {
-                BaseAddress = new Uri(GetApiUrl()),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 
@@ -371,15 +371,6 @@ namespace WinUIApp.ProxyServices
             {
                 throw new Exception("Error getting drink of the day: " + exception.Message, exception);
             }
-        }
-
-        private string GetApiUrl()
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-            return configuration.GetValue<string>("ApiUrl");
         }
     }
 }

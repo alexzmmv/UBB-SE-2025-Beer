@@ -1,6 +1,8 @@
 using System;
+using DataAccess.Service;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices.Models;
 
 namespace WinUIApp.Views.Components
@@ -29,7 +31,7 @@ namespace WinUIApp.Views.Components
 
         private void UpdateDrinkButton_Click(object sender, RoutedEventArgs eventArguments)
         {
-            var userService = new Services.DummyServices.UserService();
+            var userService = new UserService();
             Flyout flyout = new Flyout
             {
                 Content = new UpdateDrinkFlyout

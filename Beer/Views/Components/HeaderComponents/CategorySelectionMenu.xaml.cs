@@ -4,6 +4,7 @@ namespace WinUIApp.Views.Components.HeaderComponents
     using System.Collections.ObjectModel;
     using System.Linq;
     using Microsoft.UI.Xaml.Controls;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
 
     public sealed partial class CategorySelectionMenu : UserControl

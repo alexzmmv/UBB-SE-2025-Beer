@@ -30,13 +30,13 @@ namespace WinUiApp.Data.Configurations
                    .HasDefaultValue(null);
 
             // User foreign key
-            builder.HasOne(rating => rating.User)
+            builder.HasOne<User>()
                    .WithMany()
                    .HasForeignKey(rating => rating.UserId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             // Drink foreign key
-            builder.HasOne(d => d.Drink)
+            builder.HasOne<Drink>()
                    .WithMany()
                    .HasForeignKey(d => d.DrinkId)
                    .OnDelete(DeleteBehavior.Cascade);

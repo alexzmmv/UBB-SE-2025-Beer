@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Constants;
 using WinUIApp.ProxyServices.Models;
@@ -92,7 +93,7 @@ namespace WinUIApp.ViewModels
 
         public virtual void LoadRatingsForProduct(int productId)
         {
-            IEnumerable<Rating> ratingsForProduct = this.ratingService.GetRatingsByProduct(productId);
+            IEnumerable<Rating> ratingsForProduct = this.ratingService.GetRatingsByDrink(productId);
 
             IEnumerable<Rating> ratingsOrderedByNewest = ratingsForProduct.Reverse();
 

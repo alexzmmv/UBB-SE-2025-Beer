@@ -1,11 +1,14 @@
 ﻿namespace WinUIApp.ViewModels
 {
+    using DataAccess.Service.Interfaces;
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
     using System.Runtime.CompilerServices;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Services.DummyServices;
 
     internal class MainPageViewModel
     {
@@ -16,7 +19,7 @@
         private string drinkName;
         private string drinkBrand;
         private List<Category> drinkCategories;
-        private float alcoholContent;
+        private decimal alcoholContent;
 
         public MainPageViewModel(IDrinkService drinkService, IUserService userService)
         {
@@ -52,7 +55,7 @@
             set => this.SetField(ref this.drinkCategories, value);
         }
 
-        public float AlcoholContent
+        public decimal AlcoholContent
         {
             get => this.alcoholContent;
             set => this.SetField(ref this.alcoholContent, value);
@@ -64,10 +67,10 @@
         {
             var drink = this.drinkService.GetDrinkOfTheDay();
 
-            this.ImageSource = drink.DrinkImageUrl;
+            this.ImageSource = drink.DrinkURL;
             this.DrinkName = drink.DrinkName;
-            this.DrinkBrand = drink.DrinkBrand.BrandName;
-            this.DrinkCategories = drink.CategoryList;
+            this.DrinkBrand = drink.Brand.BrandName;
+            this.DrinkCategories = drink.DrinkCategories.ToList();
             this.AlcoholContent = drink.AlcoholContent;
         }
 
@@ -98,7 +101,7 @@
 
         private void LoadPersonalDrinkListData()
         {
-            int userId = this.userService.GetCurrentUserId();
+            Guid userId = this.userService.GetCurrentUserId();
             this.PersonalDrinks = this.drinkService.GetUserPersonalDrinkList(userId, HardCodedNumberOfDrinks);
         }
     }

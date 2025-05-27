@@ -1,11 +1,13 @@
 ﻿namespace WinUIApp.ViewModels
 {
+    using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Services.DummyServices;
 
     public class ReviewViewModel : ViewModelBase
     {
@@ -14,7 +16,7 @@
         private ObservableCollection<Review> reviews;
         private Review? selectedReview;
         private string reviewContent = string.Empty;
-        private int userId;
+        private Guid userId;
 
         public ReviewViewModel(IReviewService reviewService, IUserService userService)
         {

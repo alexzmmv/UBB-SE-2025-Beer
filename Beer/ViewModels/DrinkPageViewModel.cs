@@ -1,12 +1,12 @@
 ﻿namespace WinUIApp.ViewModels
 {
+    using DataAccess.Service.Interfaces;
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using WinUIApp.ProxyServices;
-    using WinUIApp.Services.DummyServices;
 
     public class DrinkPageViewModel : INotifyPropertyChanged
     {
@@ -144,9 +144,9 @@
             }
         }
 
-        private int GetCurrentUserId()
+        private Guid GetCurrentUserId()
         {
-            int userId = this.userService.GetCurrentUserId();
+            Guid userId =;
             return userId;
         }
 

@@ -31,7 +31,7 @@ namespace WinUIApp.WebUI.Models
         [Required]
         [Display(Name = "Alcohol Content (%)")]
         [Range(0, 100)]
-        public float DrinkAlcoholPercentage { get; set; } = 0.0f;
+        public decimal DrinkAlcoholPercentage { get; set; } = 0.0M;
 
         [BindNever]
         public List<SelectListItem> AvailableCategories { get; set; } = new();

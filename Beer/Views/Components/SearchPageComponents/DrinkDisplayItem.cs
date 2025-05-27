@@ -1,7 +1,7 @@
 ﻿namespace WinUIApp.Views.Components.SearchPageComponents
 {
     using System;
-    using WinUIApp.ProxyServices.Models;
+    using WinUiApp.Data.Data;
 
     public class DrinkDisplayItem
     {

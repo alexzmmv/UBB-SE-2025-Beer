@@ -1,5 +1,5 @@
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices.Models;
-using Drink = WinUIApp.ProxyServices.Models.Drink;
 
 namespace WinUIApp.WebUI.Models;
 

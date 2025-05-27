@@ -27,11 +27,11 @@ namespace WinUIApp.ProxyServices
         /// <summary>
         /// Initializes a new instance of the <see cref="ProxyDrinkService"/> class.
         /// </summary>
-        public ProxyDrinkReviewService()
+        public ProxyDrinkReviewService(string baseUrl)
         {
             this.httpClient = new HttpClient
             {
-                BaseAddress = new Uri(this.GetApiUrl()),
+                BaseAddress = new Uri(baseUrl),
             };
         }
 
@@ -86,15 +86,6 @@ namespace WinUIApp.ProxyServices
             {
                 throw new Exception($"Error happened while getting average for drink with ID {drinkID}:", exception);
             }
-        }
-
-        private string GetApiUrl()
-        {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-            return configuration.GetValue<string>("ApiUrl");
         }
     }
 }
