@@ -1,10 +1,11 @@
 ﻿using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.ProxyServices.Requests.Drinks
 {
 
     public class UpdateDrinkRequest
     {
-        public Drink drink { get; set; }
+        public DrinkDTO drink { get; set; }
     }
 }

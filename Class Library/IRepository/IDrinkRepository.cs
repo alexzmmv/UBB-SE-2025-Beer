@@ -1,6 +1,7 @@
 ﻿namespace WinUIApp.WebAPI.Repositories
 {
     using System.Collections.Generic;
+    using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
 
     public interface IDrinkRepository
@@ -9,7 +10,7 @@
 
         DrinkDTO? GetDrinkById(int drinkId);
 
-        void AddDrink(string drinkName, string drinkUrl, List<CategoryDTO> categories, string brandName, float alcoholContent);
+        void AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent);
 
         void UpdateDrink(DrinkDTO drinkDto);
 
@@ -33,13 +34,13 @@
 
         int GetRandomDrinkId();
 
-        List<CategoryDTO> GetDrinkCategories();
+        List<Category> GetDrinkCategories();
 
-        List<CategoryDTO> GetDrinkCategoriesById(int drinkId);
+        List<Category> GetDrinkCategoriesById(int drinkId);
 
-        List<BrandDTO> GetDrinkBrands();
+        List<Brand> GetDrinkBrands();
 
-        BrandDTO GetBrandById(int drinkId);
+        Brand GetBrandById(int drinkId);
 
         bool IsBrandInDatabase(string brandName);
 

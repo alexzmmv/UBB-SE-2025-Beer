@@ -178,7 +178,6 @@
                             NumberOfDeletedReviews = 0,
                             HasSubmittedAppeal = false,
                             AssignedRole = RoleType.User,
-                            FullName = twitterUserInfoObject.Data.Username,
                         };
                         await this.userService.CreateUser(user);
                     }

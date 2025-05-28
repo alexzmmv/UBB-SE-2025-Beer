@@ -106,7 +106,6 @@ namespace DataAccess.AuthProviders.Facebook
                     NumberOfDeletedReviews = 0,
                     HasSubmittedAppeal = false,
                     AssignedRole = RoleType.User,
-                    FullName = fbName
                 });
                 return true;
             }

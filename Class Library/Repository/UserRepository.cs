@@ -90,7 +90,6 @@
             dbUser.NumberOfDeletedReviews = user.NumberOfDeletedReviews;
             dbUser.HasSubmittedAppeal = user.HasSubmittedAppeal;
             dbUser.AssignedRole = user.AssignedRole;
-            dbUser.FullName = user.FullName;
 
             // When is the TwoFactor empty?
             if (!string.IsNullOrEmpty(user.TwoFASecret) && user.TwoFASecret != dbUser.TwoFASecret)

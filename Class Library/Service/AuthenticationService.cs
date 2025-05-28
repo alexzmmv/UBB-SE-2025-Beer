@@ -126,7 +126,6 @@ namespace DataAccess.Service
                     PasswordHash = Convert.ToBase64String(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password)) ?? throw new Exception("Hashing failed")),
                     UserId = Guid.NewGuid(),
                     TwoFASecret = string.Empty,
-                    FullName = username,
                     AssignedRole = RoleType.User,
                     NumberOfDeletedReviews = 0,
                     EmailAddress = "ionutcora66@gmail.com"

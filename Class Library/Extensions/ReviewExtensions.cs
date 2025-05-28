@@ -37,7 +37,7 @@ namespace WinUIApp.WebAPI.Extensions
             review.CreationDate = DateTime.Now;
         }
 
-        public static Review? ToDataModel(this ReviewDTO? reviewDto)
+        public static Review? ToDataModel(this Review? reviewDto)
         {
             if (reviewDto == null) return null;
             
