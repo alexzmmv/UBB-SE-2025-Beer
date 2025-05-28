@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using DataAccess.Model.AdminDashboard;
+using DataAccess.Service;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
-using WinUIApp.Services.DummyServices;
 using WinUIApp.ViewModels;
 
 namespace WinUIApp.Views.Components
@@ -17,7 +20,7 @@ namespace WinUIApp.Views.Components
         public UpdateDrinkFlyout()
         {
             this.InitializeComponent();
-            this.Loaded += this.UpdateDrinkFlyout_Loaded;
+            this.Loaded += this.UpdateDrinkFlyout_LoadedAsync;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
 
             this.SearchBox.TextChanged += (sender, eventArguments) =>
@@ -50,12 +53,11 @@ namespace WinUIApp.Views.Components
 
         public int UserId { get; set; }
 
-        private void UpdateDrinkFlyout_Loaded(object sender, RoutedEventArgs eventArguments)
+        private async Task UpdateDrinkFlyout_LoadedAsync(object sender, RoutedEventArgs eventArguments)
         {
             var drinkService = new ProxyDrinkService();
             var userService = new UserService();
-            var adminService = new AdminService();
-            bool isAdmin = adminService.IsAdmin(this.UserId);
+            bool isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
             var allBrands = drinkService.GetDrinkBrandNames();
             var allCategories = drinkService.GetDrinkCategories();
@@ -63,8 +65,7 @@ namespace WinUIApp.Views.Components
             this.viewModel = new UpdateDrinkMenuViewModel(
                 this.DrinkToUpdate,
                 drinkService,
-                userService,
-                adminService)
+                userService)
             {
                 AllBrands = allBrands,
                 AllCategoryObjects = allCategories,
@@ -132,7 +133,6 @@ namespace WinUIApp.Views.Components
                 this.viewModel.ValidateUpdatedDrinkDetails();
                 this.DrinkToUpdate.CategoryList = this.viewModel.GetSelectedCategories();
 
-                var adminService = new AdminService();
                 bool isAdmin = adminService.IsAdmin(UserId);
 
                 string message;

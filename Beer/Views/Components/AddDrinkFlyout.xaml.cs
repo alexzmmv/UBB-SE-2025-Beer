@@ -4,6 +4,7 @@ namespace WinUIApp.Views.Components
     using System.Collections.Generic;
     using System.Linq;
     using DataAccess.Service;
+    using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.ServiceProxy;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -12,12 +13,10 @@ namespace WinUIApp.Views.Components
 
     public sealed partial class AddDrinkFlyout : UserControl
     {
-        private readonly AdminService adminService;
         private AddDrinkMenuViewModel viewModel;
 
         public AddDrinkFlyout()
         {
-            this.adminService = new AdminService();
             this.InitializeComponent();
             this.Loaded += this.AddDrinkFlyout_Loaded;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
@@ -54,15 +53,14 @@ namespace WinUIApp.Views.Components
         {
             var drinkService = new ProxyDrinkService();
             var userService = new UserServiceProxy();
-            bool isAdmin = this.adminService.IsAdmin(this.UserId);
+            bool isAdmin = this.userService.IsAdmin(this.UserId);
 
             var allBrands = drinkService.GetDrinkBrandNames();
             var allCategories = drinkService.GetDrinkCategories();
 
             this.viewModel = new AddDrinkMenuViewModel(
                 drinkService,
-                userService,
-                this.adminService)
+                userService)
             {
                 AllBrands = allBrands,
                 AllCategoryObjects = allCategories,
@@ -110,7 +108,7 @@ namespace WinUIApp.Views.Components
             {
                 this.viewModel.ValidateUserDrinkInput();
 
-                bool isAdmin = this.adminService.IsAdmin(this.UserId);
+                bool isAdmin = this.userService.;
 
                 string message;
 

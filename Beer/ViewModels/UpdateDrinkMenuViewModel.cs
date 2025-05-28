@@ -13,13 +13,12 @@
     using WinUIApp.ProxyServices.Models;
 
     public partial class UpdateDrinkMenuViewModel(Drink drinkToUpdate, IDrinkService drinkService,
-        IUserService userService, IAdminService adminService) : INotifyPropertyChanged
+        IUserService userService) : INotifyPropertyChanged
     {
         private const float MaxAlcoholContent = 100.0f;
         private const float MinAlcoholContent = 0.0f;
         private readonly IDrinkService drinkService = drinkService;
         private readonly IUserService userService = userService;
-        private readonly IAdminService adminService = adminService;
         private Drink drinkToUpdate = drinkToUpdate;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -147,7 +146,7 @@
             try
             {
                 this.DrinkToUpdate.Brand = this.FindBrandByName(this.BrandName);
-                this.DrinkToUpdate.DrinkCategories = this.GetSelectedCategories();
+                this.DrinkToUpdate.DrinkCategories = (ICollection<DrinkCategory>)this.GetSelectedCategories();
                 this.drinkService.UpdateDrink(this.DrinkToUpdate);
                 Debug.WriteLine("Drink updated successfully (admin).");
             }
@@ -162,7 +161,7 @@
             try
             {
                 this.adminService.SendNotificationFromUserToAdmin(
-                senderUserId: this.userService.CurrentUserId,
+                senderUserId: App.CurrentUserId,
                 userModificationRequestType: "Drink Update Request",
                 userModificationRequestDetails: $"User requested to update drinkToUpdate: {this.DrinkToUpdate.DrinkName}");
             }

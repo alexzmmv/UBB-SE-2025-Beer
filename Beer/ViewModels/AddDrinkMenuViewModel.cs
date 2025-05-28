@@ -12,13 +12,12 @@
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
 
-    public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService, IAdminService adminService) : INotifyPropertyChanged
+    public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService) : INotifyPropertyChanged
     {
         private const float MaxAlcoholContent = 100.0f;
         private const float MinAlcoholContent = 0.0f;
         private readonly IDrinkService drinkService = drinkService;
         private readonly IUserService userService = userService;
-        private readonly IAdminService adminService = adminService;
         private string newDrinkName = string.Empty;
         private string newDrinkURL = string.Empty;
         private string newDrinkBrandName = string.Empty;
@@ -143,7 +142,7 @@
         {
             try
             {
-                Guid userId = this.userService.GetCurrentUserId();
+                Guid userId = App.CurrentUserId;
                 this.adminService.SendNotificationFromUserToAdmin(
                     senderUserId: userId,
                     userModificationRequestType: "New Drink Request",

@@ -1,22 +1,23 @@
 ﻿namespace WinUIApp.Views.ViewModels
 {
+    using DataAccess.Model.AdminDashboard;
     using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using System.Threading.Tasks;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
 
-    public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService, IAdminService adminService) : INotifyPropertyChanged
+    public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService) : INotifyPropertyChanged
     {
         private const string CategorySeparator = ", ";
         private readonly IDrinkService drinkService = drinkService;
         private readonly IDrinkReviewService reviewService = reviewService;
         private readonly IUserService userService = userService;
-        private readonly IAdminService adminService = adminService;
         private Drink drink;
         private float averageReviewScore;
 
@@ -76,26 +77,26 @@
             }
         }
 
-        public bool IsCurrentUserAdmin()
+        public async Task<bool> IsCurrentUserAdminAsync()
         {
-            return this.adminService.IsAdmin(this.userService.GetCurrentUserId());
+            return await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == (RoleType.Admin);
         }
 
-        public void RemoveDrink()
+        public async Task RemoveDrinkAsync()
         {
-            if (this.IsCurrentUserAdmin())
+            if (await this.IsCurrentUserAdminAsync())
             {
                 this.drinkService.DeleteDrink(this.Drink.DrinkId);
             }
             else
             {
-                this.adminService.SendNotificationFromUserToAdmin(this.userService.GetCurrentUserId(), "Removal of drink with id:" + this.Drink.DrinkId + " and name:" + this.Drink.DrinkName, "User requested removal of drink from database.");
+                this.adminService.SendNotificationFromUserToAdmin(App.CurrentUserId, "Removal of drink with id:" + this.Drink.DrinkId + " and name:" + this.Drink.DrinkName, "User requested removal of drink from database.");
             }
         }
 
         public void VoteForDrink()
         {
-            Guid userId = this.userService.GetCurrentUserId();
+            Guid userId = App.CurrentUserId;
             try
             {
                 this.drinkService.VoteDrinkOfTheDay(userId, this.Drink.DrinkId);

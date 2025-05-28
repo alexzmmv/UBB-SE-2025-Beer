@@ -60,7 +60,7 @@
                 {
                     this.drinkId = value;
                     this.OnPropertyChanged();
-                    if (this.GetCurrentUserId() > 0 && value > 0)
+                    if (value > 0)
                     {
                         this.CheckIfInListAsync();
                     }
@@ -83,7 +83,7 @@
 
         public async Task CheckIfInListAsync()
         {
-            if (this.GetCurrentUserId() <= 0 || this.DrinkId <= 0)
+            if (this.DrinkId <= 0)
             {
                 this.isInUserDrinksList = false;
                 this.UpdateButtonText();
@@ -103,7 +103,7 @@
 
         public async Task AddRemoveFromListAsync()
         {
-            if (this.GetCurrentUserId() <= 0 || this.DrinkId <= 0)
+            if (this.DrinkId <= 0)
             {
                 return;
             }
@@ -146,7 +146,7 @@
 
         private Guid GetCurrentUserId()
         {
-            Guid userId =;
+            Guid userId = App.CurrentUserId;
             return userId;
         }
 

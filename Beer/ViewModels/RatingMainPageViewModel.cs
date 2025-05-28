@@ -2,6 +2,7 @@
 {
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml.Controls;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
 
     public class RatingMainPageViewModel : ViewModelBase

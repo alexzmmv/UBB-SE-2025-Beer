@@ -50,6 +50,7 @@
     <PackageReference Include="MySql.Data" Version="9.3.0" />
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
     <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -57,8 +58,26 @@
     <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
     </ItemGroup>
     <ItemGroup>
+    <None Update="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
     <None Update="Styles\GlobalStyles.xaml">
         <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="SuccessPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="UserPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\Components\TwoFactorAuthCheckView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\Components\TwoFactorAuthSetupView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\Pages\AdminDashboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </None>
     <Page Update="Styles\DefaultStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -150,6 +169,23 @@
       <Compile Remove="Category.cs" />
       <Compile Remove="Drink.cs" />
       <Compile Remove="Review.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Remove="Assets\beers-logo.png" />
+      <Content Remove="Assets\facebook_logo.png" />
+      <Content Remove="Assets\github_logo.png" />
+      <Content Remove="Assets\google_logo.png" />
+      <Content Remove="Assets\linkedin_logo.png" />
+      <Content Remove="Assets\x-twitter-logo-on-black.png" />
+      <Content Remove="Assets\X_Logo.jpg" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Remove="MainWindow.xaml" />
+      <Page Remove="SuccessPage.xaml" />
+      <Page Remove="UserPage.xaml" />
+      <Page Remove="Views\Components\TwoFactorAuthCheckView.xaml" />
+      <Page Remove="Views\Components\TwoFactorAuthSetupView.xaml" />
+      <Page Remove="Views\Pages\AdminDashboard.xaml" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Class Library\DataAccess.csproj" />

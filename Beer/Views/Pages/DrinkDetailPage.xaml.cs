@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using WinUIApp.ProxyServices;
-using WinUIApp.Services.DummyServices;
 using WinUIApp.ViewModels;
 using WinUIApp.Views.ViewModels;
 using WinUIApp.Views.Windows;
@@ -16,7 +17,7 @@ namespace WinUIApp.Views.Pages
         {
             this.InitializeComponent();
             this.DataContext = this.ViewModel;
-            if (this.ViewModel.IsCurrentUserAdmin())
+            if (this.ViewModel.IsCurrentUserAdminAsync())
             {
                 this.RemoveButtonText.Text = "Remove drink";
             }
@@ -44,7 +45,7 @@ namespace WinUIApp.Views.Pages
 
         private void ConfirmRemoveButton_Click(object sender, RoutedEventArgs eventArguments)
         {
-            this.ViewModel.RemoveDrink();
+            this.ViewModel.RemoveDrinkAsync();
             MainWindow.AppMainFrame.Navigate(MainWindow.PreviousPage);
         }
 
