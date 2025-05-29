@@ -1,6 +1,7 @@
 ﻿namespace DataAccess.Service.Interfaces
 {
     using System.Collections.Generic;
+    using DataAccess.Constants;
     using DataAccess.Model.AdminDashboard;
 
     public interface IUpgradeRequestsService

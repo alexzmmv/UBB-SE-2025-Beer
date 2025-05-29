@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataAccess.Model.AdminDashboard;
+using DataAccess.Constants;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
 using DataAccess.Service.Interfaces;

@@ -4,7 +4,7 @@ namespace WinUIApp.Views.Components
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DataAccess.Model.AdminDashboard;
+    using DataAccess.Constants;
     using DataAccess.Service;
     using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.ServiceProxy;

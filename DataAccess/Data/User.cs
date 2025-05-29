@@ -1,4 +1,4 @@
-﻿using DataAccess.Model.AdminDashboard;
+﻿using DataAccess.Constants;
 
 namespace WinUiApp.Data.Data
 {

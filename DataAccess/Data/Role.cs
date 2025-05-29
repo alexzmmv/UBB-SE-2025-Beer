@@ -1,4 +1,6 @@
-﻿namespace DataAccess.Model.AdminDashboard
+﻿using DataAccess.Constants;
+
+namespace DataAccess.Model.AdminDashboard
 {
     public class Role
     {
