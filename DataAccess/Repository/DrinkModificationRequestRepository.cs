@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DataAccess.Data;
+using DataAccess.IRepository;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +27,14 @@ namespace DataAccess.Repository
             this.dbContext.SaveChanges();
 
             return request;
+        }
+
+        public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
+        {
+            return await dbContext.DrinkModificationRequests
+                .Include(drink => drink.OldDrink)
+                .Include(drink => drink.NewDrink)
+                .ToListAsync();
         }
     }
 }

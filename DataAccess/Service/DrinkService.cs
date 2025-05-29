@@ -5,13 +5,13 @@
 namespace WinUIApp.WebAPI.Services
 {
     using DataAccess.Data;
+    using DataAccess.IRepository;
     using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
-    using WinUIApp.WebAPI.Repositories;
     using WinUIApp.WebAPI.Services;
 
     /// <summary>

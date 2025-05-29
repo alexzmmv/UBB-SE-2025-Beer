@@ -1,4 +1,4 @@
-﻿namespace WinUIApp.WebAPI.Repositories
+﻿namespace DataAccess.IRepository
 {
     using System.Collections.Generic;
     using DataAccess.Data;

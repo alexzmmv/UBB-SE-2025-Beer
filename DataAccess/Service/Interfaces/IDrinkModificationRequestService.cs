@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccess.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace DataAccess.Service.Interfaces
     public interface IDrinkModificationRequestService
     {
         DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser);
+        Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests();
     }
 }

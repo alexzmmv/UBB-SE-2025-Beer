@@ -1,5 +1,5 @@
-﻿using Moq;
-using WinUIApp.WebAPI.Repositories;
+﻿using DataAccess.IRepository;
+using Moq;
 using WinUIApp.WebAPI.Services;
 using Xunit;
 

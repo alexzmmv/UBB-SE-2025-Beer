@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DataAccess.Data;
+using DataAccess.IRepository;
+using DataAccess.Service.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +11,7 @@ using DataAccess.Data;
 using DataAccess.IRepository;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
+using WinUiApp.Data.Interfaces;
 
 namespace DataAccess.Service
 {
@@ -18,7 +22,7 @@ namespace DataAccess.Service
         public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser)
         {
             DrinkModificationRequest request = new DrinkModificationRequest
-            {
+        {
                 ModificationType = type,
                 OldDrink = oldDrink,
                 NewDrink = newDrink,
@@ -28,6 +32,11 @@ namespace DataAccess.Service
             this.drinkModificationRequestRepository.AddRequest(request);
 
             return request;
+        }
+
+        public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
+        {
+            return await drinkModificationRepository.GetAllModificationRequests();
         }
     }
 }

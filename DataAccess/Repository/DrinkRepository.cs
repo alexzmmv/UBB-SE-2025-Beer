@@ -13,6 +13,7 @@ namespace WinUIApp.WebAPI.Repositories
     using System.Data;
     using System.Linq;
     using DataAccess.Data;
+    using DataAccess.IRepository;
     using Microsoft.EntityFrameworkCore;
     using WinUiApp.Data;
     using WinUiApp.Data.Data;

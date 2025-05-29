@@ -1,5 +1,5 @@
+using DataAccess.IRepository;
 using DataAccess.Model.Authentication;
-using IRepository;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data;
 using WinUiApp.Data.Interfaces;

@@ -1,7 +1,7 @@
-﻿using DataAccess.Model.Authentication;
+﻿using DataAccess.IRepository;
+using DataAccess.Model.Authentication;
 using DataAccess.Service.Components;
 using DataAccess.Service.Interfaces;
-using IRepository;
 using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using WinUiApp.Data.Data;
