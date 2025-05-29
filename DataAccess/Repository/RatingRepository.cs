@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace WinUIApp.WebAPI.Repositories
 {
+    using DataAccess.IRepository;
     using System;
     using System.Collections.Generic;
     using System.Linq;

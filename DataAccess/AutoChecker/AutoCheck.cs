@@ -1,4 +1,4 @@
-﻿using IRepository;
+﻿using DataAccess.IRepository;
 
 namespace DataAccess.AutoChecker
 {

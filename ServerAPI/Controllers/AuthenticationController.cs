@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DataAccess.Model.Authentication;
-using IRepository;
 using DataAccess.AuthProviders.Facebook;
 using DataAccess.AuthProviders.Github;
 using DataAccess.AuthProviders.LinkedIn;
@@ -8,6 +7,7 @@ using DataAccess.AuthProviders;
 using DataAccess.OAuthProviders;
 using DataAccess.Service;
 using WinUiApp.Data.Data;
+using DataAccess.IRepository;
 
 namespace ServerAPI.Controllers
 {

@@ -5,11 +5,11 @@ using DataAccess.AuthProviders.Github;
 using DataAccess.AuthProviders.LinkedIn;
 using DataAccess.Model.Authentication;
 using DataAccess.OAuthProviders;
-using IRepository;
 using static DataAccess.AuthProviders.BasicAuthenticationProvider;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
 using DataAccess.Constants;
+using DataAccess.IRepository;
 
 namespace DataAccess.Service
 {
