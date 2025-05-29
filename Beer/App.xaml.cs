@@ -47,26 +47,9 @@ namespace WinUIApp
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            ServiceCollection services = new ServiceCollection();
+            // To check
             IScheduler scheduler = Host.Services.GetRequiredService<IScheduler>();
             scheduler.Start().Wait();
-
-            MainWindow = Host.Services.GetRequiredService<MainWindow>();
-            MainWindow.Activate();
-
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
-            services.AddSingleton<IConfiguration>(configuration);
-            services.AddSingleton<IRatingService, ProxyRatingService>();
-            services.AddSingleton<IReviewService, ReviewsServiceProxy>();
-            services.AddSingleton<IUserService, UserService>();
-
-            serviceProvider = services.BuildServiceProvider();
-
-            //this.window = new Views.MainWindow();
-            //this.window.Activate();
 
             MainWindow = Host.Services.GetRequiredService<MainWindow>();
             MainWindow.Activate();
@@ -83,14 +66,11 @@ namespace WinUIApp
             Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    IConfiguration config = new ConfigurationBuilder()
-                        .AddUserSecrets<App>()
-                        .AddEnvironmentVariables()
-                        .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
+                    IConfigurationRoot configuration = new ConfigurationBuilder()
+                        .SetBasePath(AppContext.BaseDirectory)
+                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                         .Build();
-
-                    services.AddSingleton<IConfiguration>(config);
-
+                    services.AddSingleton<IConfiguration>(configuration);
                     string apiRoute = "http://localhost:5280/";
 
                     services.AddSingleton<ISessionService, SessionServiceProxy>(sp => new SessionServiceProxy(apiRoute));
@@ -103,6 +83,7 @@ namespace WinUIApp
                     services.AddSingleton<IAutoCheck, AutoCheckerProxy>(sp => new AutoCheckerProxy(apiRoute));
                     services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
                     services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));
+                    services.AddSingleton<IRatingService, ProxyRatingService>(sp => new ProxyRatingService(apiRoute));
 
                     services.AddSingleton<LinkedInLocalOAuthServer>(sp => new LinkedInLocalOAuthServer("http://localhost:8891/"));
                     services.AddSingleton<GitHubLocalOAuthServer>(sp => new GitHubLocalOAuthServer("http://localhost:8890/"));
