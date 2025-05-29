@@ -9,6 +9,7 @@
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
+    using WinUIApp.WebAPI.Models;
 
     internal class MainPageViewModel
     {
@@ -61,17 +62,17 @@
             set => this.SetField(ref this.alcoholContent, value);
         }
 
-        public List<Drink> PersonalDrinks { get; set; } = new List<Drink>();
+        public List<DrinkDTO> PersonalDrinks { get; set; } = new List<DrinkDTO>();
 
         public void LoadDrinkOfTheDayData()
         {
             var drink = this.drinkService.GetDrinkOfTheDay();
 
-            this.ImageSource = drink.DrinkURL;
+            this.ImageSource = drink.DrinkImageUrl;
             this.DrinkName = drink.DrinkName;
-            this.DrinkBrand = drink.Brand.BrandName;
-            this.DrinkCategories = drink.DrinkCategories.ToList();
-            this.AlcoholContent = drink.AlcoholContent;
+            this.DrinkBrand = drink.DrinkBrand.BrandName;
+            this.DrinkCategories = drink.CategoryList.ToList();
+            this.AlcoholContent = (decimal)drink.AlcoholContent;
         }
 
         public int GetDrinkOfTheDayId()
@@ -101,7 +102,7 @@
 
         private void LoadPersonalDrinkListData()
         {
-            Guid userId = this.userService.GetCurrentUserId();
+            Guid userId = App.CurrentUserId;
             this.PersonalDrinks = this.drinkService.GetUserPersonalDrinkList(userId, HardCodedNumberOfDrinks);
         }
     }

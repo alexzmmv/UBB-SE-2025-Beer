@@ -2,7 +2,7 @@
     x:Class="WinUIApp.Views.Components.DrinkListComponent"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:models="using:WinUIApp.ProxyServices.Models"
+    xmlns:models="using:WinUIApp.WebAPI.Models"
     x:Name="Root">
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto" 
@@ -15,7 +15,7 @@
             </ItemsRepeater.Layout>
 
             <ItemsRepeater.ItemTemplate>
-                <DataTemplate x:DataType="models:Drink">
+                <DataTemplate x:DataType="models:DrinkDTO">
                     <!-- Drink Card - Maintains original style but with better interaction -->
                     <Button Background="Transparent"
                             Padding="0"

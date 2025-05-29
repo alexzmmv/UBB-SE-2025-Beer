@@ -6,7 +6,7 @@ namespace DrinkDb_Auth
 {
     public sealed partial class SuccessPage : Page
     {
-        private MainWindow mainWindow;
+        private AuthenticationWindow mainWindow;
 
         public SuccessPage()
         {
@@ -16,7 +16,7 @@ namespace DrinkDb_Auth
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is MainWindow window)
+            if (e.Parameter is AuthenticationWindow window)
             {
                 this.mainWindow = window;
             }

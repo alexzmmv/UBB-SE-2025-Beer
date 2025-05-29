@@ -4,12 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Service;
+using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.ServiceProxy;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.ViewModels;
+using WinUIApp.WebAPI.Models;
+using WinUIApp.WebAPI.Services;
 
 namespace WinUIApp.Views.Components
 {
@@ -17,9 +22,18 @@ namespace WinUIApp.Views.Components
     {
         private UpdateDrinkMenuViewModel viewModel;
 
+        private bool isAdmin;
+
+        private IDrinkService drinkService;
+
+        private IUserService userService;
+
         public UpdateDrinkFlyout()
         {
             this.InitializeComponent();
+            drinkService = App.Host.Services.GetRequiredService<ProxyDrinkService>();
+            userService = App.Host.Services.GetRequiredService<IUserService>();
+
             this.Loaded += this.UpdateDrinkFlyout_LoadedAsync;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
 
@@ -49,15 +63,13 @@ namespace WinUIApp.Views.Components
             };
         }
 
-        public Drink DrinkToUpdate { get; set; }
+        public DrinkDTO DrinkToUpdate { get; set; }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
-        private async Task UpdateDrinkFlyout_LoadedAsync(object sender, RoutedEventArgs eventArguments)
+        private async void UpdateDrinkFlyout_LoadedAsync(object sender, RoutedEventArgs eventArguments)
         {
-            var drinkService = new ProxyDrinkService();
-            var userService = new UserService();
-            bool isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
             var allBrands = drinkService.GetDrinkBrandNames();
             var allCategories = drinkService.GetDrinkCategories();
@@ -121,7 +133,7 @@ namespace WinUIApp.Views.Components
             }
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs eventArguments)
+        private async void SaveButton_Click(object sender, RoutedEventArgs eventArguments)
         {
             if (this.DrinkToUpdate == null)
             {
@@ -133,7 +145,7 @@ namespace WinUIApp.Views.Components
                 this.viewModel.ValidateUpdatedDrinkDetails();
                 this.DrinkToUpdate.CategoryList = this.viewModel.GetSelectedCategories();
 
-                bool isAdmin = adminService.IsAdmin(UserId);
+                isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
                 string message;
 

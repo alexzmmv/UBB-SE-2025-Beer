@@ -84,7 +84,7 @@ namespace WinUIApp.ViewModels
                 DrinkId = productId,
                 RatingValue = this.RatingScore,
                 RatingDate = DateTime.Now,
-                UserId = this.GetUserId(),
+                UserId = App.CurrentUserId,
             };
 
             this.ratingService.CreateRating(rating);

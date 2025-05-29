@@ -25,7 +25,7 @@ namespace DrinkDb_Auth
     using WinUIApp;
     using WinUiApp.Data.Data;
 
-    public sealed partial class MainWindow : Window
+    public sealed partial class AuthenticationWindow : Window
     {
         private IAuthenticationService authenticationService;
         private ITwoFactorAuthenticationService twoFactorAuthentificationService;
@@ -34,7 +34,7 @@ namespace DrinkDb_Auth
         private IGoogleOAuth2Provider googleOAuth2Provider;
         public Frame NavigationFrame { get; private set; }
 
-        public MainWindow(IAuthenticationService authenticationService, ITwoFactorAuthenticationService twoFactorAuthenticationService,
+        public AuthenticationWindow(IAuthenticationService authenticationService, ITwoFactorAuthenticationService twoFactorAuthenticationService,
             IUserService userService, TwitterOAuth2Provider twitterOAuth2Provider, IGoogleOAuth2Provider googleOAuth2Provider)
         {
             this.authenticationService = authenticationService;

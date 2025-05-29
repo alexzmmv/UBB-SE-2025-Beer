@@ -11,6 +11,7 @@
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
+    using WinUIApp.WebAPI.Models;
 
     public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService) : INotifyPropertyChanged
     {
@@ -18,12 +19,12 @@
         private readonly IDrinkService drinkService = drinkService;
         private readonly IDrinkReviewService reviewService = reviewService;
         private readonly IUserService userService = userService;
-        private Drink drink;
+        private DrinkDTO drink;
         private float averageReviewScore;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Drink Drink
+        public DrinkDTO Drink
         {
             get
             {
@@ -42,9 +43,9 @@
         {
             get
             {
-                if (this.Drink != null && this.Drink.DrinkCategories != null)
+                if (this.Drink != null && this.Drink.CategoryList != null)
                 {
-                    return string.Join(CategorySeparator, this.Drink.DrinkCategories.Select(drinkCategory => drinkCategory.Category.CategoryName));
+                    return string.Join(CategorySeparator, this.Drink.CategoryList.Select(drinkCategory => drinkCategory.CategoryName));
                 }
                 else
                 {
@@ -90,7 +91,7 @@
             }
             else
             {
-                this.adminService.SendNotificationFromUserToAdmin(App.CurrentUserId, "Removal of drink with id:" + this.Drink.DrinkId + " and name:" + this.Drink.DrinkName, "User requested removal of drink from database.");
+               // TODO: Admin service Notify
             }
         }
 

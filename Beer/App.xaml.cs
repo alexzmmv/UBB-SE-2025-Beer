@@ -51,7 +51,7 @@ namespace WinUIApp
             IScheduler scheduler = Host.Services.GetRequiredService<IScheduler>();
             scheduler.Start().Wait();
 
-            MainWindow = Host.Services.GetRequiredService<MainWindow>();
+            MainWindow = Host.Services.GetRequiredService<AuthenticationWindow>();
             MainWindow.Activate();
 
             // Prevent app suspension
@@ -130,7 +130,7 @@ namespace WinUIApp
                     });
 
                     services.AddTransient<MainPage>();
-                    services.AddTransient<MainWindow>();
+                    services.AddTransient<AuthenticationWindow>();
                     services.AddTransient<UserPage>();
                 })
                 .Build();

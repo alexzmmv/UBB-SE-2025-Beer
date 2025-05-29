@@ -24,22 +24,16 @@ namespace WinUIApp.Views.Components
                 new PropertyMetadata(null, OnViewModelPropertyChanged));
 
         private const int DefaultIntValue = 0;
-        private readonly IDrinkService drinkService;
-        private readonly IUserService userService;
+        private IDrinkService drinkService;
+        private IUserService userService;
 
         public AddRemoveFromDrinkListButton()
         {
-            this.drinkService = new ProxyDrinkService();
-            this.userService = new UserService();
             this.InitializeComponent();
-            this.Loaded += this.AddRemoveFromDrinkListButton_Loaded;
-        }
 
-        public AddRemoveFromDrinkListButton(IDrinkService drinkService, IUserService userService)
-        {
-            this.InitializeComponent();
-            this.drinkService = drinkService;
-            this.userService = userService;
+            drinkService = App.GetService<IDrinkService>();
+            userService = App.GetService<IUserService>();
+
             this.Loaded += this.AddRemoveFromDrinkListButton_Loaded;
         }
 

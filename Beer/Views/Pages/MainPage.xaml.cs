@@ -1,6 +1,8 @@
 namespace WinUIApp.Views.Pages
 {
     using DataAccess.Service;
+    using DataAccess.Service.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Navigation;
@@ -10,11 +12,19 @@ namespace WinUIApp.Views.Pages
     public sealed partial class MainPage : Page
     {
         private readonly MainPageViewModel viewModel;
+        private IDrinkReviewService drinkReviewService;
+        private IDrinkService drinkService;
+        private IUserService userService;
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.viewModel = new MainPageViewModel(new ProxyDrinkService(), new UserService());
+
+            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
+            userService = App.Host.Services.GetRequiredService<IUserService>();
+
+            this.viewModel = new MainPageViewModel(drinkService, userService);
             this.DataContext = this.viewModel;
         }
 

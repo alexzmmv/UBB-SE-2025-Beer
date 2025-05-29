@@ -1,6 +1,8 @@
 namespace WinUIApp.Views.Components.HeaderComponents
 {
     using System.Linq;
+    using DataAccess.Service.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using WinUIApp.ProxyServices;
@@ -11,11 +13,14 @@ namespace WinUIApp.Views.Components.HeaderComponents
     public sealed partial class Header : UserControl
     {
         private readonly HeaderViewModel viewModel;
+        private IDrinkService drinkService;
 
         public Header()
         {
+            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+
             this.InitializeComponent();
-            this.viewModel = new HeaderViewModel(new ProxyDrinkService());
+            this.viewModel = new HeaderViewModel(drinkService);
             this.CategoryMenu.PopulateCategories(this.viewModel.GetCategories());
         }
 

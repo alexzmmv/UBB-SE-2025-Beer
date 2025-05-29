@@ -1,6 +1,8 @@
 namespace WinUIApp.Views.Pages
 {
     using System.Collections.Generic;
+    using DataAccess.Service.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Navigation;
@@ -14,17 +16,22 @@ namespace WinUIApp.Views.Pages
     public sealed partial class SearchPage : Page
     {
         private SearchPageViewModel searchPageViewModel;
+        private IDrinkService drinkService;
+        private IDrinkReviewService drinkReviewService;
 
         public SearchPage()
         {
             this.InitializeComponent();
+
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
             base.OnNavigatedTo(eventArguments);
             MainWindow.PreviousPage = typeof(SearchPage);
-            this.searchPageViewModel = new SearchPageViewModel(new ProxyDrinkService(), new ProxyDrinkReviewService());
+            this.searchPageViewModel = new SearchPageViewModel(this.drinkService, this.drinkReviewService);
             this.SortSelectorControl.SetSortOrder(this.searchPageViewModel.IsAscending);
             if (eventArguments.Parameter is SearchPageNavigationParameters parameters)
             {

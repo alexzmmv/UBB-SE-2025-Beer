@@ -58,7 +58,7 @@
             {
                 Rating selectedRating = this.ratingViewModel.Ratings[selectedIndex];
                 this.ratingViewModel.SelectedRating = selectedRating;
-                this.reviewViewModel.LoadReviewsForRating(selectedRating.RatingId);
+                this.reviewViewModel.LoadReviewsForRatingAsync(selectedRating.RatingId);
             }
         }
 

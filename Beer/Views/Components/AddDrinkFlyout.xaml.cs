@@ -26,7 +26,7 @@ namespace WinUIApp.Views.Components
             this.InitializeComponent();
 
             drinkService = App.Host.Services.GetRequiredService<ProxyDrinkService>();
-            userService = App.Host.Services.GetRequiredService<UserServiceProxy>();
+            userService = App.Host.Services.GetRequiredService<IUserService>();
             
             this.Loaded += this.AddDrinkFlyout_LoadedAsync;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
@@ -57,7 +57,7 @@ namespace WinUIApp.Views.Components
             };
         }
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         private async void AddDrinkFlyout_LoadedAsync(object sender, RoutedEventArgs eventArguments)
         {
@@ -110,7 +110,7 @@ namespace WinUIApp.Views.Components
             }
         }
 
-        private async void SaveButton_ClickAsync(object sender, RoutedEventArgs eventArguments)
+        private async void SaveButton_Click(object sender, RoutedEventArgs eventArguments)
         {
             try
             {

@@ -9,6 +9,7 @@
     using WinUIApp.Views;
     using WinUIApp.Views.Components.SearchPageComponents;
     using WinUIApp.Views.Pages;
+    using WinUIApp.WebAPI.Models;
 
     public class SearchPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService)
     {
@@ -76,7 +77,7 @@
                 {
                     { sortField, this.isAscending },
                 };
-                List<Drink> drinks = this.drinkService.GetDrinks(
+                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
                     searchKeyword: this.searchedTerms,
                     drinkBrandNameFilter: this.brandFilter,
                     drinkCategoryFilter: this.categoryFilter,
@@ -85,7 +86,7 @@
                     orderingCriteria: orderBy);
 
                 displayItems = new List<DrinkDisplayItem>();
-                foreach (Drink drink in drinks)
+                foreach (DrinkDTO drink in drinks)
                 {
                     float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
                     if (this.minRatingFilter == null)
@@ -103,7 +104,7 @@
             }
             else
             {
-                List<Drink> drinks = this.drinkService.GetDrinks(
+                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
                     searchKeyword: this.searchedTerms,
                     drinkBrandNameFilter: this.brandFilter,
                     drinkCategoryFilter: this.categoryFilter,
@@ -112,7 +113,7 @@
                     orderingCriteria: null);
 
                 displayItems = new List<DrinkDisplayItem>();
-                foreach (Drink drink in drinks)
+                foreach (DrinkDTO drink in drinks)
                 {
                     float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
                     if (this.minRatingFilter == null)

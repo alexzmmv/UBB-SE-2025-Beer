@@ -13,11 +13,16 @@ namespace WinUIApp.Views.Pages
 {
     public sealed partial class DrinkDetailPage : Page
     {
+        private IDrinkService drinkService;
+        private IDrinkReviewService drinkReviewService;
+        private IUserService userService;
+
         public DrinkDetailPage()
         {
             this.InitializeComponent();
             this.DataContext = this.ViewModel;
-            if (this.ViewModel.IsCurrentUserAdminAsync())
+            // Possible deadlock
+            if (this.ViewModel.IsCurrentUserAdminAsync().Result)
             {
                 this.RemoveButtonText.Text = "Remove drink";
             }
@@ -30,9 +35,18 @@ namespace WinUIApp.Views.Pages
             {
                 this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
             };
+
+            this.drinkService = App.GetService<IDrinkService>();
+            this.drinkReviewService = App.GetService<IDrinkReviewService>();
+            this.userService = App.GetService<IUserService>();
+
+            this.ViewModel = new DrinkDetailPageViewModel(
+                this.drinkService,
+                this.drinkReviewService,
+                this.userService);
         }
 
-        public DrinkDetailPageViewModel ViewModel { get; } = new DrinkDetailPageViewModel(new ProxyDrinkService(), new ProxyDrinkReviewService(), new Services.DummyServices.UserService(), new Services.DummyServices.AdminService());
+        public DrinkDetailPageViewModel ViewModel { get; }
 
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {

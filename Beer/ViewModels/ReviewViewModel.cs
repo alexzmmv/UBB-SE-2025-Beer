@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Threading.Tasks;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
@@ -22,7 +23,7 @@
         {
             this.reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
             this.reviews = new ObservableCollection<Review>();
-            this.userId = userService.CurrentUserId;
+            this.userId = App.CurrentUserId;
         }
 
         public event EventHandler? RequestClose;
@@ -45,9 +46,9 @@
             set => this.SetProperty(ref this.reviewContent, value);
         }
 
-        public virtual void LoadReviewsForRating(int ratingId)
+        public virtual async void LoadReviewsForRatingAsync(int ratingId)
         {
-            IEnumerable<Review> reviewsList = this.reviewService.GetReviewsByRating(ratingId);
+            IEnumerable<Review> reviewsList = await this.reviewService.GetReviewsByRating(ratingId);
             this.Reviews.Clear();
             foreach (Review review in reviewsList)
             {
@@ -69,12 +70,13 @@
                 Content = this.ReviewContent
             };
 
-            newReview.Activate(); // Use the Activate method to set IsActive and CreationDate
+            newReview.IsActive = true; // Use the Activate method to set IsActive and CreationDate
+            newReview.CreatedDate = DateTime.Now;
 
             try
             {
                 this.reviewService.AddReview(newReview);
-                this.LoadReviewsForRating(ratingId);
+                this.LoadReviewsForRatingAsync(ratingId);
                 this.ReviewContent = string.Empty;
                 this.CloseWindow();
             }

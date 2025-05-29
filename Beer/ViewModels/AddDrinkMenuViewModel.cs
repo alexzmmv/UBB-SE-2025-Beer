@@ -142,11 +142,8 @@
         {
             try
             {
-                Guid userId = this.userService.GetCurrentUserId();
-                this.adminService.SendNotificationFromUserToAdmin(
-                    senderUserId: userId,
-                    userModificationRequestType: "New Drink Request",
-                    userModificationRequestDetails: $"User requested to add new drink: {this.DrinkName}");
+                Guid userId = App.CurrentUserId;
+                // TODO Admin service Notify
                 Debug.WriteLine("Drink add request sent to admin.");
             }
             catch (Exception sendAddDrinkRequestException)

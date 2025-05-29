@@ -11,15 +11,16 @@
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
+    using WinUIApp.WebAPI.Models;
 
-    public partial class UpdateDrinkMenuViewModel(Drink drinkToUpdate, IDrinkService drinkService,
+    public partial class UpdateDrinkMenuViewModel(DrinkDTO drinkToUpdate, IDrinkService drinkService,
         IUserService userService) : INotifyPropertyChanged
     {
         private const float MaxAlcoholContent = 100.0f;
         private const float MinAlcoholContent = 0.0f;
         private readonly IDrinkService drinkService = drinkService;
         private readonly IUserService userService = userService;
-        private Drink drinkToUpdate = drinkToUpdate;
+        private DrinkDTO drinkToUpdate = drinkToUpdate;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,7 +32,7 @@
 
         public List<Brand> AllBrands { get; set; } = new ();
 
-        public Drink DrinkToUpdate
+        public DrinkDTO DrinkToUpdate
         {
             get => this.drinkToUpdate;
             set
@@ -56,12 +57,12 @@
 
         public string DrinkURL
         {
-            get => this.DrinkToUpdate.DrinkURL;
+            get => this.DrinkToUpdate.DrinkImageUrl;
             set
             {
-                if (this.DrinkToUpdate.DrinkURL != value)
+                if (this.DrinkToUpdate.DrinkImageUrl != value)
                 {
-                    this.DrinkToUpdate.DrinkURL = value;
+                    this.DrinkToUpdate.DrinkImageUrl = value;
                     this.OnPropertyChanged();
                 }
             }
@@ -71,19 +72,19 @@
         {
             get
             {
-                if (this.DrinkToUpdate.DrinkURL == null)
+                if (this.DrinkToUpdate.DrinkImageUrl == null)
                 {
                     return string.Empty;
                 }
 
-                return this.DrinkToUpdate.Brand.BrandName;
+                return this.DrinkToUpdate.DrinkBrand.BrandName;
             }
 
             set
             {
-                if (this.DrinkToUpdate.Brand == null || this.DrinkToUpdate.Brand.BrandName != value)
+                if (this.DrinkToUpdate.DrinkBrand == null || this.DrinkToUpdate.DrinkBrand.BrandName != value)
                 {
-                    this.DrinkToUpdate.Brand = new Brand { BrandId = 0, BrandName = value };
+                    this.DrinkToUpdate.DrinkBrand = new Brand { BrandId = 0, BrandName = value };
                     this.OnPropertyChanged();
                 }
             }
@@ -94,9 +95,9 @@
             get => this.DrinkToUpdate.AlcoholContent.ToString();
             set
             {
-                if (decimal.TryParse(value, out decimal parsedAlcoholContent) && this.DrinkToUpdate.AlcoholContent != parsedAlcoholContent)
+                if (decimal.TryParse(value, out decimal parsedAlcoholContent) && this.DrinkToUpdate.AlcoholContent != (float)parsedAlcoholContent)
                 {
-                    this.DrinkToUpdate.AlcoholContent = parsedAlcoholContent;
+                    this.DrinkToUpdate.AlcoholContent = (float)parsedAlcoholContent;
                     this.OnPropertyChanged();
                 }
             }
@@ -128,7 +129,7 @@
                 throw new ArgumentException("The brand you entered does not exist.");
             }
 
-            this.DrinkToUpdate.Brand = validBrand;
+            this.DrinkToUpdate.DrinkBrand = validBrand;
 
             if (!float.TryParse(this.AlcoholContent, out var alcoholContent) || alcoholContent < MinAlcoholContent || alcoholContent > MaxAlcoholContent)
             {
@@ -145,8 +146,8 @@
         {
             try
             {
-                this.DrinkToUpdate.Brand = this.FindBrandByName(this.BrandName);
-                this.DrinkToUpdate.DrinkCategories = (ICollection<DrinkCategory>)this.GetSelectedCategories();
+                this.DrinkToUpdate.DrinkBrand = this.FindBrandByName(this.BrandName);
+                this.DrinkToUpdate.CategoryList = (List<Category>)this.GetSelectedCategories();
                 this.drinkService.UpdateDrink(this.DrinkToUpdate);
                 Debug.WriteLine("Drink updated successfully (admin).");
             }
@@ -160,10 +161,7 @@
         {
             try
             {
-                this.adminService.SendNotificationFromUserToAdmin(
-                senderUserId: App.CurrentUserId,
-                userModificationRequestType: "Drink Update Request",
-                userModificationRequestDetails: $"User requested to update drinkToUpdate: {this.DrinkToUpdate.DrinkName}");
+                // TODO: Admin Service Notify
             }
             catch (Exception sendUpdateDrinkRequestException)
             {

@@ -58,25 +58,25 @@
     <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
     </ItemGroup>
     <ItemGroup>
-    <None Update="MainWindow.xaml">
+    <None Update="Views\Windows\AuthenticationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="Styles\GlobalStyles.xaml">
         <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="SuccessPage.xaml">
+    <None Update="Views\Pages\SuccessPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="UserPage.xaml">
+    <None Update="Views\Pages\UserPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="Views\Components\TwoFactorAuthCheckView.xaml">
+    <None Update="Views\Components\Templates\TwoFactorAuthCheckView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="Views\Components\TwoFactorAuthSetupView.xaml">
+    <None Update="Views\Components\Templates\TwoFactorAuthSetupView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="Views\Pages\AdminDashboard.xaml">
+    <None Update="Views\Interfaces\AdminDashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <Page Update="Styles\DefaultStyle.xaml">
@@ -180,12 +180,9 @@
       <Content Remove="Assets\X_Logo.jpg" />
     </ItemGroup>
     <ItemGroup>
-      <Page Remove="MainWindow.xaml" />
+      <Page Remove="AuthenticationWindow.xaml" />
       <Page Remove="SuccessPage.xaml" />
       <Page Remove="UserPage.xaml" />
-      <Page Remove="Views\Components\TwoFactorAuthCheckView.xaml" />
-      <Page Remove="Views\Components\TwoFactorAuthSetupView.xaml" />
-      <Page Remove="Views\Pages\AdminDashboard.xaml" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Class Library\DataAccess.csproj" />

@@ -116,7 +116,7 @@ namespace DrinkDb_Auth
                     Padding = new Thickness(12)
                 };
                 StackPanel reviewStack = new StackPanel { Spacing = 4 };
-                string stars = new string('★', review.Rating) + new string('☆', 5 - review.Rating);
+                string stars = new string('★', (int)review.Rating.RatingValue) + new string('☆', 5 - (int)review.Rating.RatingValue);
                 TextBlock starsText = new TextBlock
                 {
                     Text = stars,

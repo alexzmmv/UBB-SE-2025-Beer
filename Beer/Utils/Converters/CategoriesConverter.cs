@@ -8,6 +8,7 @@ namespace WinUIApp.Utils.Converters
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.UI.Xaml.Data;
+    using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
 
     /// <summary>

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices.Models;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.Views.Components
 {
@@ -11,8 +12,8 @@ namespace WinUIApp.Views.Components
     {
         public static readonly DependencyProperty DrinkProperty =
         DependencyProperty.Register(
-        nameof(Drink),
-        typeof(Drink),
+        nameof(DrinkDTO),
+        typeof(DrinkDTO),
         typeof(UpdateDrinkButton),
         new PropertyMetadata(null));
 
@@ -23,21 +24,20 @@ namespace WinUIApp.Views.Components
 
         public Action OnDrinkUpdated { get; set; }
 
-        public Drink Drink
+        public DrinkDTO Drink
         {
-            get => (Drink)this.GetValue(DrinkProperty);
+            get => (DrinkDTO)this.GetValue(DrinkProperty);
             set => this.SetValue(DrinkProperty, value);
         }
 
         private void UpdateDrinkButton_Click(object sender, RoutedEventArgs eventArguments)
         {
-            var userService = new UserService();
             Flyout flyout = new Flyout
             {
                 Content = new UpdateDrinkFlyout
                 {
                     DrinkToUpdate = this.Drink,
-                    UserId = userService.GetCurrentUserId(),
+                    UserId = App.CurrentUserId,
                 },
             };
 
