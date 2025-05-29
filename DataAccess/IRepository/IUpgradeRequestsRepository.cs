@@ -1,14 +1,16 @@
-﻿namespace DataAccess.Service.Interfaces
+﻿namespace IRepository
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using DataAccess.Model.AdminDashboard;
 
-    public interface IUpgradeRequestsService
+    public interface IUpgradeRequestsRepository
     {
         Task<List<UpgradeRequest>> RetrieveAllUpgradeRequests();
-        Task ProcessUpgradeRequest(bool isRequestAccepted, int upgradeRequestIdentifier);
-        Task<string> GetRoleNameBasedOnIdentifier(RoleType roleType);
+
         Task RemoveUpgradeRequestByIdentifier(int upgradeRequestIdentifier);
+        Task AddUpgradeRequest(Guid userId);
+
         Task<UpgradeRequest?> RetrieveUpgradeRequestByIdentifier(int upgradeRequestIdentifier);
     }
 }

@@ -185,6 +185,6 @@
       <Page Remove="UserPage.xaml" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Class Library\DataAccess.csproj" />
+      <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     </ItemGroup>
 </Project>
