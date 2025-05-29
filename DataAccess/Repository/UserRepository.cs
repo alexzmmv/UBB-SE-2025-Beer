@@ -118,5 +118,14 @@
             dataContext.Users.Add(user);
             return await dataContext.SaveChangesAsync() > 0;
         }
+
+        public async Task<List<User>> GetUsersWithHiddenReviews()
+        {
+            return await dataContext.Reviews
+                .Where(review => review.IsHidden)
+                .Select(review => review.User)
+                .Distinct()
+                .ToListAsync();
+        }
     }
 }

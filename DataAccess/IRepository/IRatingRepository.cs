@@ -16,5 +16,7 @@ namespace WinUIApp.WebAPI.Repositories
         Rating UpdateRating(Rating rating);
 
         void DeleteRating(int ratingId);
+
+        List<Rating> GetRatingsByUserId(Guid userId);
     }
 }

@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WinUiApp.Data.Data;
@@ -60,6 +59,12 @@ namespace WinUIApp.WebAPI.Controllers
             ratingService.DeleteRatingById(ratingId);
             
             return Ok();
+        }
+
+        [HttpGet("get-ratings-by-user")]
+        public IActionResult GetRatingsByUser([FromQuery] Guid userId)
+        {
+            return Ok(ratingService.GetRatingsByUser(userId));
         }
     }
 }

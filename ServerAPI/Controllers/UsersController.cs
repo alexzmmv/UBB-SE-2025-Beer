@@ -107,5 +107,11 @@ namespace ServerAPI.Controllers
                 await this.userService.UpdateUserRole(userId, roleType);
                 return Ok();
         }
+
+        [HttpGet("hidden-reviews")]
+        public async Task<IEnumerable<User>> GetUsersWithHiddenReviews()
+        {
+            return await this.userService.GetUsersWithHiddenReviews();
+        }
     }
 }

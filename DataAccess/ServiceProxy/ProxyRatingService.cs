@@ -155,5 +155,25 @@
                 throw new Exception($"Error happened while getting average rating for product with ID {productId}:", exception);
             }
         }
+
+        /// <summary>
+        /// Retrieves all ratings associated with a specific user.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>A collection of <see cref="Rating"/> instances for the user.</returns>
+        /// <exception cref="Exception">Exceptions.</exception>
+        public IEnumerable<Rating> GetRatingsByUser(Guid userId)
+        {
+            try
+            {
+                var response = this.httpClient.GetAsync($"Rating/get-ratings-by-user?userId={userId}").Result;
+                response.EnsureSuccessStatusCode();
+                return response.Content.ReadFromJsonAsync<IEnumerable<Rating>>().Result;
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error happened while getting ratings for user with ID {userId}:", exception);
+            }
+        }
     }
 }

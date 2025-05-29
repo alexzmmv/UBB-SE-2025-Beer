@@ -39,7 +39,7 @@ namespace WinUiApp.Data.Data
             this.CreatedDate = createdDate;
             this.NumberOfFlags = numberOfFlags;
             this.IsHidden = isHidden;
-            this.IsActive = false;
+            this.IsActive = false;
         }
         public int ReviewId { get; set; }
 
