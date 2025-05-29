@@ -1,0 +1,33 @@
+@startuml
+actor User
+participant SearchPage
+participant SearchPageViewModel
+participant IDrinkService
+participant ProxyDrinkService
+participant WebAPI.DrinkController
+participant WebAPI.DrinkService
+participant DrinkRepository
+database Database
+
+User -> SearchPage: Navigates to search/browse
+SearchPage -> SearchPageViewModel: Is created with services
+SearchPageViewModel -> IDrinkService: GetDrinkCategories()
+IDrinkService --> SearchPageViewModel: Category list
+SearchPageViewModel -> SearchPage: Populate category filter UI
+User -> SearchPage: Selects category filter checkboxes
+SearchPage -> SearchPageViewModel: SetCategoryFilter(selectedCategories)
+User -> SearchPage: Clicks search/apply filters button
+SearchPage -> SearchPageViewModel: GetDrinks()
+SearchPageViewModel -> IDrinkService: GetDrinks(categoryFilter)
+IDrinkService -> ProxyDrinkService: HTTP request with filters
+ProxyDrinkService -> WebAPI.DrinkController: GetDrinks with filters
+WebAPI.DrinkController -> WebAPI.DrinkService: GetDrinks(filters)
+WebAPI.DrinkService -> DrinkRepository: Query drinks with filter
+DrinkRepository -> Database: Filtered query
+DrinkRepository --> WebAPI.DrinkService: Filtered drinks
+WebAPI.DrinkService --> WebAPI.DrinkController: Filtered drink list
+WebAPI.DrinkController --> ProxyDrinkService: Filtered drinks
+ProxyDrinkService --> SearchPageViewModel: Filtered drink list
+SearchPageViewModel -> SearchPage: Update UI with filtered drinks
+SearchPage -> User: Display filtered drink results
+@enduml

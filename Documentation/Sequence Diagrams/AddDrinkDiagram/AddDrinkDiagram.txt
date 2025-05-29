@@ -1,0 +1,56 @@
+title Adding a Drink
+actor User
+
+
+participantgroup WebUI
+participant Home Page
+participant Add Drink Page
+end
+
+participant ServiceProxy
+
+participantgroup WebAPI
+participant DrinkController
+participant DrinkService
+participant DrinkRepository
+end
+
+participant Database
+
+activate User
+activate Home Page
+activate DrinkController
+activate Database
+User->Home Page:Click AddDrink button\n     in Navbar
+Home Page->*Add Drink Page:load
+activate Add Drink Page
+deactivateafter Home Page
+
+User->Add Drink Page:Complete with Drink information\n
+User->Add Drink Page:Click Submit button\n
+
+alt if information is invalid
+User<--Add Drink Page:display information about invalid fields
+note over User:redo alt with new information
+else else
+
+Add Drink Page->ServiceProxy:Add Drink with provided information
+activate ServiceProxy
+ServiceProxy->DrinkController:HTTP Post with information\n
+DrinkController->DrinkService:AddDrink call\n
+activate DrinkService
+DrinkService->DrinkRepository:AddDrink call\n
+activate DrinkRepository
+DrinkRepository->Database:Add new entry to db
+DrinkRepository<--Database:confirm addition
+DrinkService<--DrinkRepository:
+deactivate DrinkRepository
+DrinkController<--DrinkService:
+deactivate DrinkService
+ServiceProxy<--DrinkController:HTTP Response 200
+Add Drink Page<--ServiceProxy:
+deactivate ServiceProxy
+Home Page<--Add Drink Page:load home page back
+deactivate Add Drink Page
+activate Home Page
+end

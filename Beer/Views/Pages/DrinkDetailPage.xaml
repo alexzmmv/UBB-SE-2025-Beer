@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinUIApp.Views.Pages.DrinkDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinUIApp.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:WinUIApp.Views.Components"
+    xmlns:votebutton="using:WinUIApp.Views.Components"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="{Binding Drink.DrinkName}"
+                   HorizontalAlignment="Center"
+                   x:Name="Name" 
+                   FontSize="18" 
+                   FontWeight="Bold"/>
+            <Image Source="{Binding Drink.DrinkImageUrl}"
+               x:Name="DrinkImage"
+               Height="180"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
+                <components:AddRemoveFromDrinkListButton DrinkId="{Binding Drink}" />
+                <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
+                <Button Content="Add Rating" 
+            Click="AddRatingButton_Click"
+            Margin="5,0" />
+                <Button>
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel>
+                                <TextBlock Text="Are you sure?" HorizontalAlignment="Center" />
+                                <Button x:Name="ConfirmRemoveButton" Click="ConfirmRemoveButton_Click" HorizontalAlignment="Center" Margin="0 5 0 0">Confirm</Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                    <TextBlock x:Name="RemoveButtonText" Foreground="Black"/>
+                </Button>
+                <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click"  DrinkId="{Binding Drink.DrinkId}" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="Brand" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Drink.DrinkBrand.BrandName}" FontSize="14"/>
+                <TextBlock Text="Alcohol percentage" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Drink.AlcoholContent}" FontSize="14"/>
+                <TextBlock Text="Categories" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="{Binding CategoriesDisplay}" FontSize="14"/>
+                <TextBlock Text="Review score" FontSize="18" FontWeight="Bold"/>
+                <TextBlock FontSize="14">
+                <Run Text="⭐" />
+                <Run Text="{Binding AverageReviewScore}" />
+                <Run Text="/ 5" />
+                </TextBlock>
+                <TextBlock Text="Reviews" FontSize="18" FontWeight="Bold" />
+                <ItemsControl ItemsSource="{Binding Reviews}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="1" BorderBrush="Goldenrod" Padding="10" Margin="0 0 0 10">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Content}" TextWrapping="WrapWholeWords"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

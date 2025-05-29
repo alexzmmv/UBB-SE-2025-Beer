@@ -1,0 +1,30 @@
+title Remove Drink
+
+actor User
+    participant Index
+    participant DrinkDetail
+    participant DrinkController
+    participant ProxyDrinkService
+    participant WebAPI.DrinkController
+    participant DrinkService
+    participant DrinkRepository
+    participant Database
+
+    User->>Index: Click on a drink
+    Index->>DrinkDetail: Navigate to DrinkDetail
+    User->>DrinkDetail: Click Delete Button
+    DrinkDetail->>User: Show Confirm Deletion
+    User->>DrinkDetail: Confirm Deletion
+    DrinkDetail->>DrinkController: RemoveDrink(id)
+    DrinkController->>ProxyDrinkService: DeleteDrink(drinkId)
+    ProxyDrinkService->>WebAPI.DrinkController: HTTP Drink/delete/{drinkId}
+    WebAPI.DrinkController->>DrinkService: DeleteDrink(drinkId)
+    DrinkService->>DrinkRepository: DeleteDrink(drinkId)
+    DrinkRepository->>Database: Delete Drink by drinkId
+    Database-->>DrinkRepository: (void)
+    DrinkRepository-->>DrinkService: (void)
+    DrinkService-->>WebAPI.DrinkController: (void)
+    WebAPI.DrinkController-->>ProxyDrinkService: HTTP 200 OK
+    ProxyDrinkService-->>DrinkController: (void)
+    DrinkController-->>Index: Navigate to Index
+    Index-->>User: Show updated Home screen
