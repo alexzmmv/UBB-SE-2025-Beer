@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
-using DataAccess.Model.AdminDashboard;
+using DataAccess.Constants;
 using DataAccess.Model.Authentication;
 using DataAccess.OAuthProviders;
 using DataAccess.Service.Interfaces;

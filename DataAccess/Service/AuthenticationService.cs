@@ -6,10 +6,10 @@ using DataAccess.AuthProviders.LinkedIn;
 using DataAccess.Model.Authentication;
 using DataAccess.OAuthProviders;
 using IRepository;
-using DataAccess.Model.AdminDashboard;
 using static DataAccess.AuthProviders.BasicAuthenticationProvider;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
+using DataAccess.Constants;
 
 namespace DataAccess.Service
 {
