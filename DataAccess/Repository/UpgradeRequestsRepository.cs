@@ -22,6 +22,19 @@
             return await dataContext.UpgradeRequests.ToListAsync();
         }
 
+        public async Task AddUpgradeRequest(Guid userId)
+        {
+            var username = dataContext.Users.Where(user => user.UserId == userId).FirstOrDefault();
+
+            await dataContext.UpgradeRequests.AddAsync(
+                new UpgradeRequest
+                {
+                    RequestingUserIdentifier = username.UserId,
+                    RequestingUserDisplayName = username.Username,
+                });
+            await dataContext.SaveChangesAsync();
+        }
+
         public async Task RemoveUpgradeRequestByIdentifier(int upgradeRequestIdentifier)
         {
             UpgradeRequest? upgradeRequest = await dataContext.UpgradeRequests.FirstOrDefaultAsync(ur => ur.UpgradeRequestId == upgradeRequestIdentifier);

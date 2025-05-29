@@ -21,6 +21,17 @@ namespace DataAccess.Service
             this.userRepository = userRepository;
         }
 
+        public async Task AddUpgradeRequest(Guid userId)
+        {
+            try
+            {
+                await this.upgradeRequestsRepository.AddUpgradeRequest(userId);
+            }
+            catch
+            {
+            }
+        }
+
         public async Task<List<UpgradeRequest>> RetrieveAllUpgradeRequests()
         {
             try
