@@ -171,10 +171,32 @@ namespace DataAccess.ServiceProxy
             return reviews.Where(review => review.Content.Contains(content, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
-        Task<IEnumerable<Review>> IReviewService.GetReviewsByRating(int ratingId)
+        public async Task<List<Review>> GetReviewsByDrink(int drinkId)
         {
-            // Make the new route
-            throw new NotImplementedException();
+            try
+            {
+                var response = await this.httpClient.GetAsync($"{ApiRoute}/get-reviews-by-drink?drinkId={drinkId}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error happened while getting reviews for drink with ID {drinkId}:", exception);
+            }
+        }
+
+        public async Task<double> GetAverageRating(int drinkId)
+        {
+            try
+            {
+                var response = await this.httpClient.GetAsync($"{ApiRoute}/get-average-rating-by-drink?drinkId={drinkId}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<double>();
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error happened while getting average rating for drink with ID {drinkId}:", exception);
+            }
         }
     }
 }

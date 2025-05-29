@@ -78,13 +78,6 @@ namespace WinUIApp.WebAPI.Controllers
             await this.reviewService.UpdateReviewVisibility(id, isHidden);
         }
 
-        [HttpGet("get-by-rating")]
-        public IActionResult GetReviewsByRating([FromQuery] int ratingId)
-        {
-            var reviews = reviewService.GetReviewsByRating(ratingId);
-            return Ok(reviews);
-        }
-
         [HttpPost("add")]
         public async Task<int> AddReview([FromBody] Review review)
         {
@@ -113,6 +106,20 @@ namespace WinUIApp.WebAPI.Controllers
         public async Task<IEnumerable<Review>> FilterReviewsByContent([FromQuery] string content)
         {
             return await this.reviewService.FilterReviewsByContent(content);
+        }
+
+        [HttpGet("get-reviews-by-drink")]
+        public async Task<IActionResult> GetReviewsByDrink([FromQuery] int drinkId)
+        {
+            var reviews = await reviewService.GetReviewsByDrink(drinkId);
+            return Ok(reviews);
+        }
+
+        [HttpGet("get-average-rating-by-drink")]
+        public async Task<IActionResult> GetAverageRating([FromQuery] int drinkId)
+        {
+            var averageRating = await reviewService.GetAverageRating(drinkId);
+            return Ok(averageRating);
         }
     }
 }

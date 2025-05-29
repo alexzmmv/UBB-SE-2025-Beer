@@ -42,6 +42,9 @@
 
         Task<List<Review>> FilterReviewsByContent(string content);
 
-        Task<IEnumerable<Review>> GetReviewsByRating(int ratingId);
+        Task<List<Review>> GetReviewsByDrink(int drinkId);
+
+        Task<double> GetAverageRating(int drinkId);
+
     }
 }

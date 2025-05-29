@@ -158,20 +158,16 @@ namespace DataAccess.Repository
 
         public async Task<bool> UpdateReview(Review review)
         {
-            // This should be in the service !!!! (also no throws in the service)
-            //if (string.IsNullOrWhiteSpace(review.Content))
-            //    throw new ArgumentException(RepositoryErrorMessages.EmptyReviewContent, nameof(review.Content));
-
             Review? existingReview = this.dataContext.Reviews.FirstOrDefault(existingReview => existingReview.ReviewId == review.ReviewId);
 
             if (existingReview == null)
             {
-                // Returning false cause there shouldn't be a reason to return back the updated review
                 return false;
             }
 
-            existingReview.RatingId = review.RatingId;
+            existingReview.DrinkId = review.DrinkId;
             existingReview.UserId = review.UserId;
+            existingReview.RatingValue = review.RatingValue;
             existingReview.Content = review.Content;
             existingReview.CreationDate = review.CreationDate ?? existingReview.CreationDate;
             existingReview.IsActive = review.IsActive ?? existingReview.IsActive;
@@ -181,9 +177,25 @@ namespace DataAccess.Repository
             return true;
         }
 
-        public async Task<List<Review>> GetReviewsByRatingId(int ratingId)
+        public async Task<List<Review>> GetReviewsByDrinkId(int drinkId)
         {
-            return await this.dataContext.Reviews.Where(review => review.RatingId == ratingId).ToListAsync();
+            return await dataContext.Reviews
+                .Where(review => review.DrinkId == drinkId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Review>> GetReviewsByUserId(Guid userId)
+        {
+            return await this.dataContext.Reviews
+                .Where(review => review.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Review>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId)
+        {
+            return await this.dataContext.Reviews
+                .Where(review => review.DrinkId == drinkId && review.UserId == userId)
+                .ToListAsync();
         }
     }
 }

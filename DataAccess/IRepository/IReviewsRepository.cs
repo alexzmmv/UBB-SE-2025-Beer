@@ -38,6 +38,11 @@
 
         Task<List<Review>> GetHiddenReviews();
 
-        Task<List<Review>> GetReviewsByRatingId(int ratingId);
+        Task<List<Review>> GetReviewsByDrinkId(int drinkId);
+
+        Task<List<Review>> GetReviewsByUserId(Guid userId);
+
+        Task<List<Review>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId);
+
     }
 }

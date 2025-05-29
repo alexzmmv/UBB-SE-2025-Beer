@@ -190,7 +190,7 @@
         {
             try
             {
-                return await reviewsRepository.GetReviewsByUser(userId);
+                return await reviewsRepository.GetReviewsByUserId(userId);
             }
             catch
             {
@@ -233,16 +233,37 @@
             }
         }
 
-        // I think I broke something, I don't know why the namespace would be required
-        async Task<IEnumerable<Review>> IReviewService.GetReviewsByRating(int ratingId)
+        public async Task<List<Review>> GetReviewsByDrink(int drinkId)
         {
             try
             {
-                return await this.reviewsRepository.GetReviewsByRatingId(ratingId);
+                return await reviewsRepository.GetReviewsByDrinkId(drinkId);
             }
             catch
             {
                 return new List<Review>();
+            }
+        }
+
+        public async Task<double> GetAverageRating(int drinkId)
+        {
+            try
+            {
+                var allReviews = await reviewsRepository.GetReviewsByDrinkId(drinkId);
+
+                var validRatings = allReviews
+                    .Where(review => review.RatingValue.HasValue)
+                    .Select(review => review.RatingValue.Value)
+                    .ToList();
+
+                if (!validRatings.Any())
+                    return 0.0;
+
+                return (double)validRatings.Average();
+            }
+            catch
+            {
+                return 0.0;
             }
         }
     }

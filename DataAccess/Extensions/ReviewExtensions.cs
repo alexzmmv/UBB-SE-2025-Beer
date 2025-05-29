@@ -23,8 +23,10 @@ namespace WinUIApp.WebAPI.Extensions
         public static bool IsValid(this Review review)
         {
             return review != null 
-                && !string.IsNullOrWhiteSpace(review.Content) 
-                && review.Content.Length <= ReviewDomainConstants.MaxContentLength;
+                && !string.IsNullOrWhiteSpace(review.Content)
+                && review.Content.Length <= ReviewDomainConstants.MaxContentLength
+                && review.RatingValue >= ReviewDomainConstants.MinRatingValue
+                && review.RatingValue <= ReviewDomainConstants.MaxRatingValue;
         }
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace WinUIApp.WebAPI.Extensions
             return new Review
             {
                 ReviewId = reviewDto.ReviewId,
-                RatingId = reviewDto.RatingId,
+                DrinkId = reviewDto.DrinkId,
                 UserId = reviewDto.UserId,
                 Content = reviewDto.Content,
                 CreationDate = reviewDto.CreationDate,
