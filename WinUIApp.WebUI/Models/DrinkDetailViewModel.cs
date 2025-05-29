@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices.Models;
+using WinUIApp.WebAPI.Models;
 using WinUIApp.WebUI.Models;
 
 namespace WinUIApp.WebUI.Models
@@ -15,7 +16,7 @@ namespace WinUIApp.WebUI.Models
             NewReview = new RatingReviewViewModel();
         }
         
-        public required Drink Drink { get; set; }
+        public required DrinkDTO Drink { get; set; }
         public required string CategoriesDisplay { get; set; }
         public double AverageRatingScore { get; set; }
         public List<Review> Reviews { get; set; }

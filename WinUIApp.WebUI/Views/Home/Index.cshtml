@@ -118,7 +118,7 @@
                 <div class="modern-card mx-auto" style="max-width: 500px;">
                     @await Html.PartialAsync(
                         "~/Views/Drink/DrinkElement.cshtml",
-                        new WinUIApp.WebUI.Models.DrinkElementViewModel { Drink = Model.DrinkOfTheDay },
+                        new WinUIApp.WebUI.Models.DrinkElementViewModel { Drink = Model.Drink },
                         null
                     )
                 </div>

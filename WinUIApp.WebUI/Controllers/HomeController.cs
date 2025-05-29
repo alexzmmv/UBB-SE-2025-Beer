@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
+using WinUIApp.WebAPI.Models;
 using WinUIApp.WebUI.Models;
 
 
@@ -42,10 +43,10 @@ public class HomeController : Controller
 
         var homeViewModel = new HomeViewModel
         {
-            DrinkOfTheDay = drinkOfTheDay,
+            Drink = drinkOfTheDay,
             drinkCategories = drinkCategories,
             drinkBrands = drinkBrands,
-            drinks = drinks ?? new List<Drink>() // Ensure drinks is not null
+            drinks = drinks ?? new List<DrinkDTO>() // Ensure drinks is not null
         };
 
         return View(homeViewModel);

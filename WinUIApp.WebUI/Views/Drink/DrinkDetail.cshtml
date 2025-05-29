@@ -180,7 +180,8 @@
                                     </div>
                                     <div class="d-flex align-items-center">
                                         <span class="badge bg-light text-dark me-2" title="User ID">User @rating.UserId</span>
-                                        <span class="text-muted small">@rating.RatingDate.ToString("MMM dd, yyyy")</span>
+                                        @* <span class="text-muted small">@rating.RatingDate.ToString("MMM dd, yyyy")</span> *@
+                                         <span class="text-muted small">@rating.RatingDate.ToString()</span> 
                                     </div>
                                 </div>
                             </div>
@@ -193,7 +194,8 @@
                                         <div class="review-item p-3 mb-3 bg-light rounded-3">
                                             <p class="mb-2 fst-italic">@review.Content</p>
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <span class="text-muted small">@review.CreationDate.ToString("MMM dd, yyyy")</span>
+                                                @* <span class="text-muted small">@review.CreationDate.ToString("MMM dd, yyyy")</span> *@
+                                                <span class="text-muted small">@review.CreationDate.ToString()</span>
                                                 <span class="badge bg-secondary">User @review.UserId</span>
                                             </div>
                                         </div>

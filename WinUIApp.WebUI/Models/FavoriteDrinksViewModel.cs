@@ -1,10 +1,10 @@
 
-using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.WebUI.Models
 {
     public class FavoriteDrinksViewModel
     {
-        public List<Drink> FavoriteDrinks { get; set; } = new();
+        public List<DrinkDTO> FavoriteDrinks { get; set; } = new();
     }
 }

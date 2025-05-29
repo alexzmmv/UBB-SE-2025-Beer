@@ -16,7 +16,7 @@ namespace WinUIApp.WebUI.Controllers
 
         public IActionResult FavoriteDrinks()
         {
-            Guid CurrentUserId = new Guid();
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId"));
 
             var favoriteDrinks = this.drinkService.GetUserPersonalDrinkList(CurrentUserId);
 

@@ -12,6 +12,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinUIApp.Tests", "WinUIApp.Tests\WinUIApp.Tests.csproj", "{10F6F909-49D4-1623-043C-3F4DDDE6775F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinUIApp.WebUI", "WinUIApp.WebUI\WinUIApp.WebUI.csproj", "{303BD13B-1C03-4319-9CEB-92374A67D16B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8FC0E1F7-A26A-1C1C-C8D8-AC28BBB51EDF} = {8FC0E1F7-A26A-1C1C-C8D8-AC28BBB51EDF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

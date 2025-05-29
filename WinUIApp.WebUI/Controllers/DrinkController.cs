@@ -24,7 +24,7 @@ namespace WinUIApp.WebUI.Controllers
             this.ratingService = ratingService;
         }
 
-        public async Task<IActionResult> DrinkDetail(int id)
+        public IActionResult DrinkDetail(int id)
         {
             var drink = drinkService.GetDrinkById(id);
             if (drink == null)
@@ -38,21 +38,21 @@ namespace WinUIApp.WebUI.Controllers
             
             foreach (var rating in ratings)
             {
-                var ratingReviews = (await reviewService.GetReviewsByRating(rating.RatingId)).ToList();
+                var ratingReviews = reviewService.GetReviewsByRating(rating.RatingId).Result.ToList();
                 reviews.AddRange(ratingReviews);
                 
                 // Group reviews by rating ID
                 reviewsByRating[rating.RatingId] = ratingReviews;
             }
 
-            Guid CurrentUserId = new Guid(); // Using a default user ID for now
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId"));
             bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
             var viewModel = new DrinkDetailViewModel
             {
                 Drink = drink,
-                CategoriesDisplay = drink.DrinkCategories != null 
-                    ? string.Join(", ", drink.DrinkCategories.Select(c => c.Category.CategoryName)) 
+                CategoriesDisplay = drink.CategoryList != null 
+                    ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName)) 
                     : string.Empty,
                 AverageRatingScore = ratingService.GetAverageRating(id),
                 Ratings = ratings.ToList(),
@@ -162,7 +162,7 @@ namespace WinUIApp.WebUI.Controllers
         {
             try
             {
-                Guid CurrentUserId = new Guid(); // Using a default user ID for now
+                Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId"));
                 bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
                 
                 if (isInFavorites)
