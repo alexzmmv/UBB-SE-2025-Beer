@@ -60,5 +60,16 @@ namespace DataAccess.ServiceProxy
             string json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<UpgradeRequest>(json);
         }
+
+        public async Task AddUpgradeRequest(Guid userId)
+        {
+            StringContent content = new StringContent(
+                JsonConvert.SerializeObject(userId),
+                Encoding.UTF8,
+                "application/json");
+
+            HttpResponseMessage response = await httpClient.PostAsync($"{baseUrl}/{ApiBaseRoute}/add", content);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

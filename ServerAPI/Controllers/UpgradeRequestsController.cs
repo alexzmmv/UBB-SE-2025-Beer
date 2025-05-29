@@ -21,6 +21,12 @@ namespace ServerAPI.Controllers
             return await this.upgradeRequestsService.RetrieveAllUpgradeRequests();
         }
 
+        [HttpPost("add")]
+        public async Task Add([FromBody] Guid userId)
+        {
+            await this.upgradeRequestsService.AddUpgradeRequest(userId);
+        }
+
         [HttpDelete("{id}/delete")]
         public async Task Delete(int id)
         {
