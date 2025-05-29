@@ -83,6 +83,13 @@ namespace WinUIApp.WebAPI.Services
         public void DeleteRatingById(int ratingId) => 
             this.ratingRepository.DeleteRating(ratingId);
 
+        /// <summary>
+        /// Retrieves all ratings associated with a specific user.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>A collection of <see cref="RatingDTO"/> instances for the user.</returns>
+        public IEnumerable<Rating> GetRatingsByUser(Guid userId) => 
+            this.ratingRepository.GetRatingsByUserId(userId);
 
         private const double NoRatingsValue = 0.0;
         /// <summary>

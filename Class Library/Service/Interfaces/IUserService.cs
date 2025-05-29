@@ -37,5 +37,7 @@
         Task<bool> CreateUser(User user);
 
         Task<List<User>> GetUsersWhoHaveSubmittedAppeals();
+
+        Task<List<User>> GetUsersWithHiddenReviews();
     }
 }

@@ -224,5 +224,17 @@
                 return new List<User>();
             }
         }
+
+        public async Task<List<User>> GetUsersWithHiddenReviews()
+        {
+            try
+            {
+                return await this.userRepository.GetUsersWithHiddenReviews();
+            }
+            catch
+            {
+                return new List<User>();
+            }
+        }
     }
 }

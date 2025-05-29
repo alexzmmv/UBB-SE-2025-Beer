@@ -61,7 +61,7 @@ namespace WinUIApp.WebAPI.Repositories
 
             this.dbContext.Ratings.Add(rating);
             this.dbContext.SaveChanges();
-            
+
             return rating;
         }
 
@@ -96,6 +96,14 @@ namespace WinUIApp.WebAPI.Repositories
 
             this.dbContext.Ratings.Remove(rating);
             this.dbContext.SaveChanges();
+        }
+
+        /// <inheritdoc/>
+        public List<Rating> GetRatingsByUserId(Guid userId)
+        {
+            return this.dbContext.Ratings
+                .Where(rating => rating.UserId == userId)
+                .ToList();
         }
     }
 }

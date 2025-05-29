@@ -28,5 +28,7 @@
         public Task<bool> CreateUser(User user);
 
         public Task<bool> UpdateUser(User user);
+
+        Task<List<User>> GetUsersWithHiddenReviews();
     }
 }

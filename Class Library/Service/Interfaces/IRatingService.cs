@@ -11,5 +11,7 @@ namespace WinUIApp.ProxyServices
         public Rating UpdateRating(Rating rating);
         public void DeleteRatingById(int ratingId);
         public double GetAverageRating(int productId);
+
+        public IEnumerable<Rating> GetRatingsByUser(Guid userId);
     }
 }

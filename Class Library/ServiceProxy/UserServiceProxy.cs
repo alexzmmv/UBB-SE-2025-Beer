@@ -183,5 +183,13 @@ namespace DrinkDb_Auth.ServiceProxy
                 }
                 response.EnsureSuccessStatusCode();
         }
+
+        public async Task<List<User>> GetUsersWithHiddenReviews()
+        {
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{ApiRoute}/hidden-reviews");
+            response.EnsureSuccessStatusCode();
+            List<User>? users = await response.Content.ReadFromJsonAsync<List<User>>(jsonOptions);
+            return users ?? new List<User>();
+        }
     }
 }
