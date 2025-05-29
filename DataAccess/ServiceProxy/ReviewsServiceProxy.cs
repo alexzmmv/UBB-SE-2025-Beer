@@ -60,11 +60,11 @@ namespace DataAccess.ServiceProxy
             {
                 if (review.IsHidden == false)
                 {
-                    average += (double)review.Rating.RatingValue;
+                    average += review.RatingValue ?? 0;
                     numberOfVisibleReviews++;
                 }
             }
-            return average / numberOfVisibleReviews;
+            return numberOfVisibleReviews > 0 ? average / numberOfVisibleReviews : 0;
         }
 
         public async Task<List<Review>> GetFlaggedReviews(int minFlags)

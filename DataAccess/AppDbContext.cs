@@ -30,7 +30,6 @@ public class AppDbContext : DbContext, IAppDbContext
     public virtual DbSet<DrinkOfTheDay> DrinkOfTheDays { get; set; }
     public virtual DbSet<UserDrink> UserDrinks { get; set; }
     public virtual DbSet<Review> Reviews { get; set; }
-    public virtual DbSet<Rating> Ratings { get; set; }
     public virtual DbSet<Session> Sessions { get; set; }
     public virtual DbSet<Role> Roles { get; set; }
     public virtual DbSet<UpgradeRequest> UpgradeRequests { get; set; }

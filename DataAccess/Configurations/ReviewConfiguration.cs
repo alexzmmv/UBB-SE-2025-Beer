@@ -19,35 +19,31 @@ namespace WinUiApp.Data.Configurations
             builder.Property(review => review.UserId)
                    .IsRequired();
 
-            builder.Property(rating => rating.RatingValue)
+            builder.Property(review => review.RatingValue)
                 .HasColumnType("float");
             // Added IsRequired
             builder.Property(review => review.Content)
                    .HasColumnType("text")
                    .IsRequired();
 
-            builder.Property(review => review.CreationDate)
-                   .HasColumnType("datetime");
-
             builder.Property(review => review.IsActive)
                    .HasColumnType("tinyint")
                    .HasDefaultValue(null);
 
-            builder.HasOne<Drink>()
+            builder.HasOne(review => review.Drink)
                 .WithMany()
-                .HasForeignKey(d => d.DrinkId)
+                .HasForeignKey(review => review.DrinkId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Leaving this as it was from 923
             builder.HasOne(review => review.User)
                    .WithMany()
                    .HasForeignKey(review => review.UserId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasIndex(rating => new { rating.UserId, rating.DrinkId })
+            builder.HasIndex(review => new { review.UserId, review.DrinkId })
                 .IsUnique();
 
-            builder.Property(currentReview => currentReview.CreatedDate).IsRequired();
+            builder.Property(currentReview => currentReview.CreatedDate).HasColumnType("datetime").IsRequired();
             builder.Property(currentReview => currentReview.NumberOfFlags).IsRequired();
             builder.Property(currentReview => currentReview.IsHidden).IsRequired();
         }

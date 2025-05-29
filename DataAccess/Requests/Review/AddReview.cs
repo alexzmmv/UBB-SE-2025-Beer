@@ -8,8 +8,8 @@ using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.ProxyServices.Models
 {
-    public class AddRating
+    public class AddReview
     {
-        public Rating ratingDto { get; set; }
+        public Review reviewDto { get; set; }
     }
 }

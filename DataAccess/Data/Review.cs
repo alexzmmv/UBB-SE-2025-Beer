@@ -50,11 +50,7 @@ namespace WinUiApp.Data.Data
 
         public string Content { get; set; }
 
-        public DateTime? CreationDate { get; set; }
-
         public bool? IsActive { get; set; }
-
-        public Rating Rating { get; set; }
 
         public User User { get; set; }
         

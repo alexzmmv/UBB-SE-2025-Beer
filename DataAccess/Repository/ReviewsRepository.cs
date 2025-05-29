@@ -56,14 +56,8 @@ namespace DataAccess.Repository
                 return 0.0;
             }
 
-            float? average = visibleReviews.Average(r => r.Rating?.RatingValue);
-
-            if (average == null)
-            {
-                return 0.0;
-            }
-
-            return Math.Round((double)average, 1);
+            double average = visibleReviews.Average(r => r.RatingValue ?? 0);
+            return Math.Round(average, 1);
         }
 
         public async Task<List<Review>> GetMostRecentReviews(int count)
@@ -169,7 +163,7 @@ namespace DataAccess.Repository
             existingReview.UserId = review.UserId;
             existingReview.RatingValue = review.RatingValue;
             existingReview.Content = review.Content;
-            existingReview.CreationDate = review.CreationDate ?? existingReview.CreationDate;
+            existingReview.CreatedDate = review.CreatedDate;
             existingReview.IsActive = review.IsActive ?? existingReview.IsActive;
 
             await this.dataContext.SaveChangesAsync();

@@ -1,6 +1,6 @@
 namespace WinUiApp.Data.Data;
 
-public class AddRatingRequest
+public class AddReviewRequest
 {
-    public Rating Rating { get; set; }
+    public Review Review { get; set; }
 }

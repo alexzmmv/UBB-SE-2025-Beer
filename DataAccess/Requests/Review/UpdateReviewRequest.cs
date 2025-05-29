@@ -7,9 +7,9 @@ using WinUiApp.Data.Data;
 
 namespace WinUIApp.ProxyServices.Models
 {
-    public class UpdateRatingRequest
+    public class UpdateReviewRequest
     {
-        public Rating Rating { get; set; }
+        public Review Review { get; set; }
     }
 
 }

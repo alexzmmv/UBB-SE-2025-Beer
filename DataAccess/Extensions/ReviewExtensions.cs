@@ -36,20 +36,20 @@ namespace WinUIApp.WebAPI.Extensions
         public static void Activate(this Review review)
         {
             review.IsActive = true;
-            review.CreationDate = DateTime.Now;
+            review.CreatedDate = DateTime.Now;
         }
 
         public static Review? ToDataModel(this Review? reviewDto)
         {
             if (reviewDto == null) return null;
-            
+
             return new Review
             {
                 ReviewId = reviewDto.ReviewId,
                 DrinkId = reviewDto.DrinkId,
                 UserId = reviewDto.UserId,
                 Content = reviewDto.Content,
-                CreationDate = reviewDto.CreationDate,
+                CreatedDate = reviewDto.CreatedDate,
                 IsActive = reviewDto.IsActive
             };
         }
