@@ -53,7 +53,7 @@ namespace WinUIApp.WebUI.Controllers
                     addViewModel.DrinkBrandName,
                     addViewModel.DrinkAlcoholPercentage
                     );
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "HomePage");
             }
             else
             {

@@ -1,12 +1,12 @@
 using WinUiApp.Data.Data;
-using WinUIApp.ProxyServices.Models;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.WebUI.Models;
 
 public class HomeViewModel
 {
-    public Drink DrinkOfTheDay { get; set; }
+    public required DrinkDTO Drink { get; set; }
     public List<Category> drinkCategories { get; set; }
     public List<Brand> drinkBrands { get; set; }
-    public List<Drink> drinks { get; set; }
+    public List<DrinkDTO> drinks { get; set; }
 }

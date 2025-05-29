@@ -78,22 +78,20 @@ namespace WinUIApp.WebAPI.Repositories
                 .Include(drink => drink.DrinkCategories)
                     .ThenInclude(drinkCategory => drinkCategory.Category)
                 .Where(drink => drink.DrinkId == drinkId)
-                .Select(drink => new DrinkDTO(
-                    drink.DrinkId,
-                    drink.DrinkName,
-                    drink.DrinkURL,
-                    drink.DrinkCategories
-                        .Select(drinkCategory => new Category {
+                .Select(drink => new DrinkDTO
+                {
+                    DrinkId = drink.DrinkId,
+                    DrinkName = drink.DrinkName,
+                    CategoryList = drink.DrinkCategories
+                        .Select(drinkCategory => new Category
+                        {
                             CategoryId = drinkCategory.Category!.CategoryId,
-                            CategoryName = drinkCategory.Category.CategoryName})
+                            CategoryName = drinkCategory.Category.CategoryName
+                        })
                         .ToList(),
-                    new Brand
-                    {
-                        BrandId = drink.Brand!.BrandId,
-                        BrandName = drink.Brand.BrandName
-                    },
-                    (float)drink.AlcoholContent
-                ))
+                    DrinkBrand = drink.Brand,
+                    AlcoholContent = (float)drink.AlcoholContent
+                })
                 .FirstOrDefault();
         }
 
@@ -266,7 +264,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// Retrieves the drink of the day.
         /// </summary>
         /// <returns> Drink of the day. </returns>
-        public Models.DrinkDTO GetDrinkOfTheDay()
+        public DrinkDTO GetDrinkOfTheDay()
         {
             var today = DateTime.UtcNow.Date;
 
@@ -283,7 +281,7 @@ namespace WinUIApp.WebAPI.Repositories
             if (drinkOfTheDay == null)
                 throw new Exception("DrinkOfTheDay table is empty.");
 
-            var drink = GetDrinkById(drinkOfTheDay.DrinkId);
+            DrinkDTO drink = GetDrinkById(drinkOfTheDay.DrinkId);
             if (drink is null)
                 throw new Exception($"Drink with ID {drinkOfTheDay.DrinkId} not found.");
 

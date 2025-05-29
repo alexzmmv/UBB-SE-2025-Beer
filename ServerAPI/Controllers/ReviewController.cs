@@ -8,7 +8,7 @@ using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 namespace WinUIApp.WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/reviews")]
     public class ReviewController : ControllerBase
     {
         private readonly IReviewService reviewService;

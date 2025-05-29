@@ -1,10 +1,10 @@
-﻿using WinUiApp.Data.Data;
-using WinUIApp.ProxyServices.Models;
+﻿using WinUIApp.ProxyServices.Models;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.WebUI.Models
 {
     public class DrinkElementViewModel
     {
-        public Drink Drink { get; set; }
+        public DrinkDTO Drink { get; set; }
     }
 }

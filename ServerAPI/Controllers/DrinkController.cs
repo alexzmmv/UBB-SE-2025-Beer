@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DataAccess.Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WinUIApp.WebAPI.Models;
 using WinUIApp.WebAPI.Requests.Drink;
@@ -10,9 +11,9 @@ namespace WinUIApp.WebAPI.Controllers
     [Route("[controller]")]
     public class DrinkController : ControllerBase
     {
-        private readonly IDrinkDTOService drinkService;
+        private readonly IDrinkService drinkService;
 
-        public DrinkController(IDrinkDTOService drinkService)
+        public DrinkController(IDrinkService drinkService)
         {
             this.drinkService = drinkService;
         }
