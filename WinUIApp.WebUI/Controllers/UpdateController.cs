@@ -63,11 +63,7 @@ namespace WinUIApp.WebUI.Controllers
                                 return categories.FirstOrDefault(category => category.CategoryId == categoryId);
                             }).OfType<Category>()],
                         AlcoholContent = updateDrinkViewModel.DrinkAlcoholPercentage,
-                        DrinkBrand = new Brand
-                        {
-                            BrandId = -1,
-                            BrandName = updateDrinkViewModel.DrinkBrandName
-                        }
+                        DrinkBrand = drinkService.GetDrinkBrandNames().FirstOrDefault(brand => brand.BrandName == updateDrinkViewModel.DrinkBrandName)
                     });
                     return RedirectToAction("DrinkDetail", "Drink", new {id = updateDrinkViewModel.DrinkId});
                 }

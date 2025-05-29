@@ -1,3 +1,4 @@
+using DataAccess.Service;
 using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WinUIApp.ProxyServices;
@@ -16,7 +17,7 @@ namespace WinUIApp.WebUI.Controllers
 
         public IActionResult FavoriteDrinks()
         {
-            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId"));
+            Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
 
             var favoriteDrinks = this.drinkService.GetUserPersonalDrinkList(CurrentUserId);
 

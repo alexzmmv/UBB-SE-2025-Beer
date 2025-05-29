@@ -13,11 +13,17 @@ using DrinkDb_Auth.ServiceProxy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data;
+using WinUIApp.ProxyServices;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.IsEssential = true;
+});
 
 DependencyInjection(builder);
 
@@ -52,7 +58,7 @@ static void DependencyInjection(WebApplicationBuilder builder)
     builder.Services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(connectionString));
     builder.Services.AddScoped<AppDbContext>(sp => sp.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext());
 
-    string apiRoute = "http://localhost:5000/";
+    string apiRoute = "http://localhost:5078/";
 
     builder.Services.AddSingleton<ISessionService, SessionServiceProxy>(sp => new SessionServiceProxy(apiRoute));
     builder.Services.AddSingleton<IAuthenticationService>(sp => new AuthenticationServiceProxy(apiRoute));
@@ -64,6 +70,8 @@ static void DependencyInjection(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IAutoCheck, AutoCheckerProxy>(sp => new AutoCheckerProxy(apiRoute));
     builder.Services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
     builder.Services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));
+    builder.Services.AddSingleton<IDrinkService, ProxyDrinkService>(sp => new ProxyDrinkService(apiRoute));
+    builder.Services.AddTransient<IRatingService, ProxyRatingService>(sp => new ProxyRatingService(apiRoute));
 
     builder.Services.AddSingleton<LinkedInLocalOAuthServer>(sp =>
         new LinkedInLocalOAuthServer("http://localhost:8891/"));

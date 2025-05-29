@@ -10,13 +10,13 @@ using WinUIApp.WebUI.Models;
 
 namespace WinUIApp.WebUI.Controllers;
 
-public class HomeController : Controller
+public class HomePageController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<HomePageController> _logger;
 
     private readonly IDrinkService drinkService;
 
-    public HomeController(ILogger<HomeController> logger, IDrinkService drinkService)
+    public HomePageController(ILogger<HomePageController> logger, IDrinkService drinkService)
     {
         _logger = logger;
         this.drinkService = drinkService;

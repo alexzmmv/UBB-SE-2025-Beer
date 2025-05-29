@@ -117,7 +117,7 @@ namespace DataAccess.ServiceProxy
             response.EnsureSuccessStatusCode();
             List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
 
-            return reviews.Where(review => review.UserId == userId).ToList();
+            return reviews.Where(review => review.UserId == userId).ToList()??new List<Review>();
         }
 
         public async Task<List<Review>> GetReviewsSince(DateTime date)

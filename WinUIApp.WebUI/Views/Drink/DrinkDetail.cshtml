@@ -90,7 +90,7 @@
             </div>
 
             <div class="action-buttons">
-                <form method="get" asp-controller="Update" asp-action="Drink" asp-route-id="@Model.Drink.DrinkId">
+                <form method="get" asp-controller="Update" asp-action="Drink" asp-route-id="@Model.Drink.DrinkId" >
                     <button type="submit" class="action-btn btn btn-outline-primary">
                         <i class="bi bi-pencil-square me-2"></i>Update Details
                     </button>
@@ -127,7 +127,7 @@
                         <i class="bi bi-star-fill text-warning me-2"></i>
                         Rate This Drink
                     </h4>
-                    <form asp-action="AddRatingAndReview" asp-controller="Drink" method="post" class="review-form">
+                    <form asp-action="AddRatingAndReview" asp-controller="Drink" asp-route-id="@Model.Drink.DrinkId"  method="post" class="review-form">
                         <input type="hidden" name="DrinkId" value="@Model.Drink.DrinkId" />
                         <input type="hidden" name="UserId" value="1" />
                         
@@ -206,7 +206,7 @@
                                     <p class="text-muted mb-3">No reviews yet for this rating.</p>
                                 }
                                 <div class="mt-3">
-                                    <a href="@Url.Action("AddReviewToRating", "Drink", new { ratingId = rating.RatingId, drinkId = Model.Drink.DrinkId })" 
+                                    <a href="@Url.Action("AddReviewToRating", "Drink", new { ratingId = rating.RatingId, id = Model.Drink.DrinkId })" 
                                        class="btn btn-sm btn-outline-primary btn-add-review">
                                         <i class="bi bi-chat-dots me-1"></i> Add Your Review
                                     </a>

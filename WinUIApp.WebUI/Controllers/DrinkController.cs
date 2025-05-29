@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using DataAccess.Service;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +46,7 @@ namespace WinUIApp.WebUI.Controllers
                 reviewsByRating[rating.RatingId] = ratingReviews;
             }
 
-            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId"));
+            Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
             bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
             var viewModel = new DrinkDetailViewModel
@@ -162,7 +163,7 @@ namespace WinUIApp.WebUI.Controllers
         {
             try
             {
-                Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId"));
+                Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
                 bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
                 
                 if (isInFavorites)
@@ -190,7 +191,7 @@ namespace WinUIApp.WebUI.Controllers
             try
             {
                 drinkService.DeleteDrink(id);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "HomePage");
             }
             catch (Exception ex)
             {
