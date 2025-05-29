@@ -142,7 +142,7 @@
         {
             try
             {
-                Guid userId = App.CurrentUserId;
+                Guid userId = this.userService.GetCurrentUserId();
                 this.adminService.SendNotificationFromUserToAdmin(
                     senderUserId: userId,
                     userModificationRequestType: "New Drink Request",

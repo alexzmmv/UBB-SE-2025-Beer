@@ -6,6 +6,7 @@ namespace WinUIApp.WebAPI.Models
 {
     using System;
     using System.Collections.Generic;
+    using WinUiApp.Data.Data;
 
     /// <summary>
     /// Represents a drink with associated brand, image, alcohol content, and categories.
@@ -17,7 +18,7 @@ namespace WinUIApp.WebAPI.Models
 
         private string? drinkName;
         private string drinkImageUrl = string.Empty;
-        private List<CategoryDTO> categoryList;
+        private List<Category> categoryList;
         private float alcoholContent;
 
         public DrinkDTO() { }
@@ -32,7 +33,7 @@ namespace WinUIApp.WebAPI.Models
         /// <param name="brandDto">Brand of the drink.</param>
         /// <param name="alcoholContent">Alcohol content percentage.</param>
         /// <exception cref="ArgumentNullException">Thrown when brand is null.</exception>
-        public DrinkDTO(int id, string? drinkName, string imageUrl, List<CategoryDTO> categories, BrandDTO brandDto, float alcoholContent)
+        public DrinkDTO(int id, string? drinkName, string imageUrl, List<Category> categories, Brand brandDto, float alcoholContent)
         {
             this.DrinkId = id;
             this.DrinkName = drinkName;
@@ -68,7 +69,7 @@ namespace WinUIApp.WebAPI.Models
         /// <summary>
         /// Gets or sets the list of categories associated with the drink.
         /// </summary>
-        public List<CategoryDTO> CategoryList
+        public List<Category> CategoryList
         {
             get => this.categoryList;
             set => this.categoryList = value;
@@ -77,7 +78,7 @@ namespace WinUIApp.WebAPI.Models
         /// <summary>
         /// Gets or sets the brand of the drink.
         /// </summary>
-        public BrandDTO DrinkBrand { get; set; }
+        public Brand DrinkBrand { get; set; }
 
         /// <summary>
         /// Gets or sets the alcohol content of the drink as a percentage.

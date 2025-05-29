@@ -66,11 +66,11 @@ namespace WinUIApp
             Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    IConfigurationRoot configuration = new ConfigurationBuilder()
-                        .SetBasePath(AppContext.BaseDirectory)
-                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .Build();
-                    services.AddSingleton<IConfiguration>(configuration);
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
+            services.AddSingleton<IConfiguration>(configuration);
                     string apiRoute = "http://localhost:5280/";
 
                     services.AddSingleton<ISessionService, SessionServiceProxy>(sp => new SessionServiceProxy(apiRoute));

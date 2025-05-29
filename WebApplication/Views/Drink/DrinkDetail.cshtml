@@ -1,0 +1,319 @@
+@model WinUIApp.WebUI.Models.DrinkDetailViewModel
+@{
+    ViewData["Title"] = Model.Drink.DrinkName;
+}
+
+<div class="drink-detail-hero">
+    <div class="container text-center">
+        <h1>@Model.Drink.DrinkName</h1>
+        <img src="@Model.Drink.DrinkImageUrl" alt="@Model.Drink.DrinkName" class="drink-detail-image" />
+
+        <div class="rating-stars mb-3">
+            @{
+                var fullStars = (int)Math.Floor(Model.AverageRatingScore);
+                var hasHalfStar = Model.AverageRatingScore - fullStars >= 0.5;
+                var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            }
+            @for (int i = 0; i < fullStars; i++)
+            {
+            <i class="bi bi-star-fill"></i>
+            }
+            @if (hasHalfStar)
+            {
+            <i class="bi bi-star-half"></i>
+            }
+            @for (int i = 0; i < emptyStars; i++)
+            {
+            <i class="bi bi-star"></i>
+            }
+            <span class="ms-2">@Model.AverageRatingScore.ToString("0.0")</span>
+        </div>
+    </div>
+</div>
+
+<div class="container app-container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="drink-info-card mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="bi bi-shop text-primary me-2"></i>
+                                Brand
+                            </div>
+                            <div class="info-value">@Model.Drink.DrinkBrand.BrandName</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="bi bi-percent text-primary me-2"></i>
+                                Alcohol
+                            </div>
+                            <div class="info-value">@Model.Drink.AlcoholContent%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="bi bi-tags text-primary me-2"></i>
+                                Categories
+                            </div>
+                            <div class="info-value">@Model.CategoriesDisplay</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="bi bi-star-fill text-primary me-2"></i>
+                                Rating
+                            </div>
+                            <div class="info-value">@Model.AverageRatingScore / 5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <form method="get" asp-controller="Update" asp-action="Drink" asp-route-id="@Model.Drink.DrinkId">
+                    <button type="submit" class="action-btn btn btn-outline-primary">
+                        <i class="bi bi-pencil-square me-2"></i>Update Details
+                    </button>
+                </form>
+
+                <div class="dropdown">
+                    <button class="action-btn btn btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-trash3 me-2"></i>Remove
+                    </button>
+                    <ul class="dropdown-menu p-3 shadow">
+                        <li class="text-center mb-2">Are you sure you want to remove this drink?</li>
+                        <li>
+                            <form method="post" asp-action="RemoveDrink" asp-route-id="@Model.Drink.DrinkId">
+                                <button type="submit" class="btn btn-danger w-100">Confirm Removal</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Favorites Toggle -->
+                <form method="post" asp-action="ToggleFavorites" asp-route-id="@Model.Drink.DrinkId">
+                    <button type="submit" class="action-btn btn-favorite btn @(Model.IsInFavorites ? "active" : "")" aria-label="@(Model.IsInFavorites ? "Remove from favorites" : "Add to favorites")">
+                        <i class="bi bi-heart@(Model.IsInFavorites ? "-fill" : "") me-2"></i>
+                        @(Model.IsInFavorites ? "Remove from Favorites" : "Add to Favorites")
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="modern-card rating-summary h-100">
+                <div class="card-body">
+                    <h4 class="mb-4">
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        Rate This Drink
+                    </h4>
+                    <form asp-action="AddRatingAndReview" asp-controller="Drink" method="post" class="review-form">
+                        <input type="hidden" name="DrinkId" value="@Model.Drink.DrinkId" />
+                        <input type="hidden" name="UserId" value="1" />
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-bold mb-2">How would you rate this drink?</label>
+                            <div class="star-rating d-flex gap-2 fs-3 mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input visually-hidden" type="radio" name="Score" id="star@i" value="@i" required>
+                                    <label class="form-check-label rating-star" for="star@i">?</label>
+                                </div>
+                                }
+                            </div>
+                            <div class="mt-2">
+                                <span id="ratingInfo" class="text-muted small">Select your rating</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mt-3">
+                            <i class="bi bi-send me-2"></i>Submit Rating
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reviews-section">
+        <h2>
+            <i class="bi bi-chat-left-text me-2"></i>
+            Ratings & Reviews
+        </h2>
+
+        @if (Model.Ratings != null && Model.Ratings.Count > 0)
+        {
+        <div class="row">
+            @foreach (var rating in Model.Ratings)
+                {
+            <div class="col-md-6 mb-4">
+                <div class="review-card" data-rating-id="@rating.RatingId">
+                    <div class="review-header">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="rating-value">
+                                @for (int i = 1; i <= 5; i++)
+                                        {
+                                <i class="bi @(i <= rating.RatingValue ? "bi-star-fill" : "bi-star") text-warning"></i>
+                                        }
+                                <span class="ms-2 fw-bold">@rating.RatingValue</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-light text-dark me-2" title="User ID">User @rating.UserId</span>
+                                <span class="text-muted small">@rating.RatingDate.ToString("MMM dd, yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (Model.ReviewsByRating.ContainsKey(rating.RatingId) && Model.ReviewsByRating[rating.RatingId].Count > 0)
+                                {
+                        <h6 class="fw-bold mb-3">Reviews:</h6>
+                        @foreach(var review in Model.ReviewsByRating[rating.RatingId])
+                                    {
+                        <div class="review-item p-3 mb-3 bg-light rounded-3">
+                            <p class="mb-2 fst-italic">@review.Content</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">@review.CreationDate.ToString("MMM dd, yyyy")</span>
+                                <span class="badge bg-secondary">User @review.UserId</span>
+                            </div>
+                        </div>
+                                    }
+                                }
+                                else
+                                {
+                        <p class="text-muted mb-3">No reviews yet for this rating.</p>
+                                }
+                        <div class="mt-3">
+                            <a href="@Url.Action("AddReviewToRating", "Drink", new { ratingId = rating.RatingId, drinkId = Model.Drink.DrinkId })"
+                               class="btn btn-sm btn-outline-primary btn-add-review">
+                                <i class="bi bi-chat-dots me-1"></i> Add Your Review
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                }
+        </div>
+        }
+        else
+        {
+        <div class="modern-card text-center p-5 mb-4">
+            <i class="bi bi-star fs-1 text-muted mb-3"></i>
+            <h4>No Ratings Yet</h4>
+            <p class="text-muted mb-3">Be the first to rate and review this drink!</p>
+            <button class="btn btn-primary px-4 py-2">
+                <i class="bi bi-star-fill me-2"></i>
+                Add Rating
+            </button>
+        </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Enhanced star rating selection experience with descriptions
+            const stars = document.querySelectorAll('.star-rating input[type="radio"]');
+            const starLabels = document.querySelectorAll('.rating-star');
+            const ratingDescriptions = [
+                "Poor", "Fair", "Good", "Very Good", "Excellent"
+            ];
+            const ratingInfo = document.getElementById('ratingInfo');
+
+            // Set up initial styling
+            stars[0].checked = true;
+            updateStarsDisplay(0);
+            ratingInfo.textContent = `1 - ${ratingDescriptions[0]}`;
+
+            // Process each star input
+            starLabels.forEach((label, index) => {
+                // Handle hover effect
+                label.addEventListener('mouseenter', function() {
+                    updateStarsDisplay(index);
+                });
+
+                // Handle click
+                label.addEventListener('click', function() {
+                    stars[index].checked = true;
+                    updateStarsDisplay(index);
+                    ratingInfo.textContent = `${index + 1} - ${ratingDescriptions[index]}`;
+                });
+            });
+
+            // Update display when mouse leaves the rating area
+            document.querySelector('.star-rating').addEventListener('mouseleave', function() {
+                for (let i = 0; i < stars.length; i++) {
+                    if (stars[i].checked) {
+                        updateStarsDisplay(i);
+                        break;
+                    }
+                }
+            });
+
+            // Function to update stars display based on selection
+            function updateStarsDisplay(selectedIndex) {
+                starLabels.forEach((label, i) => {
+                    if (i <= selectedIndex) {
+                        label.classList.add('text-warning');
+                    } else {
+                        label.classList.remove('text-warning');
+                    }
+                });
+
+                ratingInfo.textContent = `${selectedIndex + 1} - ${ratingDescriptions[selectedIndex]}`;
+            }
+
+            // Add subtle interactivity to review cards
+            document.querySelectorAll('.review-card').forEach(function(card) {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('shadow-sm');
+                    this.style.transform = 'translateY(-3px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('shadow-sm');
+                    this.style.transform = 'translateY(0)';
+                });
+
+                // Stagger the appearance animations
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + Math.random() * 300);
+            });
+
+            // Success message handling
+            const successMessage = document.querySelector('.alert-success');
+            if (successMessage) {
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                successMessage.classList.add('highlight-effect');
+
+                setTimeout(() => {
+                    successMessage.classList.remove('highlight-effect');
+                }, 3000);
+            }
+        });
+    </script>
+}

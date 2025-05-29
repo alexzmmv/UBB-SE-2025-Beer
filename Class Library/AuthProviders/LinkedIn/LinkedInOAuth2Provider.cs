@@ -57,7 +57,6 @@ namespace DataAccess.AuthProviders.LinkedIn
                         NumberOfDeletedReviews = 0,
                         HasSubmittedAppeal = false,
                         AssignedRole = RoleType.User,
-                        FullName = name,
                     };
 
                     bool created = this.userService.CreateUser(newUser).Result;

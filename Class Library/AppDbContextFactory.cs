@@ -8,7 +8,7 @@ namespace WinUiApp.Data
     {
         public AppDbContext CreateDbContext(string[] args)
         {
-            var basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../WinUIApp.WebAPI"));
+            var basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "."));
 
             var config = new ConfigurationBuilder()
                 .SetBasePath(basePath)

@@ -1,4 +1,5 @@
-﻿using WinUIApp.WebAPI.Models;
+﻿using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.WebAPI.Requests.Drink
 {
@@ -6,7 +7,7 @@ namespace WinUIApp.WebAPI.Requests.Drink
     {
         public string inputtedDrinkName { get; set; }
         public string inputtedDrinkPath { get; set; }
-        public List<CategoryDTO> inputtedDrinkCategories { get; set; }
+        public List<Category> inputtedDrinkCategories { get; set; }
         public string inputtedDrinkBrandName { get; set; }
         public float inputtedAlcoholPercentage { get; set; }
     }

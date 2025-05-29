@@ -16,6 +16,7 @@ namespace WinUIApp.WebAPI.Repositories
     using WinUiApp.Data;
     using WinUiApp.Data.Data;
     using WinUiApp.Data.Interfaces;
+    using WinUIApp.WebAPI.Models;
 
     /// <summary>
     /// Repository for managing drink-related operations.
@@ -49,12 +50,17 @@ namespace WinUIApp.WebAPI.Repositories
                     drink.DrinkName,
                     drink.DrinkURL,
                     drink.DrinkCategories
-                            .Select(drinkCategory => new Models.CategoryDTO(
-                                drinkCategory.Category!.CategoryId,
-                                drinkCategory.Category.CategoryName))
+                            .Select(drinkCategory => new Category
+                            {
+                                CategoryId = drinkCategory.Category!.CategoryId,
+                                CategoryName = drinkCategory.Category.CategoryName
+                            })
                             .ToList(),
-                    new Models.BrandDTO(drink.Brand!.BrandId,
-                                        drink.Brand.BrandName),
+                    new Brand
+                    {
+                        BrandId = drink.Brand!.BrandId,
+                        BrandName = drink.Brand.BrandName
+                    },
                     (float)drink.AlcoholContent
                 ))
                 .ToList();
@@ -65,24 +71,27 @@ namespace WinUIApp.WebAPI.Repositories
         /// </summary>
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> The drink. </returns>
-        public Models.DrinkDTO? GetDrinkById(int drinkId)
+        public DrinkDTO? GetDrinkById(int drinkId)
         {
             return dbContext.Drinks
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                     .ThenInclude(drinkCategory => drinkCategory.Category)
                 .Where(drink => drink.DrinkId == drinkId)
-                .Select(drink => new Models.DrinkDTO(
+                .Select(drink => new DrinkDTO(
                     drink.DrinkId,
                     drink.DrinkName,
                     drink.DrinkURL,
                     drink.DrinkCategories
-                        .Select(drinkCategory => new Models.CategoryDTO(
-                            drinkCategory.Category!.CategoryId,
-                            drinkCategory.Category.CategoryName))
+                        .Select(drinkCategory => new Category {
+                            CategoryId = drinkCategory.Category!.CategoryId,
+                            CategoryName = drinkCategory.Category.CategoryName})
                         .ToList(),
-                    new Models.BrandDTO(drink.Brand!.BrandId,
-                            drink.Brand.BrandName),
+                    new Brand
+                    {
+                        BrandId = drink.Brand!.BrandId,
+                        BrandName = drink.Brand.BrandName
+                    },
                     (float)drink.AlcoholContent
                 ))
                 .FirstOrDefault();
@@ -107,7 +116,7 @@ namespace WinUIApp.WebAPI.Repositories
             return brand;
         }
 
-        private Category RetrieveCategory(Models.CategoryDTO currentCategoryDto)
+        private Category RetrieveCategory(Category currentCategoryDto)
         {
             var dataCategory = dbContext.Categories
                     .FirstOrDefault(category => category.CategoryId == currentCategoryDto.CategoryId);
@@ -141,7 +150,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="brandName"> Brand name. </param>
         /// <param name="alcoholContent"> Alcohol content. </param>
         /// 
-        public void AddDrink(string drinkName, string drinkUrl, List<Models.CategoryDTO> categories, string brandName, float alcoholContent)
+        public void AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent)
         {
             var brand = RetrieveBrand(brandName);
 
@@ -380,12 +389,17 @@ namespace WinUIApp.WebAPI.Repositories
                     drink.DrinkName,
                     drink.DrinkURL,
                     drink.DrinkCategories
-                            .Select(drinkCategory => new Models.CategoryDTO(
-                                drinkCategory.Category!.CategoryId,
-                                drinkCategory.Category.CategoryName))
+                            .Select(drinkCategory => new Category
+                            {
+                                CategoryId = drinkCategory.Category!.CategoryId,
+                                CategoryName = drinkCategory.Category.CategoryName
+                            })
                             .ToList(),
-                    new Models.BrandDTO(drink.Brand!.BrandId,
-                                        drink.Brand.BrandName),
+                    new Brand
+                    {
+                        BrandId = drink.Brand!.BrandId,
+                        BrandName = drink.Brand.BrandName
+                    },
                     (float)drink.AlcoholContent
                 ))
                 .ToList();
@@ -492,11 +506,11 @@ namespace WinUIApp.WebAPI.Repositories
         /// Retrieves a list of all available drink categories.
         /// </summary>
         /// <returns> List of all categories. </returns>
-        public List<Models.CategoryDTO> GetDrinkCategories()
+        public List<Category> GetDrinkCategories()
         {
             return dbContext.Categories
             .OrderBy(category => category.CategoryId)
-            .Select(category => new Models.CategoryDTO(
+            .Select(category => new Category(
                 category.CategoryId,
                 category.CategoryName))
             .ToList();
@@ -506,12 +520,14 @@ namespace WinUIApp.WebAPI.Repositories
         /// Retrieves a list of all available drink brands.
         /// </summary>
         /// <returns> List of all brands. </returns>
-        public List<Models.BrandDTO> GetDrinkBrands()
+        public List<Brand> GetDrinkBrands()
         {
             return dbContext.Brands
-            .Select(brand => new Models.BrandDTO(
-                brand.BrandId,
-                brand.BrandName))
+            .Select(brand => new Brand
+            {
+                BrandId = brand.BrandId,
+                BrandName = brand.BrandName
+            })
             .ToList();
         }
 
@@ -520,14 +536,16 @@ namespace WinUIApp.WebAPI.Repositories
         /// </summary>
         /// <param name="drinkId"> Id of the drink. </param>
         /// <returns> Categories for the specific drink. </returns>
-        public List<Models.CategoryDTO> GetDrinkCategoriesById(int drinkId)
+        public List<Category> GetDrinkCategoriesById(int drinkId)
         {
             var categories = dbContext.DrinkCategories
             .Where(drinkCategory => drinkCategory.DrinkId == drinkId)
             .Include(drinkCategory => drinkCategory.Category) 
-            .Select(drinkCategory => new Models.CategoryDTO(
-                drinkCategory.Category!.CategoryId,
-                drinkCategory.Category.CategoryName))
+            .Select(drinkCategory => new Category
+            {
+                CategoryId = drinkCategory.Category!.CategoryId,
+               CategoryName = drinkCategory.Category.CategoryName
+            })
             .ToList();
 
             if (categories.Count == NoCategoriesCount)
@@ -541,7 +559,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// </summary>
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> Brand. </returns>
-        public Models.BrandDTO GetBrandById(int drinkId)
+        public Brand GetBrandById(int drinkId)
         {
             var drink = dbContext.Drinks
             .Include(drink => drink.Brand)
@@ -553,9 +571,11 @@ namespace WinUIApp.WebAPI.Repositories
             if (drink.Brand == null)
                 throw new Exception("No brand found for the specified drink.");
 
-            return new Models.BrandDTO(
-                drink.Brand.BrandId,
-                drink.Brand.BrandName);
+            return new Brand
+            {
+                BrandId = drink.Brand.BrandId,
+                BrandName = drink.Brand.BrandName
+            };
         }
 
         /// <summary>

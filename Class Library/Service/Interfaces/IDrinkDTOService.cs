@@ -6,6 +6,7 @@ namespace WinUIApp.WebAPI.Services
 {
     using System;
     using System.Collections.Generic;
+    using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
 
     /// <summary>
@@ -22,7 +23,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<CategoryDTO> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage);
+        void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage);
 
         /// <summary>
         /// Adds a drink to the user's personal drink list.
@@ -54,7 +55,7 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <returns> List of brands. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        List<BrandDTO> GetDrinkBrandNames();
+        List<Brand> GetDrinkBrandNames();
 
         /// <summary>
         /// Gets the drink by ID.
@@ -69,7 +70,7 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <returns> List of categories. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        List<CategoryDTO> GetDrinkCategories();
+        List<Category> GetDrinkCategories();
 
         /// <summary>
         /// Retrieves the drink of the day.

@@ -30,7 +30,7 @@ builder.Services.AddHttpClient("DrinkDbClient", client =>
 
 // Add services to the container.
 
-builder.Services.AddScoped<IDrinkDTOService, DrinkService>();
+builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IReviewService, ReviewsService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();

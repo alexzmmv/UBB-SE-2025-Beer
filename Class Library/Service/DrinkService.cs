@@ -4,9 +4,11 @@
 
 namespace WinUIApp.WebAPI.Services
 {
+    using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
     using WinUIApp.WebAPI.Repositories;
     using WinUIApp.WebAPI.Services;
@@ -14,7 +16,7 @@ namespace WinUIApp.WebAPI.Services
     /// <summary>
     /// Drink service for managing drink-related operations.
     /// </summary>
-    public class DrinkService : IDrinkDTOService
+    public class DrinkService : IDrinkService
     {
         private const int DefaultPersonalDrinkCount = 1;
         private const int NoDrinkBrand = 0;
@@ -128,7 +130,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        public void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<CategoryDTO> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
+        public void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
         {
             try
             {
@@ -179,7 +181,7 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <returns> List of categories. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public List<CategoryDTO> GetDrinkCategories()
+        public List<Category> GetDrinkCategories()
         {
             try
             {
@@ -196,7 +198,7 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <returns> List of brands. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        public List<BrandDTO> GetDrinkBrandNames()
+        public List<Brand> GetDrinkBrandNames()
         {
             try
             {

@@ -16,7 +16,6 @@ namespace WinUiApp.Data.Configurations
             builder.Property(currentUser => currentUser.EmailAddress).IsRequired(false);
             builder.Property(currentUser => currentUser.NumberOfDeletedReviews).IsRequired();
             builder.Property(currentUser => currentUser.HasSubmittedAppeal).IsRequired();
-            builder.Property(currentUser => currentUser.FullName).IsRequired(false);
             builder.Property(currentUser => currentUser.AssignedRole).HasDefaultValue(RoleType.User);
         }
     }

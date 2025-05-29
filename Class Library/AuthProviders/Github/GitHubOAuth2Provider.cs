@@ -150,7 +150,6 @@ namespace DataAccess.AuthProviders.Github
                     NumberOfDeletedReviews = 0,
                     HasSubmittedAppeal = false,
                     AssignedRole = RoleType.User,
-                    FullName = gitHubLogin.Trim()
                 };
                 await this.userService.CreateUser(newUser);
                 return newUser.UserId;

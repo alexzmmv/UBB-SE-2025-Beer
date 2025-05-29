@@ -12,13 +12,11 @@ namespace WinUiApp.Data.Data
             this.NumberOfDeletedReviews = numberOfDeletedReviews;
             this.HasSubmittedAppeal = hasSubmittedAppeal;
             this.AssignedRole = assignedRole;
-            this.FullName = fullName;
         }
         public User()
         {
             this.AssignedRole = RoleType.User;
             this.EmailAddress = string.Empty;
-            this.FullName = string.Empty;
         }
         public required Guid UserId { get; set; }
 
@@ -36,7 +34,6 @@ namespace WinUiApp.Data.Data
 
         public RoleType AssignedRole { get; set; }
 
-        public string FullName { get; set; }
 
         public override string ToString()
         {

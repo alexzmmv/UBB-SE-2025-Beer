@@ -15,6 +15,7 @@ namespace WinUIApp.ProxyServices
     using System.Text.Json;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Requests.Drinks;
+    using WinUIApp.WebAPI.Models;
 
     /// <summary>
     /// Proxy service for managing drink-related operations.
@@ -43,13 +44,13 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkId"> Id of the drink. </param>
         /// <returns>The drink.</returns>
         /// <exception cref="Exception">Exceptions.</exception>
-        public Drink? GetDrinkById(int drinkId)
+        public DrinkDTO? GetDrinkById(int drinkId)
         {
             try
             {
                 var response = httpClient.GetAsync($"Drink/get-one?drinkId={drinkId}").Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<Drink>().Result;
+                return response.Content.ReadFromJsonAsync<DrinkDTO>().Result;
             }
             catch (Exception exception)
             {
@@ -68,7 +69,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="orderingCriteria">Order criteria.</param>
         /// <returns>List of drinks.</returns>
         /// <exception cref="Exception">Exceptions.</exception>
-        public List<Drink> GetDrinks(string? searchKeyword, List<string>? drinkBrandNameFilter, List<string>? drinkCategoryFilter, float? minimumAlcoholPercentage, float? maximumAlcoholPercentage, Dictionary<string, bool>? orderingCriteria)
+        public List<DrinkDTO> GetDrinks(string? searchKeyword, List<string>? drinkBrandNameFilter, List<string>? drinkCategoryFilter, float? minimumAlcoholPercentage, float? maximumAlcoholPercentage, Dictionary<string, bool>? orderingCriteria)
         {
             try
             {
@@ -84,7 +85,7 @@ namespace WinUIApp.ProxyServices
 
                 var response = httpClient.PostAsJsonAsync("Drink/get-all", request).Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<List<Drink>>().Result;
+                return response.Content.ReadFromJsonAsync<List<DrinkDTO>>().Result;
             }
             catch (Exception exception)
             {
@@ -138,16 +139,15 @@ namespace WinUIApp.ProxyServices
         /// </summary>
         /// <param name="drink"> drink. </param>
         /// <exception cref="Exception"> any issues. </exception>
-        public void UpdateDrink(Drink drink)
+        public void UpdateDrink(DrinkDTO drink)
         {
-            Drink convertedDrink = new()
+            DrinkDTO convertedDrink = new()
             {
                 DrinkId = drink.DrinkId,
                 DrinkName = drink.DrinkName,
-                DrinkURL = drink.DrinkURL,
-                DrinkCategories = drink.DrinkCategories,
-                AlcoholContent = drink.AlcoholContent,
-                Brand = drink.Brand,
+                DrinkImageUrl = drink.DrinkImageUrl,
+                CategoryList = drink.CategoryList.Select(c => new Category(c.CategoryId, c.CategoryName)).ToList(),
+
             };
 
             try
@@ -237,14 +237,14 @@ namespace WinUIApp.ProxyServices
         /// <param name="maximumDrinkCount"> not sure. </param>
         /// <returns> personal list. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public List<Drink> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = DefaultPersonalDrinkCount)
+        public List<DrinkDTO> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = DefaultPersonalDrinkCount)
         {
             try
             {
                 var request = new GetUserDrinkListRequest { userId = userId };
                 var response = httpClient.PostAsJsonAsync("Drink/get-user-drink-list", request).Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<List<Drink>>().Result;
+                return response.Content.ReadFromJsonAsync<List<DrinkDTO>>().Result;
             }
             catch (Exception exception)
             {
@@ -335,7 +335,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkId"> drink id. </param>
         /// <returns> the drink. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public Drink VoteDrinkOfTheDay(Guid userId, int drinkId)
+        public DrinkDTO VoteDrinkOfTheDay(Guid userId, int drinkId)
         {
             try
             {
@@ -346,7 +346,7 @@ namespace WinUIApp.ProxyServices
                 };
                 var response = httpClient.PostAsJsonAsync("Drink/vote-drink-of-the-day", request).Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<Drink>().Result;
+                return response.Content.ReadFromJsonAsync<DrinkDTO>().Result;
             }
             catch (Exception exception)
             {
@@ -359,13 +359,13 @@ namespace WinUIApp.ProxyServices
         /// </summary>
         /// <returns> the drink. </returns>
         /// <exception cref="Exception"> any issues. </exception>
-        public Drink GetDrinkOfTheDay()
+        public DrinkDTO GetDrinkOfTheDay()
         {
             try
             {
                 var response = httpClient.GetAsync("Drink/get-drink-of-the-day").Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<Drink>().Result ?? throw new Exception("Drink of the day not found");
+                return response.Content.ReadFromJsonAsync<DrinkDTO>().Result ?? throw new Exception("Drink of the day not found");
             }
             catch (Exception exception)
             {

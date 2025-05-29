@@ -7,6 +7,7 @@ namespace DataAccess.Service.Interfaces
     using System.Collections.Generic;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
+    using WinUIApp.WebAPI.Models;
 
     /// <summary>
     /// Interface for managing drink-related operations.
@@ -62,7 +63,7 @@ namespace DataAccess.Service.Interfaces
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> The drink. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        Drink? GetDrinkById(int drinkId);
+        DrinkDTO? GetDrinkById(int drinkId);
 
         /// <summary>
         /// Retrieves a random drink ID from the database.
@@ -76,7 +77,7 @@ namespace DataAccess.Service.Interfaces
         /// </summary>
         /// <returns> The drink. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        Drink GetDrinkOfTheDay();
+        DrinkDTO GetDrinkOfTheDay();
 
         /// <summary>
         /// Gets drinks based on various filters and ordering criteria.
@@ -89,7 +90,7 @@ namespace DataAccess.Service.Interfaces
         /// <param name="orderingCriteria"> order criteria. </param>
         /// <returns> List of drinks. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        List<Drink> GetDrinks(string? searchKeyword, List<string>? drinkBrandNameFilter, List<string>? drinkCategoryFilter, float? minimumAlcoholPercentage, float? maximumAlcoholPercentage, Dictionary<string, bool>? orderingCriteria);
+        List<DrinkDTO> GetDrinks(string? searchKeyword, List<string>? drinkBrandNameFilter, List<string>? drinkCategoryFilter, float? minimumAlcoholPercentage, float? maximumAlcoholPercentage, Dictionary<string, bool>? orderingCriteria);
 
         /// <summary>
         /// Retrieves a random drink ID from the database.
@@ -98,7 +99,7 @@ namespace DataAccess.Service.Interfaces
         /// <param name="maximumDrinkCount"> Not sure. </param>
         /// <returns> Personal list. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        List<Drink> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = 1);
+        List<DrinkDTO> GetUserPersonalDrinkList(Guid userId, int maximumDrinkCount = 1);
 
         /// <summary>
         /// Checks if a drink is already in the user's personal drink list.
@@ -114,7 +115,7 @@ namespace DataAccess.Service.Interfaces
         /// </summary>
         /// <param name="drink"> Drink. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        void UpdateDrink(Drink drink);
+        void UpdateDrink(DrinkDTO drink);
 
         /// <summary>
         /// Votes for the drink of the day.
@@ -123,6 +124,6 @@ namespace DataAccess.Service.Interfaces
         /// <param name="drinkId"> Drink id. </param>
         /// <returns> The drink. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
-        Drink VoteDrinkOfTheDay(Guid userId, int drinkId);
+        DrinkDTO VoteDrinkOfTheDay(Guid userId, int drinkId);
     }
 }
