@@ -83,7 +83,6 @@ namespace WinUIApp
                     services.AddSingleton<IAutoCheck, AutoCheckerProxy>(sp => new AutoCheckerProxy(apiRoute));
                     services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
                     services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));
-                    services.AddSingleton<IRatingService, ProxyRatingService>(sp => new ProxyRatingService(apiRoute));
 
                     services.AddSingleton<LinkedInLocalOAuthServer>(sp => new LinkedInLocalOAuthServer("http://localhost:8891/"));
                     services.AddSingleton<GitHubLocalOAuthServer>(sp => new GitHubLocalOAuthServer("http://localhost:8890/"));
