@@ -1,4 +1,4 @@
-﻿using DataAccess.Model.AdminDashboard;
+﻿using DataAccess.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WinUiApp.Data.Data;

@@ -9,7 +9,7 @@
     using System.Text;
     using System.Text.Json.Serialization;
     using System.Threading.Tasks;
-    using DataAccess.Model.AdminDashboard;
+    using DataAccess.Constants;
     using DataAccess.Model.Authentication;
     using DataAccess.OAuthProviders;
     using DataAccess.Service.Interfaces;

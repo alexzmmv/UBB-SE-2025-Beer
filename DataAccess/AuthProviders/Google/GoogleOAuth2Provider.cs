@@ -4,6 +4,7 @@ namespace DrinkDb_Auth.AuthProviders.Google
     using System.Security.Cryptography;
     using System.Text;
     using System.Text.Json.Serialization;
+    using DataAccess.Constants;
     using DataAccess.Model.Authentication;
     using DataAccess.OAuthProviders;
     using DataAccess.Service.Interfaces;
@@ -54,7 +55,7 @@ namespace DrinkDb_Auth.AuthProviders.Google
             if (user == null)
             {
                 userId = Guid.NewGuid();
-                User newUser = new User { UserId = userId, Username = name, PasswordHash = string.Empty, TwoFASecret = null, EmailAddress = email, AssignedRole = DataAccess.Model.AdminDashboard.RoleType.User };
+                User newUser = new User { UserId = userId, Username = name, PasswordHash = string.Empty, TwoFASecret = null, EmailAddress = email, AssignedRole = RoleType.User };
                 await this.userService.CreateUser(newUser);
             }
             else

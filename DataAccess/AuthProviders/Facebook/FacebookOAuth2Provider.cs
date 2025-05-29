@@ -1,9 +1,9 @@
 using System.Text.Json;
 using DataAccess.OAuthProviders;
 using DataAccess.Model.Authentication;
-using DataAccess.Model.AdminDashboard;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
+using DataAccess.Constants;
 
 namespace DataAccess.AuthProviders.Facebook
 {
