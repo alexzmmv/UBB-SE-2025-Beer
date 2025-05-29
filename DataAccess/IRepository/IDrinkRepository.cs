@@ -1,6 +1,7 @@
 ﻿namespace WinUIApp.WebAPI.Repositories
 {
     using System.Collections.Generic;
+    using DataAccess.Data;
     using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
 
@@ -45,5 +46,7 @@
         bool IsBrandInDatabase(string brandName);
 
         void AddBrand(string brandName);
+
+        DrinkRequestingApproval AddDrinkRequestingApproval(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent);
     }
 }

@@ -12,6 +12,7 @@ namespace WinUIApp.WebAPI.Repositories
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using DataAccess.Data;
     using Microsoft.EntityFrameworkCore;
     using WinUiApp.Data;
     using WinUiApp.Data.Data;
@@ -600,6 +601,43 @@ namespace WinUIApp.WebAPI.Repositories
             dbContext.Brands.Add(brand);
 
             dbContext.SaveChanges();
+        }
+
+        public DrinkRequestingApproval AddDrinkRequestingApproval(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent)
+        {
+            var brand = RetrieveBrand(brandName);
+
+            var drink = new DrinkRequestingApproval
+            {
+                DrinkName = drinkName,
+                DrinkURL = drinkUrl,
+                AlcoholContent = (int)alcoholContent,
+                BrandId = brand.BrandId,
+            };
+
+            dbContext.DrinksRequestingApproval.Add(drink);
+            dbContext.SaveChanges();
+            drink = dbContext.DrinksRequestingApproval
+                .FirstOrDefault(drink =>
+                        drink.DrinkName == drinkName && drink.BrandId == brand.BrandId);
+
+            foreach (var category in categories)
+            {
+                var dataCategory = RetrieveCategory(category);
+
+                var drinkCategory = new DrinkCategory
+                {
+                    DrinkId = drink.DrinkId,
+                    CategoryId = dataCategory.CategoryId
+                };
+
+                dbContext.DrinkCategories.Add(drinkCategory);
+            }
+
+
+            dbContext.SaveChanges();
+
+            return drink;
         }
     }
 }

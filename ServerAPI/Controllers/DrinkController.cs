@@ -15,11 +15,13 @@ namespace WinUIApp.WebAPI.Controllers
     {
         private readonly IDrinkService drinkService;
         private readonly IUserService userService;
+        private readonly IDrinkModificationRequestService drinkModificationRequestService;
 
-        public DrinkController(IDrinkService drinkService, IUserService userService)
+        public DrinkController(IDrinkService drinkService, IUserService userService, IDrinkModificationRequestService drinkModificationRequestService)
         {
             this.drinkService = drinkService;
             this.userService = userService;
+            this.drinkModificationRequestService = drinkModificationRequestService;
         }
 
         [HttpPost("get-all")]
@@ -34,7 +36,7 @@ namespace WinUIApp.WebAPI.Controllers
                     request.maximumAlcoholPercentage,
                     request.orderingCriteria));
         }
-        
+
         [HttpGet("get-one")]
         public IActionResult GetDrinkById([FromQuery] int drinkId)
         {
@@ -63,27 +65,33 @@ namespace WinUIApp.WebAPI.Controllers
         {
             return Ok(drinkService.GetUserPersonalDrinkList(request.userId));
         }
-        
+
         [HttpPost("add")]
         public async Task<IActionResult> AddDrink([FromBody] AddDrinkRequest request)
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            var userRole = await userService.GetHighestRoleTypeForUser(request.requestingUserId);
-            if (userRole == RoleType.Admin)
+            var user = await userService.GetUserById(request.requestingUserId) ?? throw new Exception("No user with given ID");
+            if (user.AssignedRole == RoleType.Admin)
+            {
                 drinkService.AddDrink(
                     request.inputtedDrinkName,
                     request.inputtedDrinkPath,
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
                     request.inputtedAlcoholPercentage);
+            }
             else
-                drinkService.AddDrink(
+            {
+                var drinkRequestingAddition = drinkService.AddDrinkRequestingApproval(
                     request.inputtedDrinkName,
                     request.inputtedDrinkPath,
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
-                    request.inputtedAlcoholPercentage); // make logic for add temporary drink and add request
+                    request.inputtedAlcoholPercentage);
+
+                drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Add, null, drinkRequestingAddition, user);
+            }
             return Ok();
         }
 

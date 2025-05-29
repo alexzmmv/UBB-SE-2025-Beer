@@ -4,6 +4,7 @@
 
 namespace WinUIApp.WebAPI.Services
 {
+    using DataAccess.Data;
     using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
@@ -321,6 +322,11 @@ namespace WinUIApp.WebAPI.Services
             {
                 throw new Exception("Error getting drink of the day:" + getDrinkOfTheDayException.Message, getDrinkOfTheDayException);
             }
+        }
+
+        public DrinkRequestingApproval AddDrinkRequestingApproval(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
+        {
+            return this.drinkRepository.AddDrinkRequestingApproval(inputtedDrinkName, inputtedDrinkPath, inputtedDrinkCategories, inputtedDrinkBrandName, inputtedAlcoholPercentage);
         }
     }
 }

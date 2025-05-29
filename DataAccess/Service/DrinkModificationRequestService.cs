@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using DataAccess.Constants;
+using DataAccess.Data;
+using DataAccess.IRepository;
+using DataAccess.Service.Interfaces;
+using WinUiApp.Data.Data;
+
+namespace DataAccess.Service
+{
+    public class DrinkModificationRequestService : IDrinkModificationRequestService
+    {
+        private readonly IDrinkModificationRequestRepository drinkModificationRequestRepository;
+
+        public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser)
+        {
+            DrinkModificationRequest request = new DrinkModificationRequest
+            {
+                ModificationType = type,
+                OldDrink = oldDrink,
+                NewDrink = newDrink,
+                RequestingUser = requestingUser
+            };
+
+            this.drinkModificationRequestRepository.AddRequest(request);
+
+            return request;
+        }
+    }
+}

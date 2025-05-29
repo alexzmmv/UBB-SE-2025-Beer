@@ -5,6 +5,7 @@
 namespace DataAccess.Service.Interfaces
 {
     using System.Collections.Generic;
+    using DataAccess.Data;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
     using WinUIApp.WebAPI.Models;
@@ -125,5 +126,8 @@ namespace DataAccess.Service.Interfaces
         /// <returns> The drink. </returns>
         /// <exception cref="Exception"> Any issues. </exception>
         DrinkDTO VoteDrinkOfTheDay(Guid userId, int drinkId);
+
+        DrinkRequestingApproval AddDrinkRequestingApproval(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage);
+
     }
 }
