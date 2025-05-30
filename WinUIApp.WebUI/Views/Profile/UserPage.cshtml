@@ -41,7 +41,7 @@
                 <h4 class="fw-bold">Reviews</h4>
                 <div id="ReviewsItemsControl" class="list-group">
                     <ul>
-                        @foreach (Review review in Model.CurrentUserReviews)
+                        @foreach (DataAccess.DTOModels.ReviewDTO review in Model.CurrentUserReviews)
                         {
                             <li class="list-group-item">
                                 <strong>@review.RatingValue</strong><br />

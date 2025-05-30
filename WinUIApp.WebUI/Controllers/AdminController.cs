@@ -7,6 +7,7 @@ using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models;
 using WinUiApp.Data.Data;
+using DataAccess.DTOModels;
 
 namespace WebServer.Controllers
 {
@@ -29,7 +30,7 @@ namespace WebServer.Controllers
 
         public async Task<IActionResult> AdminDashboard()
         {
-            IEnumerable<Review> reviews = await this.reviewService.GetFlaggedReviews();
+            IEnumerable<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
             IEnumerable<UpgradeRequest> upgradeRequests = await this.upgradeRequestService.RetrieveAllUpgradeRequests();
             IEnumerable<string> offensiveWords = await this.checkersService.GetOffensiveWordsList();
             List<User> users = await this.userService.GetAllUsers();
@@ -47,7 +48,7 @@ namespace WebServer.Controllers
 
             foreach (User user in appealeadUsers)
             {
-                List<Review> userReviews = await this.reviewService.GetReviewsByUser(user.UserId);
+                List<DataAccess.DTOModels.ReviewDTO> userReviews = await this.reviewService.GetReviewsByUser(user.UserId);
                 appealsWithDetails.Add(new AppealDetailsViewModel()
                 {
                     User = user,
@@ -75,7 +76,7 @@ namespace WebServer.Controllers
         {
             try
             {
-                Review? review = await this.reviewService.GetReviewById(reviewId);
+                ReviewDTO? review = await this.reviewService.GetReviewById(reviewId);
 
                 if (review == null)
                 {
@@ -83,7 +84,20 @@ namespace WebServer.Controllers
                     return RedirectToAction("AdminDashboard");
                 }
 
-                this.checkersService.RunAICheckForOneReviewAsync(review);
+                // Map ReviewDTO to Review entity for AI check
+                var reviewEntity = new WinUiApp.Data.Data.Review
+                {
+                    ReviewId = review.ReviewId,
+                    DrinkId = review.DrinkId,
+                    UserId = review.UserId,
+                    Content = review.Content,
+                    RatingValue = review.RatingValue,
+                    CreatedDate = review.CreatedDate,
+                    NumberOfFlags = review.NumberOfFlags,
+                    IsHidden = review.IsHidden
+                };
+
+                this.checkersService.RunAICheckForOneReviewAsync(reviewEntity);
             }
             catch (Exception exception)
             {
@@ -93,8 +107,19 @@ namespace WebServer.Controllers
         }
         public async Task<IActionResult> AutomaticallyCheckReviews()
         {
-            List<Review> reviews = await this.reviewService.GetFlaggedReviews();
-            List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviews));
+            List<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
+            var reviewEntities = reviews.Select(review => new WinUiApp.Data.Data.Review
+            {
+                ReviewId = review.ReviewId,
+                DrinkId = review.DrinkId,
+                UserId = review.UserId,
+                Content = review.Content,
+                RatingValue = review.RatingValue,
+                CreatedDate = review.CreatedDate,
+                NumberOfFlags = review.NumberOfFlags,
+                IsHidden = review.IsHidden
+            }).ToList();
+            List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviewEntities));
 
             return RedirectToAction("AdminDashboard");
         }
