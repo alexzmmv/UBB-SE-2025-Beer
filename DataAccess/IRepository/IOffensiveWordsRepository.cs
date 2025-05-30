@@ -1,4 +1,4 @@
-﻿namespace IRepository
+﻿namespace DataAccess.IRepository
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;

@@ -9,8 +9,8 @@ namespace WinUIApp.Tests.UnitTests.Services
     using Xunit;
     using Moq;
     using WinUIApp.WebAPI.Models;
-    using WinUIApp.WebAPI.Repositories;
     using WinUIApp.WebAPI.Services;
+    using DataAccess.IRepository;
 
     /// <summary>
     /// Unit tests for the <see cref="DrinkService"/> class.

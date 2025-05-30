@@ -1,12 +1,12 @@
 ﻿using Moq;
 using WinUIApp.WebAPI.Models;
-using WinUIApp.WebAPI.Repositories;
 using WinUIApp.WebAPI.Services;
 using WinUIApp.WebAPI.Constants.ErrorMessages;
 using WinUIApp.WebAPI.Extensions;
 using WinUiApp.Data.Data;
 using Xunit;
 using System;
+using DataAccess.IRepository;
 
 namespace WinUIApp.Tests.UnitTests.Services
 {

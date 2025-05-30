@@ -6,13 +6,13 @@ using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.WebAPI.Services
 {
+    using DataAccess.IRepository;
     using System;
     using System.Collections.Generic;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.WebAPI.Constants.ErrorMessages;
     using WinUIApp.WebAPI.Extensions;
-    using WinUIApp.WebAPI.Repositories;
 
     /// <summary>
     /// Implementation of the rating service.

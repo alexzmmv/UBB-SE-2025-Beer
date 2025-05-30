@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Model.AdminDashboard;
+using DataAccess.Constants;
 
 namespace DataAccess.Configurations
 {

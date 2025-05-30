@@ -1,4 +1,4 @@
-﻿namespace DataAccess.Model.AdminDashboard
+﻿namespace DataAccess.Constants
 {
     public enum RoleType
     {

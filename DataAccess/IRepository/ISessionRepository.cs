@@ -1,6 +1,6 @@
 ﻿using DataAccess.Model.Authentication;
 
-namespace IRepository
+namespace DataAccess.IRepository
 {
     public interface ISessionRepository
     {

@@ -1,6 +1,6 @@
 ﻿namespace WinUIApp.Views.ViewModels
 {
-    using DataAccess.Model.AdminDashboard;
+    using DataAccess.Constants;
     using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;

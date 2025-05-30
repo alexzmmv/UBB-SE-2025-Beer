@@ -1,5 +1,5 @@
 ﻿using DataAccess.AutoChecker;
-using IRepository;
+using DataAccess.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServerAPI.Controllers

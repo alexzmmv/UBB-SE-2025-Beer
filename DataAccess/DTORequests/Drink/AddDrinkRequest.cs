@@ -5,6 +5,7 @@ namespace WinUIApp.WebAPI.Requests.Drink
 {
     public class AddDrinkRequest
     {
+        public Guid requestingUserId { get; set; }
         public string inputtedDrinkName { get; set; }
         public string inputtedDrinkPath { get; set; }
         public List<Category> inputtedDrinkCategories { get; set; }

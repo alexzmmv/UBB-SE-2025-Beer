@@ -1,4 +1,6 @@
-﻿using DataAccess.Service.Interfaces;
+﻿using DataAccess.Constants;
+using DataAccess.Service;
+using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WinUIApp.WebAPI.Models;
@@ -12,10 +14,12 @@ namespace WinUIApp.WebAPI.Controllers
     public class DrinkController : ControllerBase
     {
         private readonly IDrinkService drinkService;
+        private readonly IUserService userService;
 
-        public DrinkController(IDrinkService drinkService)
+        public DrinkController(IDrinkService drinkService, IUserService userService)
         {
             this.drinkService = drinkService;
+            this.userService = userService;
         }
 
         [HttpPost("get-all")]
@@ -61,16 +65,25 @@ namespace WinUIApp.WebAPI.Controllers
         }
         
         [HttpPost("add")]
-        public IActionResult AddDrink([FromBody] AddDrinkRequest request)
+        public async Task<IActionResult> AddDrink([FromBody] AddDrinkRequest request)
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            drinkService.AddDrink(
-                request.inputtedDrinkName,
-                request.inputtedDrinkPath,
-                request.inputtedDrinkCategories,
-                request.inputtedDrinkBrandName,
-                request.inputtedAlcoholPercentage);
+            var userRole = await userService.GetHighestRoleTypeForUser(request.requestingUserId);
+            if (userRole == RoleType.Admin)
+                drinkService.AddDrink(
+                    request.inputtedDrinkName,
+                    request.inputtedDrinkPath,
+                    request.inputtedDrinkCategories,
+                    request.inputtedDrinkBrandName,
+                    request.inputtedAlcoholPercentage);
+            else
+                drinkService.AddDrink(
+                    request.inputtedDrinkName,
+                    request.inputtedDrinkPath,
+                    request.inputtedDrinkCategories,
+                    request.inputtedDrinkBrandName,
+                    request.inputtedAlcoholPercentage); // make logic for add temporary drink and add request
             return Ok();
         }
 
