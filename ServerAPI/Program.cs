@@ -8,13 +8,13 @@ using DataAccess.Service;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.AuthProviders.Google;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
-using IRepository;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data;
 using WinUiApp.Data.Interfaces;
 using WinUIApp.WebAPI.Repositories;
 using WinUIApp.WebAPI.Services;
 using WinUIApp.ProxyServices;
+using DataAccess.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +35,7 @@ builder.Services.AddScoped<IReviewService, ReviewsService>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
 
 builder.Services.AddScoped<IReviewsRepository, ReviewsRepository>();
+builder.Services.AddScoped<IDrinkModificationRequestRepository, DrinkModificationRequestRepository>();
 
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 
@@ -55,6 +56,7 @@ builder.Services.AddScoped<IOffensiveWordsRepository, OffensiveWordsRepository>(
 builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUpgradeRequestsService, UpgradeRequestsService>();
+builder.Services.AddScoped<IDrinkModificationRequestService, DrinkModificationRequestService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 builder.Services.AddScoped<IAuthenticationService>(sp => new AuthenticationService(
     sp.GetRequiredService<ISessionRepository>(),

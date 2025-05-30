@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WinUiApp.Data;
 
@@ -11,9 +12,11 @@ using WinUiApp.Data;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250529232156_FixedPendingDrinksTable")]
+    partial class FixedPendingDrinksTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,6 +269,39 @@ namespace DataAccess.Migrations
                     b.ToTable("DrinkOfTheDays");
                 });
 
+            modelBuilder.Entity("WinUiApp.Data.Data.Rating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
+
+                    b.Property<int>("DrinkId")
+                        .HasColumnType("int");
+
+                    b.Property<byte?>("IsActive")
+                        .HasColumnType("tinyint");
+
+                    b.Property<DateTime?>("RatingDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<double?>("RatingValue")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("DrinkId");
+
+                    b.HasIndex("UserId", "DrinkId")
+                        .IsUnique();
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("WinUiApp.Data.Data.Review", b =>
                 {
                     b.Property<int>("ReviewId")
@@ -279,10 +315,10 @@ namespace DataAccess.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("DrinkId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime");
 
                     b.Property<byte?>("IsActive")
                         .HasColumnType("tinyint");
@@ -293,18 +329,17 @@ namespace DataAccess.Migrations
                     b.Property<int>("NumberOfFlags")
                         .HasColumnType("int");
 
-                    b.Property<double?>("RatingValue")
-                        .HasColumnType("float");
+                    b.Property<int>("RatingId")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ReviewId");
 
-                    b.HasIndex("DrinkId");
+                    b.HasIndex("RatingId");
 
-                    b.HasIndex("UserId", "DrinkId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -461,8 +496,7 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("WinUiApp.Data.Data.Brand", "Brand")
                         .WithMany()
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("BrandId");
 
                     b.Navigation("Brand");
                 });
@@ -497,21 +531,36 @@ namespace DataAccess.Migrations
                     b.Navigation("Drink");
                 });
 
-            modelBuilder.Entity("WinUiApp.Data.Data.Review", b =>
+            modelBuilder.Entity("WinUiApp.Data.Data.Rating", b =>
                 {
-                    b.HasOne("WinUiApp.Data.Data.Drink", "Drink")
+                    b.HasOne("WinUiApp.Data.Data.Drink", null)
                         .WithMany()
                         .HasForeignKey("DrinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WinUiApp.Data.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WinUiApp.Data.Data.Review", b =>
+                {
+                    b.HasOne("WinUiApp.Data.Data.Rating", "Rating")
+                        .WithMany()
+                        .HasForeignKey("RatingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WinUiApp.Data.Data.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Drink");
+                    b.Navigation("Rating");
 
                     b.Navigation("User");
                 });

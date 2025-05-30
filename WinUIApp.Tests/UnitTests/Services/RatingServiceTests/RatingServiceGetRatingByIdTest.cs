@@ -1,9 +1,9 @@
 ﻿using Moq;
 using WinUIApp.WebAPI.Models;
-using WinUIApp.WebAPI.Repositories;
 using WinUIApp.WebAPI.Services;
 using WinUiApp.Data.Data;
 using Xunit;
+using DataAccess.IRepository;
 
 namespace WinUIApp.Tests.UnitTests.Services
 {

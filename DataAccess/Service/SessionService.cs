@@ -1,6 +1,6 @@
+using DataAccess.IRepository;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
-using IRepository;
 
 namespace DataAccess.Service
 {
