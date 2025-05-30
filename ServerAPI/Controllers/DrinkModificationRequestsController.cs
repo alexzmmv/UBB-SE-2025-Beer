@@ -1,5 +1,6 @@
 ﻿using DataAccess.AutoChecker;
 using DataAccess.Data;
+using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace ServerAPI.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAll()
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAll()
         {
             return await this.drinkModificationService.GetAllModificationRequests();
         }

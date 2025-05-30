@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using DataAccess.Data;
 using DataAccess.IRepository;
 using WinUiApp.Data.Interfaces;
+using DataAccess.DTOModels;
+using DataAccess.Extensions;
 
 namespace DataAccess.Repository
 {
@@ -21,20 +23,25 @@ namespace DataAccess.Repository
             this.dbContext = dbContext;
         }
 
-        public DrinkModificationRequest AddRequest(DrinkModificationRequest request)
+        public DrinkModificationRequestDTO AddRequest(DrinkModificationRequestDTO requestDTO)
         {
-            this.dbContext.DrinkModificationRequests.Add(request);
+            this.dbContext.DrinkModificationRequests.Add(DrinkModificationRequestExtensions.ConvertDTOToEntity(requestDTO));
             this.dbContext.SaveChanges();
 
-            return request;
+            return requestDTO;
         }
 
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
         {
-            return await dbContext.DrinkModificationRequests
+            List<DrinkModificationRequest> requests = await dbContext.DrinkModificationRequests
                 .Include(drink => drink.OldDrink)
                 .Include(drink => drink.NewDrink)
                 .ToListAsync();
+
+            return requests.Select((request) =>
+            {
+                return DrinkModificationRequestExtensions.ConvertEntityToDTO(request);
+            });
         }
     }
 }

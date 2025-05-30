@@ -131,7 +131,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        public Drink AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
+        public DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
         {
             try
             {

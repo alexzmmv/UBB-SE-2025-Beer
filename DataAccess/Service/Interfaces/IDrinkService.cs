@@ -24,7 +24,7 @@ namespace DataAccess.Service.Interfaces
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        Drink AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false);
+        DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false);
 
         /// <summary>
         /// Adds a drink to the user's personal drink list.

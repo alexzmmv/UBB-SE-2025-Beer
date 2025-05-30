@@ -11,7 +11,7 @@
 
         DrinkDTO? GetDrinkById(int drinkId);
 
-        Drink AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false);
+        DrinkDTO AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false);
 
         void UpdateDrink(DrinkDTO drinkDto);
 

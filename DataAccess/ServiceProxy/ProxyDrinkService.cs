@@ -103,7 +103,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="inputtedDrinkBrandName"> brand. </param>
         /// <param name="inputtedAlcoholPercentage"> alcohol. </param>
         /// <exception cref="Exception"> any issues. </exception>
-        public Drink AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
+        public DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
         {
             try
             {

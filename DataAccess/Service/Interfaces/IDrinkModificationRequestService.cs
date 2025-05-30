@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using DataAccess.Constants;
 using DataAccess.Data;
 using WinUiApp.Data.Data;
+using DataAccess.DTOModels;
+using WinUIApp.WebAPI.Models;
 
 namespace DataAccess.Service.Interfaces
 {
     public interface IDrinkModificationRequestService
     {
-        DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser);
-        Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests();
+        DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId);
+        Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests();
     }
 }

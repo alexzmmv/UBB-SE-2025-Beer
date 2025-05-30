@@ -12,6 +12,8 @@ using DataAccess.IRepository;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
 using WinUiApp.Data.Interfaces;
+using WinUIApp.WebAPI.Models;
+using DataAccess.DTOModels;
 
 namespace DataAccess.Service
 {
@@ -24,14 +26,14 @@ namespace DataAccess.Service
             this.drinkModificationRequestRepository = drinkModificationRequestRepository;
         }
 
-        public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser)
+        public DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId)
         {
-            DrinkModificationRequest request = new DrinkModificationRequest
+            DrinkModificationRequestDTO request = new ()
         {
                 ModificationType = type,
-                OldDrink = oldDrink,
-                NewDrink = newDrink,
-                RequestingUser = requestingUser
+                OldDrinkId = oldDrinkId,
+                NewDrinkId = newDrinkId,
+                RequestingUserId = requestingUserId
             };
 
             this.drinkModificationRequestRepository.AddRequest(request);
@@ -39,7 +41,7 @@ namespace DataAccess.Service
             return request;
         }
 
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
         {
             return await drinkModificationRequestRepository.GetAllModificationRequests();
         }

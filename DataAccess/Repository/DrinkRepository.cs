@@ -13,6 +13,7 @@ namespace WinUIApp.WebAPI.Repositories
     using System.Data;
     using System.Linq;
     using DataAccess.Data;
+    using DataAccess.Extensions;
     using DataAccess.IRepository;
     using Microsoft.EntityFrameworkCore;
     using WinUiApp.Data;
@@ -47,24 +48,7 @@ namespace WinUIApp.WebAPI.Repositories
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                 .ThenInclude(drinkCategory => drinkCategory.Category)
-                .Select(drink => new Models.DrinkDTO(
-                    drink.DrinkId,
-                    drink.DrinkName,
-                    drink.DrinkURL,
-                    drink.DrinkCategories
-                            .Select(drinkCategory => new Category
-                            {
-                                CategoryId = drinkCategory.Category!.CategoryId,
-                                CategoryName = drinkCategory.Category.CategoryName
-                            })
-                            .ToList(),
-                    new Brand
-                    {
-                        BrandId = drink.Brand!.BrandId,
-                        BrandName = drink.Brand.BrandName
-                    },
-                    (float)drink.AlcoholContent
-                ))
+                .Select(drink => DrinkExtensions.ConvertEntityToDTO(drink))
                 .ToList();
         }
 
@@ -80,23 +64,9 @@ namespace WinUIApp.WebAPI.Repositories
                 .Include(drink => drink.DrinkCategories)
                     .ThenInclude(drinkCategory => drinkCategory.Category)
                 .Where(drink => drink.DrinkId == drinkId)
-                .Select(drink => new DrinkDTO
-                {
-                    DrinkId = drink.DrinkId,
-                    DrinkName = drink.DrinkName,
-                    CategoryList = drink.DrinkCategories
-                        .Select(drinkCategory => new Category
-                        {
-                            CategoryId = drinkCategory.Category!.CategoryId,
-                            CategoryName = drinkCategory.Category.CategoryName
-                        })
-                        .ToList(),
-                    DrinkBrand = drink.Brand,
-                    AlcoholContent = (float)drink.AlcoholContent
-                })
+                .Select(drink => DrinkExtensions.ConvertEntityToDTO(drink))
                 .FirstOrDefault();
         }
-
 
         private Brand RetrieveBrand(string brandName)
         {
@@ -150,7 +120,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="brandName"> Brand name. </param>
         /// <param name="alcoholContent"> Alcohol content. </param>
         /// 
-        public Drink AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false)
+        public DrinkDTO AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false)
         {
             var brand = RetrieveBrand(brandName);
 
@@ -165,9 +135,6 @@ namespace WinUIApp.WebAPI.Repositories
 
             dbContext.Drinks.Add(drink);
             dbContext.SaveChanges();
-            drink = dbContext.Drinks
-                .FirstOrDefault(drink => 
-                        drink.DrinkName == drinkName && drink.BrandId == brand.BrandId);
 
             foreach (var category in categories)
             {
@@ -184,14 +151,14 @@ namespace WinUIApp.WebAPI.Repositories
 
             dbContext.SaveChanges();
 
-            return drink;
+            return DrinkExtensions.ConvertEntityToDTO(drink);
         }
 
         /// <summary>
         /// Updates the details of an existing drink in the database.
         /// </summary>
         /// <param name="drinkDto"> The drink with updated info. </param>
-        public void UpdateDrink(Models.DrinkDTO drinkDto)
+        public void UpdateDrink(DrinkDTO drinkDto)
         {
             try
             {
@@ -206,16 +173,13 @@ namespace WinUIApp.WebAPI.Repositories
                 }
 
                 var existingDrink = dbContext.Drinks
-                                             .Include(drink => drink.DrinkCategories) 
-                                             .FirstOrDefault(drink => drink.DrinkId == drinkDto.DrinkId);
+                                             .Include(drink => drink.DrinkCategories)
+                                             .FirstOrDefault(drink => drink.DrinkId == drinkDto.DrinkId) ?? throw new Exception("No drink found with the provided ID.");
 
-                if (existingDrink == null)
-                    throw new Exception("No drink found with the provided ID.");
-
-                existingDrink.DrinkName = drinkDto.DrinkName ?? String.Empty;
+                existingDrink.DrinkName = drinkDto.DrinkName ?? string.Empty;
                 existingDrink.DrinkURL = drinkDto.DrinkImageUrl;
                 existingDrink.AlcoholContent = (int)drinkDto.AlcoholContent;
-                existingDrink.BrandId = brand.BrandId; 
+                existingDrink.BrandId = brand.BrandId;
 
                 existingDrink.DrinkCategories.Clear();
                 var oldCategories = dbContext.DrinkCategories
@@ -279,7 +243,7 @@ namespace WinUIApp.WebAPI.Repositories
                 ResetDrinkOfTheDay();
 
             var drinkOfTheDay = dbContext.DrinkOfTheDays
-                .AsNoTracking()    
+                .AsNoTracking()
                 .FirstOrDefault();
 
             if (drinkOfTheDay == null)
@@ -386,24 +350,7 @@ namespace WinUIApp.WebAPI.Repositories
                 .Where(drink => drinkIds.Contains(drink.DrinkId))
                 .AsNoTracking()
                 .ToList(); // materialize before projection
-            var drinks = drinkEntities.Select(drink => new Models.DrinkDTO(
-                    drink.DrinkId,
-                    drink.DrinkName,
-                    drink.DrinkURL,
-                    drink.DrinkCategories
-                            .Select(drinkCategory => new Category
-                            {
-                                CategoryId = drinkCategory.Category!.CategoryId,
-                                CategoryName = drinkCategory.Category.CategoryName
-                            })
-                            .ToList(),
-                    new Brand
-                    {
-                        BrandId = drink.Brand!.BrandId,
-                        BrandName = drink.Brand.BrandName
-                    },
-                    (float)drink.AlcoholContent
-                ))
+            var drinks = drinkEntities.Select(drink => DrinkExtensions.ConvertEntityToDTO(drink))
                 .ToList();
 
             return drinks;
