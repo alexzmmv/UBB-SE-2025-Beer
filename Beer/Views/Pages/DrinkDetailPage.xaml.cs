@@ -4,9 +4,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 using WinUIApp.ProxyServices;
 using WinUIApp.ViewModels;
+using WinUIApp.Views.Components.Modals;
 using WinUIApp.Views.ViewModels;
 using WinUIApp.Views.Windows;
 
@@ -39,6 +42,9 @@ namespace WinUIApp.Views.Pages
             {
                 this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
             };
+
+            this.ViewModel.RequestOpenPopup += OpenAddReviewModal;
+            this.ViewModel.RequestClosePopup += CloseAddReviewModal;
         }
 
         public DrinkDetailPageViewModel ViewModel { get; }
@@ -91,5 +97,16 @@ namespace WinUIApp.Views.Pages
             ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
 
         }
-    }
+
+        private void OpenAddReviewModal(object sender, EventArgs e)
+        {
+            AddReviewModalOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void CloseAddReviewModal(object sender,EventArgs e)
+        {
+
+            AddReviewModalOverlay.Visibility = Visibility.Collapsed;
+        }
+}
 }
