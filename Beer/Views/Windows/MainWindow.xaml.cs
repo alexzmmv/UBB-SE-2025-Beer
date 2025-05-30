@@ -6,12 +6,14 @@ namespace WinUIApp.Views
     using Microsoft.UI.Windowing;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Navigation;
     using WinUIApp.Views.Pages;
 
     public sealed partial class MainWindow : Window
     {
         public MainWindow()
         {
+            MainWindow.CurrentPage = typeof(MainPage);
             this.InitializeComponent();
             this.SetFixedSize(1440, 900);
             AppMainFrame = this.MainFrame;
@@ -21,6 +23,8 @@ namespace WinUIApp.Views
         public static Frame AppMainFrame { get; private set; }
 
         public static Type PreviousPage { get; set; }
+
+        public static Type CurrentPage { get; set; }
 
         private void SetFixedSize(int width, int height)
         {

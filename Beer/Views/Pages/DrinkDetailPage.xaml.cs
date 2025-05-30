@@ -51,7 +51,7 @@ namespace WinUIApp.Views.Pages
 
             this.HideButtonsOnBan();
         }
-        
+
         public DrinkDetailPageViewModel ViewModel { get; }
 
         public async void HideButtonsOnBan()
@@ -91,6 +91,9 @@ namespace WinUIApp.Views.Pages
             {
                 this.ViewModel.LoadDrink(drinkId);
             }
+
+            MainWindow.PreviousPage = MainWindow.CurrentPage;
+            MainWindow.CurrentPage = typeof(DrinkDetailPage);
         }
 
         private void ConfirmRemoveButton_Click(object sender, RoutedEventArgs eventArguments)

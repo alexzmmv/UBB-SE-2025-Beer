@@ -46,6 +46,10 @@
                     Click="SearchDrinksButton_Click">
                 <SymbolIcon Symbol="Find"/>
             </Button>
+            <Button x:Name="GoBackButton"
+                    Content="Go Back"
+                Click="GoBackButton_Click">
+            </Button>
         </StackPanel>
         <components:AddDrinkButton x:Name="AddDrinkButtonControl" 
                                    Margin="0 0 30 0"
