@@ -25,6 +25,18 @@ namespace WinUIApp.Views.Components.HeaderComponents
             this.CategoryMenu.PopulateCategories(this.viewModel.GetCategories());
         }
 
+        private void GoBackButton_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            if (MainWindow.PreviousPage != null)
+            {
+                MainWindow.AppMainFrame.Navigate(MainWindow.PreviousPage);
+            }
+            else
+            {
+                MainWindow.AppMainFrame.Navigate(typeof(MainPage));
+            }
+        }
+
         private void Logo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             MainWindow.AppMainFrame.Navigate(typeof(MainPage));
@@ -37,6 +49,7 @@ namespace WinUIApp.Views.Components.HeaderComponents
                 SelectedCategoryFilters = this.CategoryMenu.SelectedCategories.ToList(),
                 InputSearchKeyword = this.DrinkSearchBox.Text,
             };
+            MainWindow.PreviousPage = MainWindow.CurrentPage;
             MainWindow.AppMainFrame.Navigate(typeof(SearchPage), navigationParameters);
         }
 

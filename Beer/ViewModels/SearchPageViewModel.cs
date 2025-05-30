@@ -86,21 +86,21 @@
                     orderingCriteria: orderBy);
 
                 displayItems = new List<DrinkDisplayItem>();
-                //foreach (DrinkDTO drink in drinks)
-                //{
-                //    float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
-                //    if (this.minRatingFilter == null)
-                //    {
-                //        displayItems.Add(new DrinkDisplayItem(drink, averageScore));
-                //    }
-                //    else
-                //    {
-                //        if (averageScore >= this.minRatingFilter)
-                //        {
-                //            displayItems.Add(new DrinkDisplayItem(drink, averageScore));
-                //        }
-                //    }
-                //}
+                foreach (DrinkDTO drink in drinks)
+                {
+                    float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
+                    if (this.minRatingFilter == null)
+                    {
+                        displayItems.Add(new DrinkDisplayItem(drink, averageScore));
+                    }
+                    else
+                    {
+                        if (averageScore >= this.minRatingFilter)
+                        {
+                            displayItems.Add(new DrinkDisplayItem(drink, averageScore));
+                        }
+                    }
+                }
             }
             else
             {
@@ -113,21 +113,21 @@
                     orderingCriteria: null);
 
                 displayItems = new List<DrinkDisplayItem>();
-                //foreach (DrinkDTO drink in drinks)
-                //{
-                //    float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
-                //    if (this.minRatingFilter == null)
-                //    {
-                //        displayItems.Add(new DrinkDisplayItem(drink, averageScore));
-                //    }
-                //    else
-                //    {
-                //        if (averageScore >= this.minRatingFilter)
-                //        {
-                //            displayItems.Add(new DrinkDisplayItem(drink, averageScore));
-                //        }
-                //    }
-                //}
+                foreach (DrinkDTO drink in drinks)
+                {
+                    float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
+                    if (this.minRatingFilter == null)
+                    {
+                        displayItems.Add(new DrinkDisplayItem(drink, averageScore));
+                    }
+                    else
+                    {
+                        if (averageScore >= this.minRatingFilter)
+                        {
+                            displayItems.Add(new DrinkDisplayItem(drink, averageScore));
+                        }
+                    }
+                }
 
                 if (this.isAscending)
                 {
