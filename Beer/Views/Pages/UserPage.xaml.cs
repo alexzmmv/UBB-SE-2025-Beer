@@ -65,21 +65,6 @@ namespace DrinkDb_Auth
                 UsernameTextBlock.Text = string.Empty;
                 StatusTextBlock.Text = string.Empty;
             }
-
-            RoleType userRole = this.currentUser?.AssignedRole ?? RoleType.User;
-
-            bool isAdmin = userRole == RoleType.Admin;
-
-            if (!isAdmin)
-            {
-                this.AdminDashboardButton.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.authenticationService.Logout();
-            App.MainWindow.Close();
         }
 
         private void AdminDashboardButton_Click(object sender, RoutedEventArgs e)

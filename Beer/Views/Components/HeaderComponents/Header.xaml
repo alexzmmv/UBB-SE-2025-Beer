@@ -12,7 +12,7 @@
 
     <Grid Height="60" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button x:Name="Logo"
-                Content="DrinkMDb"
+                Content="Home"
                 Click="Logo_Click"
                 Background="Transparent"
                 BorderThickness="0"
