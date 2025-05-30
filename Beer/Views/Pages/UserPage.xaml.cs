@@ -93,53 +93,53 @@ namespace DrinkDb_Auth
 
         private async void LoadUserReviews()
         {
-            Guid currentUserId = App.CurrentUserId;
-            if (currentUserId == Guid.Empty)
-            {
-                return;
-            }
+            //Guid currentUserId = App.CurrentUserId;
+            //if (currentUserId == Guid.Empty)
+            //{
+            //    return;
+            //}
 
-            List<Review> userReviews = (await this.reviewService.GetReviewsByUser(currentUserId))
-                .Where(review => !review.IsHidden)
-                .OrderByDescending(review => review.CreatedDate)
-                .ToList();
+            //List<Review> userReviews = (await this.reviewService.GetReviewsByUser(currentUserId))
+            //    .Where(review => !review.IsHidden)
+            //    .OrderByDescending(review => review.CreatedDate)
+            //    .ToList();
 
-            this.ReviewsItemsControl.Items.Clear();
-            foreach (Review review in userReviews)
-            {
-                Border border = new Border
-                {
-                    BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Black),
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(8),
-                    Margin = new Thickness(0, 0, 0, 10),
-                    Padding = new Thickness(12)
-                };
-                StackPanel reviewStack = new StackPanel { Spacing = 4 };
-                string stars = new string('★', (int)review.Rating.RatingValue) + new string('☆', 5 - (int)review.Rating.RatingValue);
-                TextBlock starsText = new TextBlock
-                {
-                    Text = stars,
-                    FontSize = 20,
-                    Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gold)
-                };
-                reviewStack.Children.Add(starsText);
-                TextBlock dateText = new TextBlock
-                {
-                    Text = review.CreatedDate.ToShortDateString(),
-                    FontSize = 12,
-                    Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray)
-                };
-                reviewStack.Children.Add(dateText);
-                TextBlock commentText = new TextBlock
-                {
-                    Text = review.Content,
-                    FontSize = 14
-                };
-                reviewStack.Children.Add(commentText);
-                border.Child = reviewStack;
-                this.ReviewsItemsControl.Items.Add(border);
-            }
+            //this.ReviewsItemsControl.Items.Clear();
+            //foreach (Review review in userReviews)
+            //{
+            //    Border border = new Border
+            //    {
+            //        BorderBrush = new SolidColorBrush(Microsoft.UI.Colors.Black),
+            //        BorderThickness = new Thickness(1),
+            //        CornerRadius = new CornerRadius(8),
+            //        Margin = new Thickness(0, 0, 0, 10),
+            //        Padding = new Thickness(12)
+            //    };
+            //    StackPanel reviewStack = new StackPanel { Spacing = 4 };
+            //    string stars = new string('★', (int)review.Rating.RatingValue) + new string('☆', 5 - (int)review.Rating.RatingValue);
+            //    TextBlock starsText = new TextBlock
+            //    {
+            //        Text = stars,
+            //        FontSize = 20,
+            //        Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gold)
+            //    };
+            //    reviewStack.Children.Add(starsText);
+            //    TextBlock dateText = new TextBlock
+            //    {
+            //        Text = review.CreatedDate.ToShortDateString(),
+            //        FontSize = 12,
+            //        Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray)
+            //    };
+            //    reviewStack.Children.Add(dateText);
+            //    TextBlock commentText = new TextBlock
+            //    {
+            //        Text = review.Content,
+            //        FontSize = 14
+            //    };
+            //    reviewStack.Children.Add(commentText);
+            //    border.Child = reviewStack;
+            //    this.ReviewsItemsControl.Items.Add(border);
+            //}
         }
     }
 

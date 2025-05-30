@@ -13,17 +13,18 @@
     
     <ScrollViewer>
         <StackPanel Orientation="Vertical">
-            <TextBlock Text="{Binding Drink.DrinkName}"
+            <TextBlock Text="{Binding DrinkDTO.DrinkName}"
                    HorizontalAlignment="Center"
                    x:Name="Name" 
                    FontSize="18" 
                    FontWeight="Bold"/>
-            <Image Source="{Binding Drink.DrinkImageUrl}"
+            <Image Source="{Binding DrinkDTO.DrinkImageUrl}"
                x:Name="DrinkImage"
                Height="180"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
-                <components:AddRemoveFromDrinkListButton DrinkId="{Binding Drink}" />
-                <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
+                <components:AddRemoveFromDrinkListButton DrinkId="{Binding DrinkDTO}" />
+                <!--
+                <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding DrinkDTO}" /> -->
                 <Button Content="Add Rating" 
             Click="AddRatingButton_Click"
             Margin="5,0" />
@@ -38,13 +39,13 @@
                     </Button.Flyout>
                     <TextBlock x:Name="RemoveButtonText" Foreground="Black"/>
                 </Button>
-                <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click"  DrinkId="{Binding Drink.DrinkId}" />
+                <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click"  DrinkId="{Binding DrinkDTO.DrinkId}" />
             </StackPanel>
             <StackPanel HorizontalAlignment="Center">
                 <TextBlock Text="Brand" FontSize="18" FontWeight="Bold"/>
-                <TextBlock Text="{Binding Drink.DrinkBrand.BrandName}" FontSize="14"/>
+                <TextBlock Text="{Binding DrinkDTO.DrinkBrand.BrandName}" FontSize="14"/>
                 <TextBlock Text="Alcohol percentage" FontSize="18" FontWeight="Bold"/>
-                <TextBlock Text="{Binding Drink.AlcoholContent}" FontSize="14"/>
+                <TextBlock Text="{Binding DrinkDTO.AlcoholContent}" FontSize="14"/>
                 <TextBlock Text="Categories" FontSize="18" FontWeight="Bold"/>
                 <TextBlock Text="{Binding CategoriesDisplay}" FontSize="14"/>
                 <TextBlock Text="Review score" FontSize="18" FontWeight="Bold"/>

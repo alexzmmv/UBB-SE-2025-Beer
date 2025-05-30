@@ -2,6 +2,7 @@ namespace WinUIApp.Views.Components
 {
     using DataAccess.Service;
     using DataAccess.Service.Interfaces;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using WinUIApp.ProxyServices;
@@ -31,8 +32,8 @@ namespace WinUIApp.Views.Components
         {
             this.InitializeComponent();
 
-            drinkService = App.GetService<IDrinkService>();
-            userService = App.GetService<IUserService>();
+            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            userService = App.Host.Services.GetRequiredService<IUserService>();
 
             this.Loaded += this.AddRemoveFromDrinkListButton_Loaded;
         }

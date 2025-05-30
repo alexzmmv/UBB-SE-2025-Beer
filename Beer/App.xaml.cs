@@ -40,10 +40,6 @@ namespace WinUIApp
         public static Window MainWindow { get; set; }
 
         private static IServiceProvider? serviceProvider;
-        public static T GetService<T>() where T : class
-        {
-            return serviceProvider!.GetRequiredService<T>();
-        }
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
@@ -71,7 +67,7 @@ namespace WinUIApp
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
             services.AddSingleton<IConfiguration>(configuration);
-                    string apiRoute = "http://localhost:5280/";
+                    string apiRoute = "http://localhost:5078/";
 
                     services.AddSingleton<ISessionService, SessionServiceProxy>(sp => new SessionServiceProxy(apiRoute));
                     services.AddSingleton<IAuthenticationService>(sp => new AuthenticationServiceProxy(apiRoute));
@@ -83,6 +79,8 @@ namespace WinUIApp
                     services.AddSingleton<IAutoCheck, AutoCheckerProxy>(sp => new AutoCheckerProxy(apiRoute));
                     services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
                     services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));
+                    services.AddSingleton<IDrinkService>(sp => new ProxyDrinkService(apiRoute));
+                    services.AddSingleton<IDrinkReviewService>(sp => new ProxyDrinkReviewService(apiRoute));
 
                     services.AddSingleton<LinkedInLocalOAuthServer>(sp => new LinkedInLocalOAuthServer("http://localhost:8891/"));
                     services.AddSingleton<GitHubLocalOAuthServer>(sp => new GitHubLocalOAuthServer("http://localhost:8890/"));

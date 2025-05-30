@@ -53,6 +53,7 @@
                     </Style>
                 </ListView.Resources>
                 <ListView.ItemTemplate>
+                    <!-- 
                     <DataTemplate x:DataType="domain:Rating">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Rating:" 
@@ -67,6 +68,7 @@
                                 FontFamily="{StaticResource DefaultFontFamily}"/>
                         </StackPanel>
                     </DataTemplate>
+                    -->
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>

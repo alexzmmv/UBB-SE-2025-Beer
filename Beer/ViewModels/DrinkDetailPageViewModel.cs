@@ -69,7 +69,7 @@
         public void LoadDrink(int drinkId)
         {
             this.Drink = this.drinkService.GetDrinkById(drinkId);
-            this.AverageReviewScore = this.reviewService.GetReviewAverageByDrinkID(drinkId);
+            //this.AverageReviewScore = this.reviewService.GetReviewAverageByDrinkID(drinkId);
             List<Review> reviews = this.reviewService.GetReviewsByDrinkID(drinkId);
             this.Reviews.Clear();
             foreach (Review review in reviews)

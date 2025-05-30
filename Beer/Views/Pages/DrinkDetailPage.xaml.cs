@@ -1,6 +1,7 @@
 ﻿using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -20,9 +21,31 @@ namespace WinUIApp.Views.Pages
         public DrinkDetailPage()
         {
             this.InitializeComponent();
+
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
+            this.userService = App.Host.Services.GetRequiredService<IUserService>();
+
+            this.ViewModel = new DrinkDetailPageViewModel(
+                this.drinkService,
+                this.drinkReviewService,
+                this.userService);
+
             this.DataContext = this.ViewModel;
-            // Possible deadlock
-            if (this.ViewModel.IsCurrentUserAdminAsync().Result)
+
+            this.UpdateRemoveButtonText();
+
+            //this.UpdateButton.OnDrinkUpdated = () =>
+            //{
+            //    this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
+            //};
+        }
+
+        public DrinkDetailPageViewModel ViewModel { get; }
+
+        public async void UpdateRemoveButtonText()
+        {
+            if (await this.ViewModel.IsCurrentUserAdminAsync())
             {
                 this.RemoveButtonText.Text = "Remove drink";
             }
@@ -30,23 +53,7 @@ namespace WinUIApp.Views.Pages
             {
                 this.RemoveButtonText.Text = "Send remove drink request";
             }
-
-            this.UpdateButton.OnDrinkUpdated = () =>
-            {
-                this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
-            };
-
-            this.drinkService = App.GetService<IDrinkService>();
-            this.drinkReviewService = App.GetService<IDrinkReviewService>();
-            this.userService = App.GetService<IUserService>();
-
-            this.ViewModel = new DrinkDetailPageViewModel(
-                this.drinkService,
-                this.drinkReviewService,
-                this.userService);
         }
-
-        public DrinkDetailPageViewModel ViewModel { get; }
 
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
@@ -70,27 +77,27 @@ namespace WinUIApp.Views.Pages
 
         private void AddRatingButton_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ViewModel?.Drink == null)
-            {
-                return;
-            }
+            //if (this.ViewModel?.Drink == null)
+            //{
+            //    return;
+            //}
 
-            int productId = this.ViewModel.Drink.DrinkId;
+            //int productId = this.ViewModel.Drink.DrinkId;
 
-            IConfiguration configuration = App.GetService<IConfiguration>();
-            IRatingService ratingService = App.GetService<IRatingService>();
-            IReviewService reviewService = App.GetService<IReviewService>();
-            IUserService userService = App.GetService<IUserService>();
+            //IConfiguration configuration = App.GetService<IConfiguration>();
+            //IRatingService ratingService = App.GetService<IRatingService>();
+            //IReviewService reviewService = App.GetService<IReviewService>();
+            //IUserService userService = App.GetService<IUserService>();
 
-            RatingViewModel ratingViewModel = new RatingViewModel(ratingService);
-            ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
+            //RatingViewModel ratingViewModel = new RatingViewModel(ratingService);
+            //ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
 
-            RatingMainPageViewModel mainVm = new RatingMainPageViewModel(configuration, ratingViewModel, reviewViewModel, productId);
+            //RatingMainPageViewModel mainVm = new RatingMainPageViewModel(configuration, ratingViewModel, reviewViewModel, productId);
 
-            ratingViewModel.LoadRatingsForProduct(productId);
+            //ratingViewModel.LoadRatingsForProduct(productId);
 
-            RatingReviewWindow window = new RatingReviewWindow(mainVm, productId);
-            window.Activate();
+            //RatingReviewWindow window = new RatingReviewWindow(mainVm, productId);
+            //window.Activate();
         }
     }
 }
