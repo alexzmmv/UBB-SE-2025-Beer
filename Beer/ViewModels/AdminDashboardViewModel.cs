@@ -683,7 +683,6 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             try
             {
                 List<User> users = await this.userService.GetUsersWithHiddenReviews();
-                // Filter out admins and already banned users
                 users = users.Where(u => u.AssignedRole != RoleType.Admin && u.AssignedRole != RoleType.Banned).ToList();
                 this.UsersWithHiddenReviews = new ObservableCollection<User>(users);
             }
@@ -705,17 +704,14 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             {
                 await this.userService.UpdateUserRole(userId, RoleType.Banned);
 
-                // Remove the user from the list immediately
-                var userToRemove = this.UsersWithHiddenReviews.FirstOrDefault(u => u.UserId == userId);
-                if (userToRemove != null)
+                User? userToRemove = this.UsersWithHiddenReviews.FirstOrDefault(u => u.UserId == userId);
+                if (userToRemove == null)
                 {
-                    this.UsersWithHiddenReviews.Remove(userToRemove);
+                    return;
                 }
 
-                // Refresh the full list to ensure consistency
                 await this.LoadUsersWithHiddenReviews();
 
-                // Force UI update
                 this.OnPropertyChanged(nameof(UsersWithHiddenReviews));
             }
             catch (Exception ex)

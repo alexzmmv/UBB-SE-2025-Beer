@@ -18,8 +18,8 @@ namespace WinUIApp.Views
             this.InitializeComponent();
             this.SetFixedSize(1440, 900);
             AppMainFrame = this.MainFrame;
-            this.MainFrame.Navigate(typeof(MainPage));
             this.MainFrame.Navigated += MainFrame_Navigated;
+            this.MainFrame.Navigate(typeof(MainPage));
         }
 
         public static Frame AppMainFrame { get; private set; }

@@ -231,27 +231,7 @@ namespace DrinkDb_Auth.View
         {
             if (sender is Button button && button.Tag is Guid userId)
             {
-                ContentDialog confirmDialog = new ContentDialog
-                {
-                    Title = "Confirm Ban",
-                    Content = "Are you sure you want to ban this user?",
-                    PrimaryButtonText = "Yes",
-                    CloseButtonText = "No",
-                    XamlRoot = this.XamlRoot
-                };
-
-                try
-                {
-                    var result = await confirmDialog.ShowAsync();
-                    if (result == ContentDialogResult.Primary)
-                    {
-                        await Task.Run(() => this.ViewModel.BanUser(userId));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error showing dialog: {ex.Message}");
-                }
+                await this.ViewModel.BanUser(userId);
             }
         }
     }
