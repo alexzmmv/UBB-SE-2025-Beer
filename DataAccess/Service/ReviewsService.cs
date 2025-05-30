@@ -25,7 +25,10 @@
         {
             try
             {
-                var review = ReviewMapper.ToEntity(reviewDto);
+                if (!ReviewValidator.IsValid(reviewDto))
+                {
+                    throw new ArgumentException("Invalid review data.");
+                }
                 return await reviewsRepository.AddReview(reviewDto);
             }
             catch
@@ -73,6 +76,11 @@
         {
             try
             {
+                var reviewDto = await reviewsRepository.GetReviewById(reviewId);
+                if (reviewDto == null || !ReviewValidator.IsValid(reviewDto))
+                {
+                    throw new ArgumentException("Invalid review data.");
+                }
                 await reviewsRepository.UpdateReviewVisibility(reviewId, isHidden);
             }
             catch
