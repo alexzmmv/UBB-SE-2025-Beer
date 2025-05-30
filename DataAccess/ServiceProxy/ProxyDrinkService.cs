@@ -103,7 +103,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="inputtedDrinkBrandName"> brand. </param>
         /// <param name="inputtedAlcoholPercentage"> alcohol. </param>
         /// <exception cref="Exception"> any issues. </exception>
-        public void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
+        public Drink AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
         {
             try
             {
@@ -128,6 +128,8 @@ namespace WinUIApp.ProxyServices
 
                 var response = httpClient.PostAsJsonAsync("Drink/add", request).Result;
                 response.EnsureSuccessStatusCode();
+
+                return null;
             }
             catch (Exception exception)
             {
@@ -372,11 +374,6 @@ namespace WinUIApp.ProxyServices
             {
                 throw new Exception("Error getting drink of the day: " + exception.Message, exception);
             }
-        }
-
-        public DrinkRequestingApproval AddDrinkRequestingApproval(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
-        {
-            throw new NotImplementedException();
         }
     }
 }

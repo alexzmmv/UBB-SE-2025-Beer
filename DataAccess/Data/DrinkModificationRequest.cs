@@ -14,6 +14,6 @@ public class DrinkModificationRequest
     public int DrinkModificationRequestId { get; set; }
     public DrinkModificationRequestType ModificationType { get; set; }
     public Drink? OldDrink { get; set; }
-    public DrinkRequestingApproval? NewDrink { get; set; }
+    public Drink? NewDrink { get; set; }
     public User RequestingUser { get; set; }
 }

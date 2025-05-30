@@ -13,9 +13,7 @@ namespace WinUiApp.Data.Interfaces
         DbSet<Category> Categories { get; set; }
 
         DbSet<Drink> Drinks { get; set; }
-        
-        DbSet<DrinkRequestingApproval> DrinksRequestingApproval { get; set; }
-        
+
         DbSet<DrinkModificationRequest> DrinkModificationRequests { get; set; }
 
         DbSet<DrinkCategory> DrinkCategories { get; set; }

@@ -24,7 +24,7 @@ namespace DataAccess.Service
             this.drinkModificationRequestRepository = drinkModificationRequestRepository;
         }
 
-        public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, DrinkRequestingApproval? newDrink, User requestingUser)
+        public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser)
         {
             DrinkModificationRequest request = new DrinkModificationRequest
         {

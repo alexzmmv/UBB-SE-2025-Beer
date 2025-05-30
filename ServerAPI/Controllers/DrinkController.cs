@@ -79,16 +79,18 @@ namespace WinUIApp.WebAPI.Controllers
                     request.inputtedDrinkPath,
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
-                    request.inputtedAlcoholPercentage);
+                    request.inputtedAlcoholPercentage,
+                    false);
             }
             else
             {
-                var drinkRequestingAddition = drinkService.AddDrinkRequestingApproval(
+                var drinkRequestingAddition = drinkService.AddDrink(
                     request.inputtedDrinkName,
                     request.inputtedDrinkPath,
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
-                    request.inputtedAlcoholPercentage);
+                    request.inputtedAlcoholPercentage,
+                    true);
 
                 drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Add, null, drinkRequestingAddition, user);
             }

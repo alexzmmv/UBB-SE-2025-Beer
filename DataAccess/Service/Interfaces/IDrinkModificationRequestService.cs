@@ -12,7 +12,7 @@ namespace DataAccess.Service.Interfaces
 {
     public interface IDrinkModificationRequestService
     {
-        DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, DrinkRequestingApproval? newDrink, User requestingUser);
+        DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser);
         Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests();
     }
 }

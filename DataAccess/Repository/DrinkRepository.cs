@@ -150,7 +150,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// <param name="brandName"> Brand name. </param>
         /// <param name="alcoholContent"> Alcohol content. </param>
         /// 
-        public void AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent)
+        public Drink AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false)
         {
             var brand = RetrieveBrand(brandName);
 
@@ -160,6 +160,7 @@ namespace WinUIApp.WebAPI.Repositories
                 DrinkURL = drinkUrl,
                 AlcoholContent = (int)alcoholContent,
                 BrandId = brand.BrandId,
+                IsRequestingApproval = isDrinkRequestingApproval
             };
 
             dbContext.Drinks.Add(drink);
@@ -181,8 +182,9 @@ namespace WinUIApp.WebAPI.Repositories
                 dbContext.DrinkCategories.Add(drinkCategory);
             }
 
+            dbContext.SaveChanges();
 
-            dbContext.SaveChanges(); 
+            return drink;
         }
 
         /// <summary>
@@ -602,42 +604,6 @@ namespace WinUIApp.WebAPI.Repositories
             dbContext.Brands.Add(brand);
 
             dbContext.SaveChanges();
-        }
-
-        public DrinkRequestingApproval AddDrinkRequestingApproval(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent)
-        {
-            var brand = RetrieveBrand(brandName);
-
-            var drink = new DrinkRequestingApproval
-            {
-                DrinkName = drinkName,
-                DrinkURL = drinkUrl,
-                AlcoholContent = (int)alcoholContent,
-                BrandId = brand.BrandId,
-            };
-
-            dbContext.DrinksRequestingApproval.Add(drink);
-            dbContext.SaveChanges();
-            drink = dbContext.DrinksRequestingApproval
-                .FirstOrDefault(drink =>
-                        drink.DrinkName == drinkName && drink.BrandId == brand.BrandId);
-
-            foreach (var category in categories)
-            {
-                var dataCategory = RetrieveCategory(category);
-
-                var drinkCategory = new DrinkCategory
-                {
-                    DrinkId = drink.DrinkId,
-                    CategoryId = dataCategory.CategoryId
-                };
-
-                dbContext.DrinkCategories.Add(drinkCategory);
-            }
-
-            dbContext.SaveChanges();
-
-            return drink;
         }
     }
 }

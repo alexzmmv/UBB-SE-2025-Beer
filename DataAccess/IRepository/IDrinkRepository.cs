@@ -11,7 +11,7 @@
 
         DrinkDTO? GetDrinkById(int drinkId);
 
-        void AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent);
+        Drink AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false);
 
         void UpdateDrink(DrinkDTO drinkDto);
 
@@ -46,7 +46,5 @@
         bool IsBrandInDatabase(string brandName);
 
         void AddBrand(string brandName);
-
-        DrinkRequestingApproval AddDrinkRequestingApproval(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent);
     }
 }

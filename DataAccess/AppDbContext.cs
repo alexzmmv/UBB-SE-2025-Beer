@@ -22,7 +22,6 @@ public class AppDbContext : DbContext, IAppDbContext
     public virtual DbSet<Brand> Brands { get; set; }
     public virtual DbSet<Category> Categories { get; set; }
     public virtual DbSet<Drink> Drinks { get; set; }
-    public virtual DbSet<DrinkRequestingApproval> DrinksRequestingApproval { get; set; }
     public virtual DbSet<DrinkModificationRequest> DrinkModificationRequests { get; set; }
     public virtual DbSet<DrinkCategory> DrinkCategories { get; set; }
     public virtual DbSet<User> Users { get; set; }

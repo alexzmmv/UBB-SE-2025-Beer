@@ -131,11 +131,11 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        public void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
+        public Drink AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
         {
             try
             {
-                this.drinkRepository.AddDrink(inputtedDrinkName, inputtedDrinkPath, inputtedDrinkCategories, inputtedDrinkBrandName, inputtedAlcoholPercentage);
+                return this.drinkRepository.AddDrink(inputtedDrinkName, inputtedDrinkPath, inputtedDrinkCategories, inputtedDrinkBrandName, inputtedAlcoholPercentage, isDrinkRequestingApproval);
             }
             catch (Exception addingDrinkException)
             {
@@ -322,11 +322,6 @@ namespace WinUIApp.WebAPI.Services
             {
                 throw new Exception("Error getting drink of the day:" + getDrinkOfTheDayException.Message, getDrinkOfTheDayException);
             }
-        }
-
-        public DrinkRequestingApproval AddDrinkRequestingApproval(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
-        {
-            return this.drinkRepository.AddDrinkRequestingApproval(inputtedDrinkName, inputtedDrinkPath, inputtedDrinkCategories, inputtedDrinkBrandName, inputtedAlcoholPercentage);
         }
     }
 }
