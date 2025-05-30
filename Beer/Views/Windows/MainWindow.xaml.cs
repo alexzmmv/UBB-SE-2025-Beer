@@ -41,7 +41,7 @@ namespace WinUIApp.Views
         {
             if (this.HeaderComponent != null)
             {
-                this.HeaderComponent.UpdateSearchBarVisibility(e.SourcePageType);
+                this.HeaderComponent.UpdateHeaderComponentsVisibility(e.SourcePageType);
             }
         }
     }

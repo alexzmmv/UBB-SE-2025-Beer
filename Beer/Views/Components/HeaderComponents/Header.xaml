@@ -49,6 +49,7 @@
                 <SymbolIcon Symbol="Find"/>
             </Button>
             <Button x:Name="GoBackButton"
+                    Visibility="{x:Bind GoBackButtonVisibility, Mode=OneWay}"
                     Content="Go Back"
                 Click="GoBackButton_Click">
             </Button>

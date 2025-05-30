@@ -55,16 +55,27 @@ namespace WinUIApp.Views.Components.HeaderComponents
 
         public Visibility SearchBarVisibility { get; set; } = Visibility.Collapsed;
 
+        public Visibility GoBackButtonVisibility { get; set; } = Visibility.Collapsed;
+
         public void SetSearchBarVisibility(bool isVisible)
         {
             SearchBarVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             this.Bindings.Update();
         }
 
-        public void UpdateSearchBarVisibility(Type currentPageType)
+        public void SetGoBackButtonVisibility(bool isVisible)
+        {
+            GoBackButtonVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            this.Bindings.Update();
+        }
+
+        public void UpdateHeaderComponentsVisibility(Type currentPageType)
         {
             bool shouldShowSearchBar = currentPageType == typeof(MainPage) || currentPageType == typeof(SearchPage);
             SetSearchBarVisibility(shouldShowSearchBar);
+
+            bool shouldShowGoBackButton = currentPageType != typeof(MainPage);
+            SetGoBackButtonVisibility(shouldShowGoBackButton);
         }
     }
 }
