@@ -3,46 +3,46 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DataAccess.Model.AdminDashboard;
+    using DataAccess.DTOModels;
     using WinUiApp.Data.Data;
 
     public interface IReviewsRepository
     {
-        Task<List<Review>> GetAllReviews();
+        Task<List<ReviewDTO>> GetAllReviews();
 
-        Task<List<Review>> GetReviewsSince(DateTime date);
+        Task<List<ReviewDTO>> GetReviewsSince(DateTime date);
 
         Task<double> GetAverageRatingForVisibleReviews();
 
-        Task<List<Review>> GetMostRecentReviews(int count);
+        Task<List<ReviewDTO>> GetMostRecentReviews(int count);
 
         Task<int> GetReviewCountAfterDate(DateTime date);
 
-        Task<List<Review>> GetFlaggedReviews(int minFlags);
+        Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags);
 
-        Task<List<Review>> GetReviewsByUser(Guid userId);
+        Task<List<ReviewDTO>> GetReviewsByUser(Guid userId);
 
-        Task<Review?> GetReviewById(int reviewID);
+        Task<ReviewDTO?> GetReviewById(int reviewID);
 
         Task UpdateReviewVisibility(int reviewID, bool isHidden);
 
         Task UpdateNumberOfFlagsForReview(int reviewID, int numberOfFlags);
 
         // From 923 this returns a Review
-        Task<int> AddReview(Review review);
+        Task<int> AddReview(ReviewDTO review);
 
         // Changed this to bool
-        Task<bool> UpdateReview(Review review);
+        Task<bool> UpdateReview(ReviewDTO review);
 
         Task RemoveReviewById(int reviewID);
 
-        Task<List<Review>> GetHiddenReviews();
+        Task<List<ReviewDTO>> GetHiddenReviews();
 
-        Task<List<Review>> GetReviewsByDrinkId(int drinkId);
+        Task<List<ReviewDTO>> GetReviewsByDrinkId(int drinkId);
 
-        Task<List<Review>> GetReviewsByUserId(Guid userId);
+        Task<List<ReviewDTO>> GetReviewsByUserId(Guid userId);
 
-        Task<List<Review>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId);
+        Task<List<ReviewDTO>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId);
 
     }
 }

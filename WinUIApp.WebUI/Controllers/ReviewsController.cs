@@ -46,7 +46,7 @@ namespace WebServer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReviewId,UserId,Rating,Content,CreatedDate,NumberOfFlags,IsHidden")] Review review)
+        public async Task<IActionResult> Create([Bind("ReviewId,UserId,DrinkId,RatingValue,Content,CreatedDate,NumberOfFlags,IsHidden")] Review review)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace WebServer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("ReviewId,UserId,Rating,Content,CreatedDate,NumberOfFlags,IsHidden")] Review review)
+        public async Task<IActionResult> Edit([Bind("ReviewId,UserId,DrinkId,RatingValue,Content,CreatedDate,NumberOfFlags,IsHidden")] Review review)
         {
             if (ModelState.IsValid)
             {

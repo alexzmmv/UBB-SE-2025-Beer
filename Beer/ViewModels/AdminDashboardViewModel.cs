@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using DataAccess.Constants;
+using DataAccess.DTOModels;
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
@@ -24,7 +25,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         private readonly ICheckersService checkersService;
         private readonly IUpgradeRequestsService requestsService;
 
-        private ObservableCollection<Review> flaggedReviews;
+        private ObservableCollection<ReviewDTO> flaggedReviews;
         private ObservableCollection<User> appealsUsers;
         private ObservableCollection<UpgradeRequest> upgradeRequests;
         private ObservableCollection<string> offensiveWords;
@@ -79,7 +80,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         public ICommand BanUserCommand { get; private set; }
 
-        public ObservableCollection<Review> FlaggedReviews
+        public ObservableCollection<ReviewDTO> FlaggedReviews
         {
             get => this.flaggedReviews;
             set
@@ -248,16 +249,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         public async Task LoadFlaggedReviews()
         {
-            try
-            {
-                List<Review> reviews = await this.reviewsService.GetFlaggedReviews();
-                this.FlaggedReviews = new ObservableCollection<Review>(reviews);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error loading flagged reviews: {ex.Message}");
-                this.FlaggedReviews = new ObservableCollection<Review>();
-            }
+            List<ReviewDTO> reviews = await this.reviewsService.GetFlaggedReviews();
+            this.FlaggedReviews = new ObservableCollection<ReviewDTO>(reviews);
         }
 
         public async Task LoadAppeals()
@@ -304,8 +297,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         public async Task FilterReviews(string filter)
         {
-            List<Review> reviews = await this.reviewsService.FilterReviewsByContent(filter);
-            this.FlaggedReviews = new ObservableCollection<Review>(reviews);
+            List<ReviewDTO> reviews = await this.reviewsService.FilterReviewsByContent(filter);
+            this.FlaggedReviews = new ObservableCollection<ReviewDTO>(reviews);
         }
 
         public async Task FilterAppeals(string filter)
@@ -339,11 +332,11 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             await this.LoadFlaggedReviews();
         }
 
-        public async Task RunAICheck(Review review)
+        public async Task RunAICheck(ReviewDTO review)
         {
             try
             {
-                this.checkersService.RunAICheckForOneReviewAsync(review);
+                //this.checkersService.RunAICheckForOneReviewAsync(review);
                 await this.LoadFlaggedReviews();
             }
             catch
@@ -355,10 +348,10 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             try
             {
-                List<Review> reviews = await this.reviewsService.GetFlaggedReviews();
-                List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviews));
+                List<ReviewDTO> reviews = await this.reviewsService.GetFlaggedReviews();
+                //List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviews));
                 await this.LoadFlaggedReviews();
-                return messages;
+                return null;
             }
             catch
             {
@@ -428,7 +421,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             await this.LoadAppeals();
         }
 
-        public List<Review> GetUserReviews(Guid userId)
+        public List<ReviewDTO> GetUserReviews(Guid userId)
         {
             return this.reviewsService.GetReviewsByUser(userId).Result;
         }
@@ -455,7 +448,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 this.IsAppealUserBanned = true;
                 this.UserStatusDisplay = this.GetUserStatusDisplay(user, true);
 
-                List<Review> reviews = await this.reviewsService.GetReviewsByUser(user.UserId);
+                List<ReviewDTO> reviews = await this.reviewsService.GetReviewsByUser(user.UserId);
                 this.UserReviewsFormatted = new ObservableCollection<string>(
                     reviews.Select(r => this.FormatReviewContent(r)).ToList());
             }
@@ -567,7 +560,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             return $"User ID: {user.UserId}\nEmail: {user.EmailAddress}\n{currentRoleName} -> {requiredRoleName}";
         }
 
-        public string FormatReviewContent(Review review)
+        public string FormatReviewContent(ReviewDTO review)
         {
             if (review == null)
             {
@@ -577,7 +570,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             return $"{review.Content}";
         }
 
-        public string FormatReviewWithFlags(Review review)
+        public string FormatReviewWithFlags(ReviewDTO review)
         {
             if (review == null)
             {
@@ -636,8 +629,9 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
             this.HideReviewCommand = new RelayCommand<int>(param =>
                 this.HideReview(param));
+            
 
-            this.RunAICheckCommand = new RelayCommand<Review>(async review =>
+            this.RunAICheckCommand = new RelayCommand<ReviewDTO>(async review =>
                 await this.RunAICheck(review));
 
             this.RunAutoCheckCommand = new AsyncRelayCommand(async () =>

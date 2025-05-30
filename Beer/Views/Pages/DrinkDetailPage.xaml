@@ -85,7 +85,7 @@
                 VerticalAlignment="Stretch"
                 Canvas.ZIndex="999">
             <modals:AddReviewModal x:Name="AddReviewModal"
-                                   CloseRequested="CloseAddReviewModal"/>
+                                   CloseRequested="CloseAddReviewModal" DrinkId="{Binding Drink.DrinkId}"/>
         </Grid>
     </Grid>
 </Page>

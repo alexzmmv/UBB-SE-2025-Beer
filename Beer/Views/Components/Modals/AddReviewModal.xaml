@@ -38,9 +38,26 @@
                                HorizontalAlignment="Center"
                                Margin="0,0,0,12"/>
 
+                        <!-- Dynamic Bottle Rating -->
+                    <ItemsControl ItemsSource="{Binding Bottles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding ImageSource}" Width="40" Height="80" Margin="20"
+                               Tapped="Bottle_Click" DataContext="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
                     <!-- Input Field -->
                     <TextBox x:Name="ReviewInput"
                              Header="Your Review"
+                             Text="{Binding Content, Mode=TwoWay}"
                              PlaceholderText="Write your review here..."
                              TextWrapping="Wrap"
                              AcceptsReturn="True"

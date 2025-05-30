@@ -10,5 +10,7 @@ namespace DataAccess.Service.Interfaces
     public interface IDrinkModificationRequestService
     {
         Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests();
+        Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId);
+        Task DenyRequest(int modificationRequestId);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using DataAccess.DTOModels;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
@@ -20,16 +21,31 @@ namespace WinUIApp.ViewModels
         private double averageRating;
         private ObservableCollection<BottleAsset> bottles;
         private int ratingScore;
-        private IReviewService ratingService;
+        private string content;
+        private IReviewService reviewService;
         private const int MINIMUM_RATING = 1;
         private const int MAXIMUM_RATING = 5;
 
         public RatingViewModel(IReviewService reviewService)
         {
-            this.ratingService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
+            this.reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
             this.ratings = new ObservableCollection<float>();
             this.bottles = new ObservableCollection<BottleAsset>();
             this.InitializeBottles();
+        }
+
+
+        public string Content
+        {
+            get => content;
+            set
+            {
+                if (content != value)
+                {
+                    content = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public virtual ObservableCollection<float> Ratings
@@ -74,22 +90,26 @@ namespace WinUIApp.ViewModels
             this.RatingScore = clickedBottleNumber;
         }
 
-        public virtual void AddRating(int productId)
+        public virtual void AddReview(int drinkId)
         {
-            //if (this.RatingScore < RatingViewModel.MINIMUM_RATING)
-            //{
-            //    return;
-            //}
+            if (this.RatingScore < RatingViewModel.MINIMUM_RATING)
+            {
+                return;
+            }
 
-            //Rating rating = new Rating
-            //{
-            //    DrinkId = productId,
-            //    RatingValue = this.RatingScore,
-            //    RatingDate = DateTime.Now,
-            //    UserId = App.CurrentUserId,
-            //};
+            ReviewDTO newReview = new ReviewDTO
+            {
+                ReviewId = 0,
+                DrinkId = drinkId,
+                Content = Content,
+                RatingValue = this.RatingScore,
+                UserId = App.CurrentUserId,
+                IsHidden = true,
+                CreatedDate = DateTime.UtcNow,
+                NumberOfFlags = 0,
+            };
 
-            //this.ratingService.CreateRating(rating);
+            this.reviewService.AddReview(newReview);
             //this.LoadRatingsForProduct(productId);
         }
 

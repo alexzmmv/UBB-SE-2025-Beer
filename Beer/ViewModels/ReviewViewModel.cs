@@ -74,7 +74,7 @@
 
             try
             {
-                this.reviewService.AddReview(newReview);
+                //this.reviewService.AddReview(newReview);
                 this.LoadReviewsForRatingAsync(ratingId);
                 this.ReviewContent = string.Empty;
                 this.CloseWindow();

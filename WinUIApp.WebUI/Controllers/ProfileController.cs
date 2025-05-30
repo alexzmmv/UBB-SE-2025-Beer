@@ -31,7 +31,7 @@ namespace WebServer.Controllers
                 return RedirectToAction("AuthenticationPage", "Auth");
             }
 
-            IEnumerable<Review> reviews = await reviewService.GetReviewsByUser(currentUser.UserId);
+            IEnumerable<DataAccess.DTOModels.ReviewDTO> reviews = await reviewService.GetReviewsByUser(currentUser.UserId);
             UserPageModel userPageModel = new UserPageModel()
             {
                 CurrentUser = currentUser,
