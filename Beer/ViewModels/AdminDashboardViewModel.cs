@@ -41,7 +41,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         // Constructor of warnings
         public MainPageViewModel(IReviewService reviewsService, IUserService userService,
-            IUpgradeRequestsService upgradeRequestsService,ICheckersService checkersService)
+            IUpgradeRequestsService upgradeRequestsService, ICheckersService checkersService)
         {
             this.reviewsService = reviewsService;
             this.userService = userService;
@@ -668,7 +668,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
             this.BanUserCommand = new RelayCommand<Guid>(userId =>
             {
-                _ = this.BanUser(userId); 
+                _ = this.BanUser(userId);
             });
         }
 
@@ -704,15 +704,19 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             try
             {
                 await this.userService.UpdateUserRole(userId, RoleType.Banned);
+
                 // Remove the user from the list immediately
                 var userToRemove = this.UsersWithHiddenReviews.FirstOrDefault(u => u.UserId == userId);
                 if (userToRemove != null)
                 {
                     this.UsersWithHiddenReviews.Remove(userToRemove);
-                    this.OnPropertyChanged(nameof(UsersWithHiddenReviews));
                 }
-                // Also refresh the full list to ensure consistency
+
+                // Refresh the full list to ensure consistency
                 await this.LoadUsersWithHiddenReviews();
+
+                // Force UI update
+                this.OnPropertyChanged(nameof(UsersWithHiddenReviews));
             }
             catch (Exception ex)
             {
