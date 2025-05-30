@@ -15,6 +15,7 @@
         void UpdateDrink(DrinkDTO drinkDto);
 
         void DeleteDrink(int drinkId);
+        void DeleteRequestingApprovalDrink(int drinkId);
 
         DrinkDTO GetDrinkOfTheDay();
 

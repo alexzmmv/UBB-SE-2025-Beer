@@ -228,6 +228,19 @@ namespace WinUIApp.WebAPI.Repositories
             dbContext.SaveChanges();
         }
 
+        public void DeleteRequestingApprovalDrink(int drinkId)
+        {
+            var drink = dbContext.DrinksRequestingApproval
+                                    .FirstOrDefault(drink => drink.DrinkId == drinkId);
+
+            if (drink == null)
+                throw new Exception("No drink found with the provided ID.");
+
+            dbContext.DrinksRequestingApproval.Remove(drink);
+
+            dbContext.SaveChanges();
+        }
+
         /// <summary>
         /// Retrieves the drink of the day.
         /// </summary>
