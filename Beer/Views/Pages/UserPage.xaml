@@ -67,6 +67,14 @@
                     <TextBlock 
                         x:Name="StatusTextBlock"
                         FontSize="16" />
+
+                    <Button 
+                        x:Name="RequestAdminButton"
+                        Content="Request Admin"
+                        Click="RequestAdminButton_Click"
+                        Background="White"
+                        Foreground="Black"/>
+
                 </StackPanel>
             </Border>
         </StackPanel>

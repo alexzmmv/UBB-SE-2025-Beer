@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccess.Constants;
+using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
 using DataAccess.Service.Interfaces;
@@ -21,6 +22,7 @@ namespace DrinkDb_Auth
         private readonly IUserService userService;
         private readonly IAuthenticationService authenticationService;
         private readonly IReviewService reviewService;
+        private readonly IUpgradeRequestsService upgradeRequestsService;
         private User? currentUser;
 
         public UserPage()
@@ -30,6 +32,9 @@ namespace DrinkDb_Auth
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.authenticationService = App.Host.Services.GetRequiredService<IAuthenticationService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
+            this.upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
+
+            this.RequestAdminButtonVisibility();
         }
 
         private void UserPage_Loaded(object sender, RoutedEventArgs e)
@@ -125,6 +130,39 @@ namespace DrinkDb_Auth
             //    border.Child = reviewStack;
             //    this.ReviewsItemsControl.Items.Add(border);
             //}
+        }
+
+        public async void RequestAdminButtonVisibility()
+        {
+            RoleType? role = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId);
+
+            if (role == null)
+            {
+                return;
+            }
+
+            if (role != RoleType.User)
+            {
+                this.RequestAdminButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            List<UpgradeRequest> requests = await this.upgradeRequestsService.RetrieveAllUpgradeRequests();
+
+            foreach (UpgradeRequest request in requests)
+            {
+                if (request.RequestingUserIdentifier == App.CurrentUserId)
+                {
+                    this.RequestAdminButton.Visibility = Visibility.Collapsed;
+                    return;
+                }
+            }
+        }
+
+        private async void RequestAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            await this.upgradeRequestsService.AddUpgradeRequest(App.CurrentUserId);
+            this.RequestAdminButton.Visibility = Visibility.Collapsed;
         }
     }
 
