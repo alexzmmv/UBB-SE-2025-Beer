@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Net.Http.Json;
-using DataAccess.Model.AdminDashboard;
+using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
@@ -23,20 +23,20 @@ namespace DataAccess.ServiceProxy
             httpClient.BaseAddress = new Uri(baseUrl);
         }
 
-        public async Task<int> AddReview(Review review)
+        public async Task<int> AddReview(ReviewDTO reviewDto)
         {
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync($"{ApiRoute}/add", review);
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync($"{ApiRoute}/add", reviewDto);
             response.EnsureSuccessStatusCode();
-            return review.ReviewId + 1;
+            return reviewDto.ReviewId + 1;
         }
 
-        public IEnumerable<Review> GetReviewsByRating(int ratingId)
+        public IEnumerable<ReviewDTO> GetReviewsByRating(int ratingId)
         {
             try
             {
                 var response = this.httpClient.GetAsync($"Review/get-by-rating?ratingId={ratingId}").Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<IEnumerable<Review>>().Result;
+                return response.Content.ReadFromJsonAsync<IEnumerable<ReviewDTO>>().Result;
             }
             catch (Exception exception)
             {
@@ -44,20 +44,20 @@ namespace DataAccess.ServiceProxy
             }
         }
 
-        public async Task<List<Review>> GetAllReviews()
+        public async Task<List<ReviewDTO>> GetAllReviews()
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review>? reviews = await response.Content.ReadFromJsonAsync<List<Review>>();
-            return reviews ?? new List<Review>();
+            List<ReviewDTO>? reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>();
+            return reviews ?? new List<ReviewDTO>();
         }
 
         public async Task<double> GetAverageRatingForVisibleReviews()
         {
-            List<Review> reviews = await GetAllReviews();
+            List<ReviewDTO> reviews = await GetAllReviews();
             double average = 0;
             int numberOfVisibleReviews = 0;
-            foreach (Review review in reviews)
+            foreach (ReviewDTO review in reviews)
             {
                 if (review.IsHidden == false)
                 {
@@ -68,64 +68,64 @@ namespace DataAccess.ServiceProxy
             return numberOfVisibleReviews > 0 ? average / numberOfVisibleReviews : 0;
         }
 
-        public async Task<List<Review>> GetFlaggedReviews(int minFlags)
+        public async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags)
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
-            return reviews.Where(review => review.NumberOfFlags >= minFlags && !review.IsHidden).ToList() ?? new List<Review>();
+            return reviews.Where(review => review.NumberOfFlags >= minFlags && !review.IsHidden).ToList();
         }
 
-        public async Task<List<Review>> GetHiddenReviews()
+        public async Task<List<ReviewDTO>> GetHiddenReviews()
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
-            return reviews.Where(review => review.IsHidden).ToList() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
+            return reviews.Where(review => review.IsHidden).ToList();
         }
 
-        public async Task<List<Review>> GetMostRecentReviews(int count)
+        public async Task<List<ReviewDTO>> GetMostRecentReviews(int count)
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
             return reviews.Where(review => !review.IsHidden).OrderByDescending(review => review.CreatedDate).Take(count).ToList();
         }
 
-        public async Task<Review?> GetReviewById(int reviewID)
+        public async Task<ReviewDTO?> GetReviewById(int reviewID)
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
-            return reviews.Where(review => review.ReviewId == reviewID).First();
+            return reviews.FirstOrDefault(review => review.ReviewId == reviewID);
         }
 
         public async Task<int> GetReviewCountAfterDate(DateTime date)
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
-            return reviews.Where(review => review.CreatedDate == date).Count();
+            return reviews.Count(review => review.CreatedDate == date);
         }
 
-        public async Task<List<Review>> GetReviewsByUser(Guid userId)
+        public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
-            return reviews.Where(review => review.UserId == userId).ToList()??new List<Review>();
+            return reviews.Where(review => review.UserId == userId).ToList();
         }
 
-        public async Task<List<Review>> GetReviewsSince(DateTime date)
+        public async Task<List<ReviewDTO>> GetReviewsSince(DateTime date)
         {
             HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
             response.EnsureSuccessStatusCode();
-            List<Review> reviews = await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+            List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
             return reviews.Where(review => review.CreatedDate >= date).ToList();
         }
@@ -161,24 +161,24 @@ namespace DataAccess.ServiceProxy
             await UpdateNumberOfFlagsForReview(reviewId, 0);
         }
 
-        public async Task<List<Review>> GetReviewsForReport()
+        public async Task<List<ReviewDTO>> GetReviewsForReport()
         {
             return await GetAllReviews();
         }
 
-        public async Task<List<Review>> FilterReviewsByContent(string content)
+        public async Task<List<ReviewDTO>> FilterReviewsByContent(string content)
         {
-            List<Review> reviews = await GetAllReviews();
+            List<ReviewDTO> reviews = await GetAllReviews();
             return reviews.Where(review => review.Content.Contains(content, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
-        public async Task<List<Review>> GetReviewsByDrink(int drinkId)
+        public async Task<List<ReviewDTO>> GetReviewsByDrink(int drinkId)
         {
             try
             {
                 var response = await this.httpClient.GetAsync($"{ApiRoute}/get-reviews-by-drink?drinkId={drinkId}");
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<Review>>() ?? new List<Review>();
+                return await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
             }
             catch (Exception exception)
             {

@@ -5,10 +5,11 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DataAccess.IRepository;
-    using DataAccess.Model.AdminDashboard;
+    using DataAccess.DTOModels;
     using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
     using WinUiApp.Data.Data;
+    using DataAccess.Extensions;
 
     public class ReviewsService : IReviewService
     {
@@ -20,11 +21,12 @@
             this.reviewsRepository = reviewsRepository;
         }
 
-        public async Task<int> AddReview(Review review)
+        public async Task<int> AddReview(ReviewDTO reviewDto)
         {
             try
             {
-                return await reviewsRepository.AddReview(review);
+                var review = ReviewMapper.ToEntity(reviewDto);
+                return await reviewsRepository.AddReview(reviewDto);
             }
             catch
             {
@@ -43,11 +45,12 @@
             }
         }
 
-        public async Task<Review?> GetReviewById(int reviewId)
+        public async Task<ReviewDTO?> GetReviewById(int reviewId)
         {
             try
             {
-                return await reviewsRepository.GetReviewById(reviewId);
+                var reviewDto = await reviewsRepository.GetReviewById(reviewId);
+                return reviewDto;
             }
             catch
             {
@@ -101,7 +104,7 @@
             }
         }
 
-        public async Task<List<Review>> GetFlaggedReviews(int minFlags = 1)
+        public async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags = 1)
         {
             try
             {
@@ -109,24 +112,24 @@
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
-        public async Task<List<Review>> GetHiddenReviews()
+        public async Task<List<ReviewDTO>> GetHiddenReviews()
         {
             try
             {
-                List<Review> reviews = await reviewsRepository.GetAllReviews();
+                var reviews = await reviewsRepository.GetAllReviews();
                 return reviews.Where(review => review.IsHidden == true).ToList();
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
-        public async Task<List<Review>> GetAllReviews()
+        public async Task<List<ReviewDTO>> GetAllReviews()
         {
             try
             {
@@ -134,11 +137,11 @@
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
-        public async Task<List<Review>> GetReviewsSince(DateTime date)
+        public async Task<List<ReviewDTO>> GetReviewsSince(DateTime date)
         {
             try
             {
@@ -146,7 +149,7 @@
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
@@ -162,7 +165,7 @@
             }
         }
 
-        public async Task<List<Review>> GetMostRecentReviews(int count)
+        public async Task<List<ReviewDTO>> GetMostRecentReviews(int count)
         {
             try
             {
@@ -170,7 +173,7 @@
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
@@ -186,7 +189,7 @@
             }
         }
 
-        public async Task<List<Review>> GetReviewsByUser(Guid userId)
+        public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
         {
             try
             {
@@ -194,27 +197,27 @@
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
-        public async Task<List<Review>> GetReviewsForReport()
+        public async Task<List<ReviewDTO>> GetReviewsForReport()
         {
             try
             {
                 DateTime date = DateTime.Now.AddDays(-1);
                 int count = await reviewsRepository.GetReviewCountAfterDate(date);
 
-                List<Review> reviews = await reviewsRepository.GetMostRecentReviews(count);
-                return reviews ?? [];
+                var reviews = await reviewsRepository.GetMostRecentReviews(count);
+                return reviews ?? new List<ReviewDTO>();
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
-        public async Task<List<Review>> FilterReviewsByContent(string content)
+        public async Task<List<ReviewDTO>> FilterReviewsByContent(string content)
         {
             try
             {
@@ -224,16 +227,16 @@
                 }
 
                 content = content.ToLower();
-                List<Review> reviews = await GetFlaggedReviews();
+                var reviews = await GetFlaggedReviews();
                 return reviews.Where(review => review.Content.ToLower().Contains(content)).ToList();
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 
-        public async Task<List<Review>> GetReviewsByDrink(int drinkId)
+        public async Task<List<ReviewDTO>> GetReviewsByDrink(int drinkId)
         {
             try
             {
@@ -241,7 +244,7 @@
             }
             catch
             {
-                return new List<Review>();
+                return new List<ReviewDTO>();
             }
         }
 

@@ -10,9 +10,7 @@ namespace WinUIApp.ProxyServices
     using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Json;
-    using WinUIApp.ProxyServices;
-    using WinUiApp.Data.Data;
-
+    using DataAccess.DTOModels;
 
     /// <summary>
     /// Proxy service for managing drink-related operations.
@@ -49,13 +47,13 @@ namespace WinUIApp.ProxyServices
             }
         }
 
-        public List<Review> GetReviewsByDrinkID(int drinkID)
+        public List<ReviewDTO> GetReviewsByDrinkID(int drinkID)
         {
             try
             {
                 var response = this.httpClient.GetAsync($"api/reviews/get-reviews-by-drink?drinkId={drinkID}").Result;
                 response.EnsureSuccessStatusCode();
-                return response.Content.ReadFromJsonAsync<List<Review>>().Result ?? new List<Review>();
+                return response.Content.ReadFromJsonAsync<List<ReviewDTO>>().Result ?? new List<ReviewDTO>();
             }
             catch (Exception exception)
             {
