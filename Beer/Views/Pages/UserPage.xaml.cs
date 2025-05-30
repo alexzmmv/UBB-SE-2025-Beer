@@ -50,20 +50,28 @@ namespace DrinkDb_Auth
                 {
                     NameTextBlock.Text = currentUser.Username;
                     UsernameTextBlock.Text = "@" + currentUser.Username;
-                    StatusTextBlock.Text = "Status: Online";
+
+                    if (currentUser.AssignedRole == RoleType.Banned && !currentUser.HasSubmittedAppeal)
+                    {
+                        AppealButton.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        AppealButton.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
                     NameTextBlock.Text = "User not found";
                     UsernameTextBlock.Text = string.Empty;
-                    StatusTextBlock.Text = string.Empty;
+                    AppealButton.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 NameTextBlock.Text = "No user logged in";
                 UsernameTextBlock.Text = string.Empty;
-                StatusTextBlock.Text = string.Empty;
+                AppealButton.Visibility = Visibility.Collapsed;
             }
 
             RoleType userRole = this.currentUser?.AssignedRole ?? RoleType.User;
@@ -140,6 +148,29 @@ namespace DrinkDb_Auth
             //    border.Child = reviewStack;
             //    this.ReviewsItemsControl.Items.Add(border);
             //}
+        }
+
+        private async void AppealButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentUser != null)
+            {
+                try
+                {
+                    await userService.UpdateUserAppleaed(currentUser, true);
+                    AppealButton.Visibility = Visibility.Collapsed;
+                }
+                catch (Exception ex)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to submit appeal. Please try again later.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await dialog.ShowAsync();
+                }
+            }
         }
     }
 
