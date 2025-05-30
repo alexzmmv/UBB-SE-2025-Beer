@@ -155,7 +155,7 @@ namespace DrinkDb_Auth.ServiceProxy
 
         public async Task<RoleType?> GetHighestRoleTypeForUser(Guid id)
         {
-            HttpResponseMessage response = await this.httpClient.GetAsync($"{ApiRoute}/byId/{id}/highestRole");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{ApiRoute}/byId/{id}/role");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<RoleType>(jsonOptions);
         }

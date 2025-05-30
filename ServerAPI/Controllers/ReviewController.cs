@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using WinUIApp.WebAPI.Services;
 using System;
-using WinUIApp.WebAPI.Models;
-using WinUiApp.Data.Data;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using DataAccess.DTOModels;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 
 namespace WinUIApp.WebAPI.Controllers
@@ -19,13 +19,13 @@ namespace WinUIApp.WebAPI.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IEnumerable<Review>> GetAll()
+        public async Task<IEnumerable<ReviewDTO>> GetAll()
         {
             return await this.reviewService.GetAllReviews();
         }
 
         [HttpGet("since")]
-        public async Task<IEnumerable<Review>> GetReviewsSince([FromQuery] DateTime date)
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsSince([FromQuery] DateTime date)
         {
             return await this.reviewService.GetReviewsSince(date);
         }
@@ -37,7 +37,7 @@ namespace WinUIApp.WebAPI.Controllers
         }
 
         [HttpGet("mostRecent")]
-        public async Task<IEnumerable<Review>> GetMostRecentReviews([FromQuery] int count)
+        public async Task<IEnumerable<ReviewDTO>> GetMostRecentReviews([FromQuery] int count)
         {
             return await this.reviewService.GetMostRecentReviews(count);
         }
@@ -49,19 +49,19 @@ namespace WinUIApp.WebAPI.Controllers
         }
 
         [HttpGet("flagged")]
-        public async Task<IEnumerable<Review>> GetFlaggedReviews([FromQuery] int minFlags)
+        public async Task<IEnumerable<ReviewDTO>> GetFlaggedReviews([FromQuery] int minFlags)
         {
             return await this.reviewService.GetFlaggedReviews(minFlags);
         }
 
         [HttpGet("byUser")]
-        public async Task<IEnumerable<Review>> GetReviewsByUser([FromQuery] Guid userId)
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsByUser([FromQuery] Guid userId)
         {
             return await this.reviewService.GetReviewsByUser(userId);
         }
 
         [HttpGet("{id}")]
-        public async Task<Review?> GetReviewById(int id)
+        public async Task<ReviewDTO?> GetReviewById(int id)
         {
             return await this.reviewService.GetReviewById(id);
         }
@@ -78,17 +78,10 @@ namespace WinUIApp.WebAPI.Controllers
             await this.reviewService.UpdateReviewVisibility(id, isHidden);
         }
 
-        [HttpGet("get-by-rating")]
-        public IActionResult GetReviewsByRating([FromQuery] int ratingId)
-        {
-            var reviews = reviewService.GetReviewsByRating(ratingId);
-            return Ok(reviews);
-        }
-
         [HttpPost("add")]
-        public async Task<int> AddReview([FromBody] Review review)
+        public async Task<int> AddReview([FromBody] ReviewDTO reviewDto)
         {
-            return await this.reviewService.AddReview(review);
+            return await this.reviewService.AddReview(reviewDto);
         }
 
         [HttpDelete("{id}/delete")]
@@ -98,21 +91,35 @@ namespace WinUIApp.WebAPI.Controllers
         }
 
         [HttpGet("hidden")]
-        public async Task<IEnumerable<Review>> GetHiddenReviews()
+        public async Task<IEnumerable<ReviewDTO>> GetHiddenReviews()
         {
             return await this.reviewService.GetHiddenReviews();
         }
 
         [HttpGet("report")]
-        public async Task<IEnumerable<Review>> GetReviewsForReport()
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsForReport()
         {
             return await this.reviewService.GetReviewsForReport();
         }
 
         [HttpGet("filter")]
-        public async Task<IEnumerable<Review>> FilterReviewsByContent([FromQuery] string content)
+        public async Task<IEnumerable<ReviewDTO>> FilterReviewsByContent([FromQuery] string content)
         {
             return await this.reviewService.FilterReviewsByContent(content);
+        }
+
+        [HttpGet("get-reviews-by-drink")]
+        public async Task<IActionResult> GetReviewsByDrink([FromQuery] int drinkId)
+        {
+            var reviews = await reviewService.GetReviewsByDrink(drinkId);
+            return Ok(reviews);
+        }
+
+        [HttpGet("get-average-rating-by-drink")]
+        public async Task<IActionResult> GetAverageRating([FromQuery] int drinkId)
+        {
+            var averageRating = await reviewService.GetAverageRating(drinkId);
+            return Ok(averageRating);
         }
     }
 }

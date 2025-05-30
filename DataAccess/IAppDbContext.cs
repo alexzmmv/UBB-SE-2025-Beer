@@ -27,8 +27,6 @@ namespace WinUiApp.Data.Interfaces
 
         DbSet<Review> Reviews { get; set; }
 
-        DbSet<Rating> Ratings { get; set; }
-
         DbSet<Session> Sessions { get; set; }
 
         DbSet<Role> Roles { get; set; }

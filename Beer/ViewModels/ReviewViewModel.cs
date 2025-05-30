@@ -48,12 +48,12 @@
 
         public virtual async void LoadReviewsForRatingAsync(int ratingId)
         {
-            IEnumerable<Review> reviewsList = await this.reviewService.GetReviewsByRating(ratingId);
-            this.Reviews.Clear();
-            foreach (Review review in reviewsList)
-            {
-                this.Reviews.Add(review);
-            }
+            //IEnumerable<Review> reviewsList = await this.reviewService.GetReviewsByRating(ratingId);
+            //this.Reviews.Clear();
+            //foreach (Review review in reviewsList)
+            //{
+            //    this.Reviews.Add(review);
+            //}
         }
 
         public virtual void AddReview(int ratingId)
@@ -65,7 +65,6 @@
 
             Review newReview = new Review
             {
-                RatingId = ratingId,
                 UserId = this.userId,
                 Content = this.ReviewContent
             };
@@ -75,7 +74,7 @@
 
             try
             {
-                this.reviewService.AddReview(newReview);
+                //this.reviewService.AddReview(newReview);
                 this.LoadReviewsForRatingAsync(ratingId);
                 this.ReviewContent = string.Empty;
                 this.CloseWindow();

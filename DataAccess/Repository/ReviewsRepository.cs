@@ -16,6 +16,8 @@ namespace DataAccess.Repository
     using WinUiApp.Data.Data;
     using WinUiApp.Data.Interfaces;
     using Microsoft.VisualBasic;
+    using DataAccess.DTOModels;
+    using DataAccess.Extensions;
 
     public class ReviewsRepository : IReviewsRepository
     {
@@ -32,17 +34,19 @@ namespace DataAccess.Repository
             await dataContext.SaveChangesAsync();
         }
 
-        public async Task<List<Review>> GetAllReviews()
+        public async Task<List<ReviewDTO>> GetAllReviews()
         {
-            return await dataContext.Reviews.ToListAsync();
+            var reviews = await dataContext.Reviews.ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
-        public async Task<List<Review>> GetReviewsSince(DateTime date)
+        public async Task<List<ReviewDTO>> GetReviewsSince(DateTime date)
         {
-            return await dataContext.Reviews
+            var reviews = await dataContext.Reviews
                 .Where(review => review.CreatedDate >= date && !review.IsHidden)
                 .OrderByDescending(review => review.CreatedDate)
                 .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
         public async Task<double> GetAverageRatingForVisibleReviews()
@@ -56,23 +60,18 @@ namespace DataAccess.Repository
                 return 0.0;
             }
 
-            float? average = visibleReviews.Average(r => r.Rating?.RatingValue);
-
-            if (average == null)
-            {
-                return 0.0;
-            }
-
-            return Math.Round((double)average, 1);
+            double average = visibleReviews.Average(r => r.RatingValue ?? 0);
+            return Math.Round(average, 1);
         }
 
-        public async Task<List<Review>> GetMostRecentReviews(int count)
+        public async Task<List<ReviewDTO>> GetMostRecentReviews(int count)
         {
-            return await dataContext.Reviews
+            var reviews = await dataContext.Reviews
                 .Where(review => !review.IsHidden)
                 .OrderByDescending(review => review.CreatedDate)
                 .Take(count)
                 .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
         public async Task<int> GetReviewCountAfterDate(DateTime date)
@@ -81,24 +80,27 @@ namespace DataAccess.Repository
                 .CountAsync(review => review.CreatedDate >= date && !review.IsHidden);
         }
 
-        public async Task<List<Review>> GetFlaggedReviews(int minFlags)
+        public async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags)
         {
-            return await dataContext.Reviews
+            var reviews = await dataContext.Reviews
                 .Where(review => review.NumberOfFlags >= minFlags && !review.IsHidden)
                 .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
-        public async Task<List<Review>> GetReviewsByUser(Guid userId)
+        public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
         {
-            return await dataContext.Reviews
+            var reviews = await dataContext.Reviews
                 .Where(review => review.UserId == userId && !review.IsHidden)
                 .OrderByDescending(review => review.CreatedDate)
                 .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
-        public async Task<Review?> GetReviewById(int reviewId)
+        public async Task<ReviewDTO?> GetReviewById(int reviewId)
         {
-            return await dataContext.Reviews.FirstOrDefaultAsync(r => r.ReviewId == reviewId);
+            var review = await dataContext.Reviews.FirstOrDefaultAsync(r => r.ReviewId == reviewId);
+            return review != null ? ReviewMapper.ToDTO(review) : null;
         }
 
         public async Task UpdateReviewVisibility(int reviewId, bool isHidden)
@@ -129,8 +131,9 @@ namespace DataAccess.Repository
             await dataContext.SaveChangesAsync();
         }
 
-        public async Task<int> AddReview(Review review)
+        public async Task<int> AddReview(ReviewDTO reviewDto)
         {
+            var review = ReviewMapper.ToEntity(reviewDto);
             await dataContext.Reviews.AddAsync(review);
             await dataContext.SaveChangesAsync();
             return review.ReviewId;
@@ -138,7 +141,7 @@ namespace DataAccess.Repository
 
         public async Task RemoveReviewById(int reviewId)
         {
-            Review? review = await GetReviewById(reviewId);
+            Review? review = await dataContext.Reviews.FirstOrDefaultAsync(r => r.ReviewId == reviewId);
 
             if (review == null)
             {
@@ -149,41 +152,57 @@ namespace DataAccess.Repository
             await dataContext.SaveChangesAsync();
         }
 
-        public async Task<List<Review>> GetHiddenReviews()
+        public async Task<List<ReviewDTO>> GetHiddenReviews()
         {
-            return await dataContext.Reviews
+            var reviews = await dataContext.Reviews
                 .Where(review => review.IsHidden)
                 .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
-        public async Task<bool> UpdateReview(Review review)
+        public async Task<bool> UpdateReview(ReviewDTO reviewDto)
         {
-            // This should be in the service !!!! (also no throws in the service)
-            //if (string.IsNullOrWhiteSpace(review.Content))
-            //    throw new ArgumentException(RepositoryErrorMessages.EmptyReviewContent, nameof(review.Content));
-
-            Review? existingReview = this.dataContext.Reviews.FirstOrDefault(existingReview => existingReview.ReviewId == review.ReviewId);
+            Review? existingReview = this.dataContext.Reviews.FirstOrDefault(existingReview => existingReview.ReviewId == reviewDto.ReviewId);
 
             if (existingReview == null)
             {
-                // Returning false cause there shouldn't be a reason to return back the updated review
                 return false;
             }
 
-            existingReview.RatingId = review.RatingId;
-            existingReview.UserId = review.UserId;
-            existingReview.Content = review.Content;
-            existingReview.CreationDate = review.CreationDate ?? existingReview.CreationDate;
-            existingReview.IsActive = review.IsActive ?? existingReview.IsActive;
+            existingReview.DrinkId = reviewDto.DrinkId;
+            existingReview.UserId = reviewDto.UserId;
+            existingReview.RatingValue = reviewDto.RatingValue;
+            existingReview.Content = reviewDto.Content;
+            existingReview.CreatedDate = reviewDto.CreatedDate;
+            existingReview.IsActive = reviewDto.IsHidden;
 
             await this.dataContext.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<List<Review>> GetReviewsByRatingId(int ratingId)
+        public async Task<List<ReviewDTO>> GetReviewsByDrinkId(int drinkId)
         {
-            return await this.dataContext.Reviews.Where(review => review.RatingId == ratingId).ToListAsync();
+            var reviews = await dataContext.Reviews
+                .Where(review => review.DrinkId == drinkId)
+                .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
+        }
+
+        public async Task<List<ReviewDTO>> GetReviewsByUserId(Guid userId)
+        {
+            var reviews = await this.dataContext.Reviews
+                .Where(review => review.UserId == userId)
+                .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
+        }
+
+        public async Task<List<ReviewDTO>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId)
+        {
+            var reviews = await this.dataContext.Reviews
+                .Where(review => review.DrinkId == drinkId && review.UserId == userId)
+                .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
     }
 }

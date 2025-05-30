@@ -58,6 +58,9 @@
     <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
     </ItemGroup>
     <ItemGroup>
+    <Page Update="Views\Components\Modals\AddReviewModal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Views\Windows\AuthenticationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
@@ -178,6 +181,9 @@
       <Content Remove="Assets\linkedin_logo.png" />
       <Content Remove="Assets\x-twitter-logo-on-black.png" />
       <Content Remove="Assets\X_Logo.jpg" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="Views\Components\Modals\AddReviewModal.xaml" />
     </ItemGroup>
     <ItemGroup>
       <Page Remove="AuthenticationWindow.xaml" />

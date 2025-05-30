@@ -18,6 +18,7 @@ namespace WinUIApp.WebAPI.Repositories
     using WinUiApp.Data.Data;
     using WinUiApp.Data.Interfaces;
     using WinUIApp.WebAPI.Models;
+    using DataAccess.Extensions;
 
     /// <summary>
     /// Repository for managing drink-related operations.
@@ -40,30 +41,13 @@ namespace WinUIApp.WebAPI.Repositories
         /// Retrieves a list of all drinks.
         /// </summary>
         /// <returns> List of drinks. </returns>
-        public List<Models.DrinkDTO> GetDrinks()
+        public List<DrinkDTO> GetDrinks()
         {
             return dbContext.Drinks
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                 .ThenInclude(drinkCategory => drinkCategory.Category)
-                .Select(drink => new Models.DrinkDTO(
-                    drink.DrinkId,
-                    drink.DrinkName,
-                    drink.DrinkURL,
-                    drink.DrinkCategories
-                            .Select(drinkCategory => new Category
-                            {
-                                CategoryId = drinkCategory.Category!.CategoryId,
-                                CategoryName = drinkCategory.Category.CategoryName
-                            })
-                            .ToList(),
-                    new Brand
-                    {
-                        BrandId = drink.Brand!.BrandId,
-                        BrandName = drink.Brand.BrandName
-                    },
-                    (float)drink.AlcoholContent
-                ))
+                .Select(DrinkMapper.ToDTO)
                 .ToList();
         }
 
@@ -74,28 +58,14 @@ namespace WinUIApp.WebAPI.Repositories
         /// <returns> The drink. </returns>
         public DrinkDTO? GetDrinkById(int drinkId)
         {
-            return dbContext.Drinks
+            var drink = dbContext.Drinks
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                     .ThenInclude(drinkCategory => drinkCategory.Category)
-                .Where(drink => drink.DrinkId == drinkId)
-                .Select(drink => new DrinkDTO
-                {
-                    DrinkId = drink.DrinkId,
-                    DrinkName = drink.DrinkName,
-                    CategoryList = drink.DrinkCategories
-                        .Select(drinkCategory => new Category
-                        {
-                            CategoryId = drinkCategory.Category!.CategoryId,
-                            CategoryName = drinkCategory.Category.CategoryName
-                        })
-                        .ToList(),
-                    DrinkBrand = drink.Brand,
-                    AlcoholContent = (float)drink.AlcoholContent
-                })
-                .FirstOrDefault();
-        }
+                .FirstOrDefault(drink => drink.DrinkId == drinkId);
 
+            return drink != null ? DrinkMapper.ToDTO(drink) : null;
+        }
 
         private Brand RetrieveBrand(string brandName)
         {
@@ -139,7 +109,6 @@ namespace WinUIApp.WebAPI.Repositories
             return dataCategory;
         }
 
-
         /// <summary>
         /// Adds a new drink to the database.
         /// </summary>
@@ -180,7 +149,6 @@ namespace WinUIApp.WebAPI.Repositories
                 dbContext.DrinkCategories.Add(drinkCategory);
             }
 
-
             dbContext.SaveChanges(); 
         }
 
@@ -188,7 +156,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// Updates the details of an existing drink in the database.
         /// </summary>
         /// <param name="drinkDto"> The drink with updated info. </param>
-        public void UpdateDrink(Models.DrinkDTO drinkDto)
+        public void UpdateDrink(DrinkDTO drinkDto)
         {
             try
             {
@@ -238,7 +206,6 @@ namespace WinUIApp.WebAPI.Repositories
             {
                 throw new Exception("Database error occurred while updating drink." + exception.Message, exception);
             }
-
         }
 
         /// <summary>
@@ -257,6 +224,19 @@ namespace WinUIApp.WebAPI.Repositories
             dbContext.DrinkCategories.RemoveRange(drink.DrinkCategories);
 
             dbContext.Drinks.Remove(drink);
+
+            dbContext.SaveChanges();
+        }
+
+        public void DeleteRequestingApprovalDrink(int drinkId)
+        {
+            var drink = dbContext.DrinksRequestingApproval
+                                    .FirstOrDefault(drink => drink.DrinkId == drinkId);
+
+            if (drink == null)
+                throw new Exception("No drink found with the provided ID.");
+
+            dbContext.DrinksRequestingApproval.Remove(drink);
 
             dbContext.SaveChanges();
         }

@@ -9,6 +9,9 @@ using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebUI.Models;
 using WinUIApp.WebUI.Models;
+using System.Text.Json;
+using System.Collections.Generic;
+using DataAccess.DTOModels;
 
 namespace WinUIApp.WebUI.Controllers
 {
@@ -16,13 +19,13 @@ namespace WinUIApp.WebUI.Controllers
     {
         private readonly IDrinkService drinkService;
         private readonly IReviewService reviewService;
-        private readonly IRatingService ratingService;
+        private readonly IUserService userService;
 
-        public DrinkController(IDrinkService drinkService, IReviewService reviewService, IRatingService ratingService)
+        public DrinkController(IDrinkService drinkService, IReviewService reviewService, IUserService userService)
         {
             this.drinkService = drinkService;
             this.reviewService = reviewService;
-            this.ratingService = ratingService;
+            this.userService = userService;
         }
 
         public IActionResult DrinkDetail(int id)
@@ -33,19 +36,9 @@ namespace WinUIApp.WebUI.Controllers
                 return NotFound();
             }
             
-            var ratings = ratingService.GetRatingsByDrink(id);
-            var reviews = new List<Review>();
-            var reviewsByRating = new Dictionary<int, List<Review>>();
-            
-            foreach (var rating in ratings)
-            {
-                var ratingReviews = reviewService.GetReviewsByRating(rating.RatingId).Result.ToList();
-                reviews.AddRange(ratingReviews);
-                
-                // Group reviews by rating ID
-                reviewsByRating[rating.RatingId] = ratingReviews;
-            }
-
+            // Get all reviews for this drink
+            var reviews = reviewService.GetReviewsByDrink(id).Result;
+            double averageRating = reviews.Count > 0 ? reviews.Average(r => r.RatingValue ?? 0) : 0;
             Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
             bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
@@ -55,106 +48,68 @@ namespace WinUIApp.WebUI.Controllers
                 CategoriesDisplay = drink.CategoryList != null 
                     ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName)) 
                     : string.Empty,
-                AverageRatingScore = ratingService.GetAverageRating(id),
-                Ratings = ratings.ToList(),
+                AverageRatingScore = averageRating,
                 Reviews = reviews,
                 IsInFavorites = isInFavorites,
-                ReviewsByRating = reviewsByRating,
-                NewReview = new RatingReviewViewModel { DrinkId = id }
+                NewReview = new RatingReviewViewModel { DrinkId = id, UserId = CurrentUserId }
             };
-            
-            return View(viewModel);
-        }        [HttpGet]
-        public IActionResult AddReviewToRating(int ratingId, int drinkId)
-        {
-            var rating = ratingService.GetRatingById(ratingId);
-            if (rating == null)
-            {
-                TempData["ErrorMessage"] = "Rating not found.";
-                return RedirectToAction("DrinkDetail", new { id = drinkId });
-            }
-            
-            var viewModel = new RatingReviewViewModel
-            {
-                RatingId = ratingId,
-                DrinkId = drinkId,
-                Score = (int)rating.RatingValue
-            };
-            
-            TempData["RatingValue"] = rating.RatingValue;
             
             return View(viewModel);
         }
-        
+
         [HttpPost]
         public IActionResult AddRatingAndReview(RatingReviewViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                // If there are validation errors, redirect back to the drink detail page
                 TempData["ErrorMessage"] = "Please fill in all required fields.";
-                if (model.RatingId.HasValue)
-                {
-                    return RedirectToAction("AddReviewToRating", new { ratingId = model.RatingId.Value, drinkId = model.DrinkId });
-                }
                 return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
             }
-            
+
             try
             {
-                Rating savedRating;
-                
-                // If RatingId is provided, add a review to existing rating
-                if (model.RatingId.HasValue)
+                // Check if the user already has a review for this drink
+                var existingReview = reviewService.GetReviewsByDrink(model.DrinkId)
+                    .Result.FirstOrDefault(r => r.UserId == model.UserId);
+                if (existingReview != null)
                 {
-                    // Use existing rating
-                    var rating = ratingService.GetRatingById(model.RatingId.Value);
-                    if (rating == null)
-                    {
-                        TempData["ErrorMessage"] = "The selected rating could not be found.";
-                        return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
-                    }
-                    
-                    savedRating = rating;
+                    TempData["ErrorMessage"] = "You have already rated this drink. You can only rate a drink once.";
+                    return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
                 }
-                else
+
+                var reviewDto = new ReviewDTO
                 {
-                    // Create new rating
-                    var rating = new Rating
-                    {
-                        DrinkId = model.DrinkId,
-                        UserId = model.UserId,
-                        RatingValue = model.Score,
-                        RatingDate = DateTime.Now,
-                        IsActive = true
-                    };
-                    
-                    savedRating = ratingService.CreateRating(rating);
-                }
-                  // Create and save the review only if content is provided
-                if (!string.IsNullOrWhiteSpace(model.ReviewContent))
-                {
-                    var review = new Review
-                    {
-                        RatingId = savedRating.RatingId,
-                        UserId = model.UserId,
-                        Content = model.ReviewContent
-                    };
-                    
-                    reviewService.AddReview(review);
-                    TempData["SuccessMessage"] = "Your rating and review have been submitted successfully.";
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "Your rating has been submitted successfully.";
-                }
+                    ReviewId = 0, // Let the DB assign the ID
+                    DrinkId = model.DrinkId,
+                    UserId = model.UserId,
+                    Content = model.ReviewContent ?? string.Empty,
+                    RatingValue = (float?)model.Score ?? 0,
+                    CreatedDate = DateTime.UtcNow,
+                    NumberOfFlags = 0,
+                    IsHidden = false
+                };
+
+                // // For debugging: store the review as JSON
+                // var debugReviewJson = new {
+                //     reviewId = reviewDto.ReviewId,
+                //     drinkId = reviewDto.DrinkId,
+                //     userId = reviewDto.UserId,
+                //     content = reviewDto.Content,
+                //     ratingValue = reviewDto.RatingValue,
+                //     createdDate = reviewDto.CreatedDate,
+                //     numberOfFlags = reviewDto.NumberOfFlags,
+                //     isHidden = reviewDto.IsHidden
+                // };
+                // TempData["DebugReviewJson"] = System.Text.Json.JsonSerializer.Serialize(debugReviewJson, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+                reviewService.AddReview(reviewDto).GetAwaiter().GetResult();
+                TempData["SuccessMessage"] = "Your review has been submitted successfully.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "There was an error submitting your review. Please try again.";
+                TempData["ErrorMessage"] = $"There was an error submitting your review. Please try again. {ex.Message}";
             }
-            
-            // Redirect back to the drink detail page
+
             return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
         }
         

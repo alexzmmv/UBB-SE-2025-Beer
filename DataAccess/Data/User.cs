@@ -31,8 +31,6 @@ namespace WinUiApp.Data.Data
             this.Username = string.Empty;
             this.PasswordHash = string.Empty;
             this.TwoFASecret = null;
-            this.Votes = new List<Vote>();
-            this.UserDrinks = new List<UserDrink>();
         }
         public Guid UserId { get; set; }
 
@@ -56,8 +54,8 @@ namespace WinUiApp.Data.Data
             return "Id: " + UserId.ToString() + ", email: " + EmailAddress;
         }
 
-        public ICollection<Vote> Votes { get; set; }
+        public ICollection<Vote> Votes { get; set; } = new List<Vote>();
 
-        public ICollection<UserDrink> UserDrinks { get; set; }
+        public ICollection<UserDrink> UserDrinks { get; set; } = new List<UserDrink>();
     }
 }
