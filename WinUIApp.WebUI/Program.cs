@@ -71,7 +71,6 @@ static void DependencyInjection(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
     builder.Services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));
     builder.Services.AddSingleton<IDrinkService, ProxyDrinkService>(sp => new ProxyDrinkService(apiRoute));
-    builder.Services.AddTransient<IRatingService, ProxyRatingService>(sp => new ProxyRatingService(apiRoute));
 
     builder.Services.AddSingleton<LinkedInLocalOAuthServer>(sp =>
         new LinkedInLocalOAuthServer("http://localhost:8891/"));
