@@ -12,7 +12,7 @@ namespace WinUIApp.Views.Components
     {
         public static readonly DependencyProperty DrinkProperty =
         DependencyProperty.Register(
-        nameof(Drink),
+        nameof(DrinkDTO),
         typeof(DrinkDTO),
         typeof(UpdateDrinkButton),
         new PropertyMetadata(null));

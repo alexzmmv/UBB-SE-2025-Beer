@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using WinUIApp.Views.Pages;
 
 namespace DrinkDb_Auth
 {
@@ -27,7 +26,7 @@ namespace DrinkDb_Auth
         {
             if (this.mainWindow != null)
             {
-                this.mainWindow.NavigationFrame.Navigate(typeof(MainPage));
+                this.mainWindow.NavigationFrame.Navigate(typeof(UserPage));
             }
         }
     }

@@ -25,7 +25,7 @@ namespace WinUIApp.Views.Components
         {
             this.InitializeComponent();
 
-            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            drinkService = App.Host.Services.GetRequiredService<ProxyDrinkService>();
             userService = App.Host.Services.GetRequiredService<IUserService>();
             
             this.Loaded += this.AddDrinkFlyout_LoadedAsync;
