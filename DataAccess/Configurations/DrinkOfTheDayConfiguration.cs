@@ -12,7 +12,8 @@ namespace WinUiApp.Data.Configurations
 
             builder.HasOne(drink => drink.Drink)
                    .WithMany()
-                   .HasForeignKey(drink => drink.DrinkId);
+                   .HasForeignKey(drink => drink.DrinkId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

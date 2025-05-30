@@ -40,7 +40,7 @@
             set => this.SetProperty(ref this.reviewViewModel, value);
         }
 
-        public Rating? SelectedRating => this.ratingViewModel.SelectedRating;
+        public float? SelectedRating => this.ratingViewModel.SelectedRating;
 
         public void HandleRatingSelection(ListView listView)
         {
@@ -56,9 +56,9 @@
         {
             if (selectedIndex >= MinimumValidIndex && selectedIndex < this.ratingViewModel.Ratings.Count)
             {
-                Rating selectedRating = this.ratingViewModel.Ratings[selectedIndex];
-                this.ratingViewModel.SelectedRating = selectedRating;
-                this.reviewViewModel.LoadReviewsForRatingAsync(selectedRating.RatingId);
+                //Rating selectedRating = this.ratingViewModel.Ratings[selectedIndex];
+                //this.ratingViewModel.SelectedRating = selectedRating;
+                //this.reviewViewModel.LoadReviewsForRatingAsync(selectedRating.RatingId);
             }
         }
 

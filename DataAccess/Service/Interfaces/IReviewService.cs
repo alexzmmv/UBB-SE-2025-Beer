@@ -3,16 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DataAccess.Model.AdminDashboard;
-    using WinUiApp.Data.Data;
+    using DataAccess.DTOModels;
 
     public interface IReviewService
     {
-        Task<int> AddReview(Review review);
+        Task<int> AddReview(ReviewDTO review);
 
         Task RemoveReviewById(int reviewId);
 
-        Task<Review?> GetReviewById(int reviewId);
+        Task<ReviewDTO?> GetReviewById(int reviewId);
 
         Task UpdateNumberOfFlagsForReview(int reviewId, int numberOfFlags);
 
@@ -20,28 +19,30 @@
 
         Task HideReview(int reviewID);
 
-        Task<List<Review>> GetFlaggedReviews(int minFlags = 1);
+        Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags = 1);
 
-        Task<List<Review>> GetHiddenReviews();
+        Task<List<ReviewDTO>> GetHiddenReviews();
 
-        Task<List<Review>> GetAllReviews();
+        Task<List<ReviewDTO>> GetAllReviews();
 
-        Task<List<Review>> GetReviewsSince(DateTime date);
+        Task<List<ReviewDTO>> GetReviewsSince(DateTime date);
 
         Task<double> GetAverageRatingForVisibleReviews();
 
-        Task<List<Review>> GetMostRecentReviews(int count);
+        Task<List<ReviewDTO>> GetMostRecentReviews(int count);
 
-        Task<List<Review>> GetReviewsForReport();
+        Task<List<ReviewDTO>> GetReviewsForReport();
 
         Task<int> GetReviewCountAfterDate(DateTime date);
 
-        Task<List<Review>> GetReviewsByUser(Guid userId);
+        Task<List<ReviewDTO>> GetReviewsByUser(Guid userId);
 
         Task ResetReviewFlags(int reviewId);
 
-        Task<List<Review>> FilterReviewsByContent(string content);
+        Task<List<ReviewDTO>> FilterReviewsByContent(string content);
 
-        Task<IEnumerable<Review>> GetReviewsByRating(int ratingId);
+        Task<List<ReviewDTO>> GetReviewsByDrink(int drinkId);
+
+        Task<double> GetAverageRating(int drinkId);
     }
 }

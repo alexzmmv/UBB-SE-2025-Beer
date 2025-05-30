@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WinUiApp.Data;
 
@@ -11,9 +12,11 @@ using WinUiApp.Data;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530010728_NukeRating")]
+    partial class NukeRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,23 +188,6 @@ namespace DataAccess.Migrations
                     b.HasKey("BrandId");
 
                     b.ToTable("Brands");
-
-                    b.HasData(
-                        new
-                        {
-                            BrandId = 1,
-                            BrandName = "Sunbrew Co."
-                        },
-                        new
-                        {
-                            BrandId = 2,
-                            BrandName = "Berry Spirits"
-                        },
-                        new
-                        {
-                            BrandId = 3,
-                            BrandName = "Mocktails Inc."
-                        });
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.Category", b =>
@@ -223,23 +209,6 @@ namespace DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CategoryName = "Ale"
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CategoryName = "Vodka"
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            CategoryName = "Soft Drink"
-                        });
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.Drink", b =>
@@ -270,32 +239,6 @@ namespace DataAccess.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("Drinks");
-
-                    b.HasData(
-                        new
-                        {
-                            DrinkId = 1,
-                            AlcoholContent = 5.2m,
-                            BrandId = 1,
-                            DrinkName = "Golden Ale",
-                            DrinkURL = "https://example.com/drinks/golden-ale.jpg"
-                        },
-                        new
-                        {
-                            DrinkId = 2,
-                            AlcoholContent = 37.5m,
-                            BrandId = 2,
-                            DrinkName = "Cherry Vodka",
-                            DrinkURL = "https://example.com/drinks/cherry-vodka.jpg"
-                        },
-                        new
-                        {
-                            DrinkId = 3,
-                            AlcoholContent = 0.0m,
-                            BrandId = 3,
-                            DrinkName = "Ginger Beer",
-                            DrinkURL = "https://example.com/drinks/ginger-beer.jpg"
-                        });
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.DrinkCategory", b =>
@@ -311,23 +254,6 @@ namespace DataAccess.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("DrinkCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            DrinkId = 1,
-                            CategoryId = 1
-                        },
-                        new
-                        {
-                            DrinkId = 2,
-                            CategoryId = 2
-                        },
-                        new
-                        {
-                            DrinkId = 3,
-                            CategoryId = 3
-                        });
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.DrinkOfTheDay", b =>
@@ -384,32 +310,6 @@ namespace DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Reviews");
-
-                    b.HasData(
-                        new
-                        {
-                            ReviewId = 1,
-                            Content = "Great taste, smooth and refreshing.",
-                            CreatedDate = new DateTime(2024, 12, 20, 10, 30, 0, 0, DateTimeKind.Utc),
-                            DrinkId = 1,
-                            IsActive = (byte)1,
-                            IsHidden = false,
-                            NumberOfFlags = 0,
-                            RatingValue = 4.5,
-                            UserId = new Guid("11111111-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            ReviewId = 2,
-                            Content = "Too bitter for my preference.",
-                            CreatedDate = new DateTime(2024, 12, 20, 10, 30, 0, 0, DateTimeKind.Utc),
-                            DrinkId = 2,
-                            IsActive = (byte)1,
-                            IsHidden = false,
-                            NumberOfFlags = 1,
-                            RatingValue = 3.0,
-                            UserId = new Guid("22222222-2222-2222-2222-222222222222")
-                        });
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.User", b =>
@@ -447,28 +347,6 @@ namespace DataAccess.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            AssignedRole = 1,
-                            EmailAddress = "john.doe@example.com",
-                            HasSubmittedAppeal = false,
-                            NumberOfDeletedReviews = 0,
-                            PasswordHash = "$2a$11$K2xKJ9.vF8wHqJ4bK9mZXeJ8vKlM3nO2pQ7rS9tU1vW3xY4zA5bC6",
-                            Username = "john_doe"
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            AssignedRole = 1,
-                            EmailAddress = "jane.smith@example.com",
-                            HasSubmittedAppeal = false,
-                            NumberOfDeletedReviews = 1,
-                            PasswordHash = "$2a$11$L3yLK0.wG9xIrK5cL0nAYfK9wLmN4oP3qR8sT0uV2wX4yZ5aB6dD7",
-                            Username = "jane_smith"
-                        });
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.UserDrink", b =>
