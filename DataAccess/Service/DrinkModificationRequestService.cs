@@ -19,7 +19,12 @@ namespace DataAccess.Service
     {
         private readonly IDrinkModificationRequestRepository drinkModificationRequestRepository;
 
-        public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, Drink? newDrink, User requestingUser)
+        public DrinkModificationRequestService(IDrinkModificationRequestRepository drinkModificationRequestRepository)
+        {
+            this.drinkModificationRequestRepository = drinkModificationRequestRepository;
+        }
+
+        public DrinkModificationRequest AddRequest(DrinkModificationRequestType type, Drink? oldDrink, DrinkRequestingApproval? newDrink, User requestingUser)
         {
             DrinkModificationRequest request = new DrinkModificationRequest
         {
@@ -36,7 +41,7 @@ namespace DataAccess.Service
 
         public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
         {
-            return await drinkModificationRepository.GetAllModificationRequests();
+            return await drinkModificationRequestRepository.GetAllModificationRequests();
         }
     }
 }

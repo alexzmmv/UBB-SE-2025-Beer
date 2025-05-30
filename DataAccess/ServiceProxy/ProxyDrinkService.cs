@@ -4,6 +4,7 @@
 
 namespace WinUIApp.ProxyServices
 {
+    using DataAccess.Data;
     using DataAccess.Service.Interfaces;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -371,6 +372,11 @@ namespace WinUIApp.ProxyServices
             {
                 throw new Exception("Error getting drink of the day: " + exception.Message, exception);
             }
+        }
+
+        public DrinkRequestingApproval AddDrinkRequestingApproval(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage)
+        {
+            throw new NotImplementedException();
         }
     }
 }

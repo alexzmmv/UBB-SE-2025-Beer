@@ -635,7 +635,6 @@ namespace WinUIApp.WebAPI.Repositories
                 dbContext.DrinkCategories.Add(drinkCategory);
             }
 
-
             dbContext.SaveChanges();
 
             return drink;

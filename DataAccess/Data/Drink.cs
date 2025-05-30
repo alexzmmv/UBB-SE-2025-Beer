@@ -8,6 +8,8 @@
         public int? BrandId { get; set; }
         public decimal AlcoholContent { get; set; }
 
+        public bool IsRequestingApproval { get; set; }
+
         public Brand Brand { get; set; }
         public ICollection<DrinkCategory> DrinkCategories { get; set; }
         public ICollection<Vote> Votes { get; set; }
