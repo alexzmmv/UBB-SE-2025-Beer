@@ -14,7 +14,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Rating)
+                @Html.DisplayNameFor(model => model.RatingValue)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Content)
@@ -35,7 +35,7 @@
 @foreach (Review item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Rating)
+                @Html.DisplayFor(modelItem => item.RatingValue)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Content)

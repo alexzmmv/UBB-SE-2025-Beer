@@ -9,6 +9,8 @@ using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebUI.Models;
 using WinUIApp.WebUI.Models;
+using System.Text.Json;
+using System.Collections.Generic;
 
 namespace WinUIApp.WebUI.Controllers
 {
@@ -16,13 +18,13 @@ namespace WinUIApp.WebUI.Controllers
     {
         private readonly IDrinkService drinkService;
         private readonly IReviewService reviewService;
-        private readonly IRatingService ratingService;
+        private readonly IUserService userService;
 
-        public DrinkController(IDrinkService drinkService, IReviewService reviewService, IRatingService ratingService)
+        public DrinkController(IDrinkService drinkService, IReviewService reviewService, IUserService userService)
         {
             this.drinkService = drinkService;
             this.reviewService = reviewService;
-            this.ratingService = ratingService;
+            this.userService = userService;
         }
 
         public IActionResult DrinkDetail(int id)
@@ -33,19 +35,9 @@ namespace WinUIApp.WebUI.Controllers
                 return NotFound();
             }
             
-            var ratings = ratingService.GetRatingsByDrink(id);
-            var reviews = new List<Review>();
-            var reviewsByRating = new Dictionary<int, List<Review>>();
-            
-            foreach (var rating in ratings)
-            {
-                var ratingReviews = reviewService.GetReviewsByRating(rating.RatingId).Result.ToList();
-                reviews.AddRange(ratingReviews);
-                
-                // Group reviews by rating ID
-                reviewsByRating[rating.RatingId] = ratingReviews;
-            }
-
+            // Get all reviews for this drink
+            var reviews = reviewService.GetReviewsByDrink(id).Result;
+            double averageRating = reviews.Count > 0 ? reviews.Average(r => r.RatingValue ?? 0) : 0;
             Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
             bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
@@ -55,106 +47,169 @@ namespace WinUIApp.WebUI.Controllers
                 CategoriesDisplay = drink.CategoryList != null 
                     ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName)) 
                     : string.Empty,
-                AverageRatingScore = ratingService.GetAverageRating(id),
-                Ratings = ratings.ToList(),
+                AverageRatingScore = averageRating,
                 Reviews = reviews,
                 IsInFavorites = isInFavorites,
-                ReviewsByRating = reviewsByRating,
-                NewReview = new RatingReviewViewModel { DrinkId = id }
+                NewReview = new RatingReviewViewModel { DrinkId = id, UserId = CurrentUserId }
             };
-            
-            return View(viewModel);
-        }        [HttpGet]
-        public IActionResult AddReviewToRating(int ratingId, int drinkId)
-        {
-            var rating = ratingService.GetRatingById(ratingId);
-            if (rating == null)
-            {
-                TempData["ErrorMessage"] = "Rating not found.";
-                return RedirectToAction("DrinkDetail", new { id = drinkId });
-            }
-            
-            var viewModel = new RatingReviewViewModel
-            {
-                RatingId = ratingId,
-                DrinkId = drinkId,
-                Score = (int)rating.RatingValue
-            };
-            
-            TempData["RatingValue"] = rating.RatingValue;
             
             return View(viewModel);
         }
-        
+
         [HttpPost]
         public IActionResult AddRatingAndReview(RatingReviewViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                // If there are validation errors, redirect back to the drink detail page
                 TempData["ErrorMessage"] = "Please fill in all required fields.";
-                if (model.RatingId.HasValue)
-                {
-                    return RedirectToAction("AddReviewToRating", new { ratingId = model.RatingId.Value, drinkId = model.DrinkId });
-                }
                 return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
             }
-            
+
             try
             {
-                Rating savedRating;
-                
-                // If RatingId is provided, add a review to existing rating
-                if (model.RatingId.HasValue)
+                var allReviews = reviewService.GetAllReviews().Result;
+                int newReviewId = allReviews.Any() ? allReviews.Max(r => r.ReviewId) + 1 : 1;
+                var user = userService.GetUserById(model.UserId).Result;
+                var drinkDto = drinkService.GetDrinkById(model.DrinkId);
+                var drink = new Drink
                 {
-                    // Use existing rating
-                    var rating = ratingService.GetRatingById(model.RatingId.Value);
-                    if (rating == null)
+                    DrinkId = drinkDto.DrinkId,
+                    DrinkName = drinkDto.DrinkName ?? string.Empty,
+                    DrinkURL = drinkDto.DrinkImageUrl ?? string.Empty,
+                    BrandId = drinkDto.DrinkBrand.BrandId,
+                    AlcoholContent = (decimal)drinkDto.AlcoholContent,
+                    Brand = new Brand
                     {
-                        TempData["ErrorMessage"] = "The selected rating could not be found.";
-                        return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
-                    }
-                    
-                    savedRating = rating;
-                }
-                else
+                        BrandId = drinkDto.DrinkBrand.BrandId,
+                        BrandName = drinkDto.DrinkBrand.BrandName
+                    },
+                    DrinkCategories = new List<DrinkCategory>(),
+                    Votes = new List<Vote>(),
+                    UserDrinks = new List<UserDrink>()
+                };
+                var review = new Review
                 {
-                    // Create new rating
-                    var rating = new Rating
-                    {
-                        DrinkId = model.DrinkId,
-                        UserId = model.UserId,
-                        RatingValue = model.Score,
-                        RatingDate = DateTime.Now,
-                        IsActive = true
-                    };
-                    
-                    savedRating = ratingService.CreateRating(rating);
-                }
-                  // Create and save the review only if content is provided
-                if (!string.IsNullOrWhiteSpace(model.ReviewContent))
-                {
-                    var review = new Review
-                    {
-                        RatingId = savedRating.RatingId,
-                        UserId = model.UserId,
-                        Content = model.ReviewContent
-                    };
-                    
-                    reviewService.AddReview(review);
-                    TempData["SuccessMessage"] = "Your rating and review have been submitted successfully.";
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "Your rating has been submitted successfully.";
-                }
+                    ReviewId = newReviewId,
+                    DrinkId = model.DrinkId,
+                    UserId = model.UserId,
+                    Content = model.ReviewContent ?? string.Empty,
+                    CreatedDate = DateTime.UtcNow,
+                    IsActive = true,
+                    IsHidden = false,
+                    NumberOfFlags = 0,
+                    RatingValue = (float?)model.Score,
+                    User = user,
+                    Drink = drink
+                };
+                var debugReviewJson = new {
+                    reviewId = review.ReviewId,
+                    drinkId = review.DrinkId,
+                    userId = review.UserId,
+                    content = review.Content,
+                    isActive = review.IsActive,
+                    user = new {
+                        userId = user.UserId,
+                        username = user.Username,
+                        passwordHash = user.PasswordHash,
+                        twoFASecret = user.TwoFASecret,
+                        emailAddress = user.EmailAddress,
+                        numberOfDeletedReviews = user.NumberOfDeletedReviews,
+                        hasSubmittedAppeal = user.HasSubmittedAppeal,
+                        assignedRole = user.AssignedRole,
+                        votes = user.Votes?.Select(v => new {
+                            voteId = v.VoteId,
+                            userId = v.UserId,
+                            drinkId = v.DrinkId,
+                            voteTime = v.VoteTime,
+                            user = v.User?.Username ?? "string",
+                            drink = v.Drink != null ? new {
+                                drinkId = v.Drink.DrinkId,
+                                drinkName = v.Drink.DrinkName,
+                                drinkURL = v.Drink.DrinkURL,
+                                brandId = v.Drink.BrandId ?? 0,
+                                alcoholContent = (int)v.Drink.AlcoholContent,
+                                brand = v.Drink.Brand != null ? new {
+                                    brandId = v.Drink.Brand.BrandId,
+                                    brandName = v.Drink.Brand.BrandName
+                                } : new { brandId = 0, brandName = "string" },
+                                drinkCategories = v.Drink.DrinkCategories?.Select(dc => new {
+                                    drinkId = dc.DrinkId,
+                                    categoryId = dc.CategoryId,
+                                    drink = dc.Drink?.DrinkName ?? "string",
+                                    category = dc.Category != null ? new {
+                                        categoryId = dc.Category.CategoryId,
+                                        categoryName = dc.Category.CategoryName,
+                                        drinkCategories = new[] { "string" }
+                                    } : new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } }
+                                }).ToArray() ?? new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } },
+                                votes = new[] { "string" },
+                                userDrinks = new[] { "string" }
+                            } : new { drinkId = 0, drinkName = "string", drinkURL = "string", brandId = 0, alcoholContent = 0, brand = new { brandId = 0, brandName = "string" }, drinkCategories = new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } }, votes = new[] { "string" }, userDrinks = new[] { "string" } }
+                        }).ToArray() ?? new[] { new { voteId = 0, userId = user.UserId, drinkId = 0, voteTime = DateTime.UtcNow, user = "string", drink = new { drinkId = 0, drinkName = "string", drinkURL = "string", brandId = 0, alcoholContent = 0, brand = new { brandId = 0, brandName = "string" }, drinkCategories = new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } }, votes = new[] { "string" }, userDrinks = new[] { "string" } } } },
+                        userDrinks = user.UserDrinks?.Select(ud => new {
+                            userId = ud.UserId,
+                            drinkId = ud.DrinkId,
+                            user = ud.User?.Username ?? "string",
+                            drink = ud.Drink != null ? new {
+                                drinkId = ud.Drink.DrinkId,
+                                drinkName = ud.Drink.DrinkName,
+                                drinkURL = ud.Drink.DrinkURL,
+                                brandId = ud.Drink.BrandId ?? 0,
+                                alcoholContent = (int)ud.Drink.AlcoholContent,
+                                brand = ud.Drink.Brand != null ? new {
+                                    brandId = ud.Drink.Brand.BrandId,
+                                    brandName = ud.Drink.Brand.BrandName
+                                } : new { brandId = 0, brandName = "string" },
+                                drinkCategories = ud.Drink.DrinkCategories?.Select(dc => new {
+                                    drinkId = dc.DrinkId,
+                                    categoryId = dc.CategoryId,
+                                    drink = dc.Drink?.DrinkName ?? "string",
+                                    category = dc.Category != null ? new {
+                                        categoryId = dc.Category.CategoryId,
+                                        categoryName = dc.Category.CategoryName,
+                                        drinkCategories = new[] { "string" }
+                                    } : new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } }
+                                }).ToArray() ?? new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } },
+                                votes = new[] { "string" },
+                                userDrinks = new[] { "string" }
+                            } : new { drinkId = 0, drinkName = "string", drinkURL = "string", brandId = 0, alcoholContent = 0, brand = new { brandId = 0, brandName = "string" }, drinkCategories = new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } }, votes = new[] { "string" }, userDrinks = new[] { "string" } }
+                        }).ToArray() ?? new[] { new { userId = user.UserId, drinkId = 0, user = "string", drink = new { drinkId = 0, drinkName = "string", drinkURL = "string", brandId = 0, alcoholContent = 0, brand = new { brandId = 0, brandName = "string" }, drinkCategories = new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } }, votes = new[] { "string" }, userDrinks = new[] { "string" } } } }
+                    },
+                    drink = new {
+                        drinkId = drink.DrinkId,
+                        drinkName = drink.DrinkName,
+                        drinkURL = drink.DrinkURL,
+                        brandId = drink.BrandId ?? 0,
+                        alcoholContent = (int)drink.AlcoholContent,
+                        brand = drink.Brand != null ? new { brandId = drink.Brand.BrandId, brandName = drink.Brand.BrandName } : new { brandId = 0, brandName = "string" },
+                        drinkCategories = drink.DrinkCategories?.Select(dc => new {
+                            drinkId = dc.DrinkId,
+                            categoryId = dc.CategoryId,
+                            drink = dc.Drink?.DrinkName ?? "string",
+                            category = dc.Category != null ? new {
+                                categoryId = dc.Category.CategoryId,
+                                categoryName = dc.Category.CategoryName,
+                                drinkCategories = new[] { "string" }
+                            } : new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } }
+                        }).ToArray() ?? new[] { new { drinkId = 0, categoryId = 0, drink = "string", category = new { categoryId = 0, categoryName = "string", drinkCategories = new[] { "string" } } } },
+                        votes = new[] { "string" },
+                        userDrinks = new[] { "string" }
+                    },
+                    createdDate = review.CreatedDate,
+                    numberOfFlags = review.NumberOfFlags,
+                    isHidden = review.IsHidden,
+                    ratingValue = review.RatingValue
+                };
+                TempData["DebugReviewJson"] = JsonSerializer.Serialize(debugReviewJson, new JsonSerializerOptions { WriteIndented = true });
+
+                reviewService.AddReview(review).GetAwaiter().GetResult();
+                TempData["SuccessMessage"] = "Your review has been submitted successfully.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "There was an error submitting your review. Please try again.";
+                TempData["ErrorMessage"] = $"There was an error submitting your review. Please try again. {ex.Message} | DrinkId: {model.DrinkId}, UserId: {model.UserId}, Score: {model.Score}, ReviewContent: {model.ReviewContent}";
             }
-            
-            // Redirect back to the drink detail page
+
             return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
         }
         

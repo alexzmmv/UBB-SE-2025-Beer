@@ -1,4 +1,5 @@
-﻿@using DataAccess.Model.AdminDashboard
+﻿@using DataAccess.Constants
+@using DataAccess.Model.AdminDashboard
 @using WebServer.Models
 @using WinUiApp.Data.Data
 @model UserPageModel
@@ -43,7 +44,7 @@
                         @foreach (Review review in Model.CurrentUserReviews)
                         {
                             <li class="list-group-item">
-                                <strong>@review.Rating</strong><br />
+                                <strong>@review.RatingValue</strong><br />
                                 <span>@review.Content</span>
                             </li>
                         }
