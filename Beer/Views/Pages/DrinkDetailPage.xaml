@@ -32,9 +32,10 @@
 
                     <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
                     <Button Content="Add Review"
+                            x:Name="ReviewButton"
                             Command="{x:Bind ViewModel.ShowPopupCommand, Mode=OneWay}"
                             Margin="5,0" />
-                    <Button>
+                    <Button x:Name="RemoveButton">
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
                                 <StackPanel>
@@ -45,7 +46,7 @@
                         </Button.Flyout>
                         <TextBlock x:Name="RemoveButtonText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                     </Button>
-                    <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click"  DrinkId="{Binding DrinkDTO.DrinkId}" />
+                    <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click" x:Name="VoteButton"  DrinkId="{Binding DrinkDTO.DrinkId}" />
 
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Left">
