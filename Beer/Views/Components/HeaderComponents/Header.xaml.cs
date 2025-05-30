@@ -1,5 +1,6 @@
 namespace WinUIApp.Views.Components.HeaderComponents
 {
+    using System;
     using System.Linq;
     using DataAccess.Service.Interfaces;
     using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,20 @@ namespace WinUIApp.Views.Components.HeaderComponents
                 InputSearchKeyword = this.DrinkSearchBox.Text,
             };
             MainWindow.AppMainFrame.Navigate(typeof(SearchPage), navigationParameters);
+        }
+
+        public Visibility SearchBarVisibility { get; set; } = Visibility.Collapsed;
+
+        public void SetSearchBarVisibility(bool isVisible)
+        {
+            SearchBarVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            this.Bindings.Update();
+        }
+
+        public void UpdateSearchBarVisibility(Type currentPageType)
+        {
+            bool shouldShowSearchBar = currentPageType == typeof(MainPage) || currentPageType == typeof(SearchPage);
+            SetSearchBarVisibility(shouldShowSearchBar);
         }
     }
 }

@@ -6,7 +6,10 @@ namespace WinUIApp.Views
     using Microsoft.UI.Windowing;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Navigation;
     using WinUIApp.Views.Pages;
+    using WinUIApp.Views.Components.HeaderComponents;
+    using System.Reflection;
 
     public sealed partial class MainWindow : Window
     {
@@ -16,6 +19,7 @@ namespace WinUIApp.Views
             this.SetFixedSize(1440, 900);
             AppMainFrame = this.MainFrame;
             this.MainFrame.Navigate(typeof(MainPage));
+            this.MainFrame.Navigated += MainFrame_Navigated;
         }
 
         public static Frame AppMainFrame { get; private set; }
@@ -28,6 +32,14 @@ namespace WinUIApp.Views
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
             appWindow.Resize(new SizeInt32(width, height));
+        }
+
+        private void MainFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (this.HeaderComponent != null)
+            {
+                this.HeaderComponent.UpdateSearchBarVisibility(e.SourcePageType);
+            }
         }
     }
 }

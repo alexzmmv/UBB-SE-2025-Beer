@@ -666,8 +666,12 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             this.ShowWordListPopupCommand = new RelayCommand(() => this.ShowWordListPopup());
             this.HideWordListPopupCommand = new RelayCommand(() => this.HideWordListPopup());
 
-            this.BanUserCommand = new AsyncRelayCommand<Guid>(async (userId) => await this.BanUser(userId));
+            this.BanUserCommand = new RelayCommand<Guid>(userId =>
+            {
+                _ = this.BanUser(userId); 
+            });
         }
+
 
         private void UpdateUserRole(User user, RoleType roleType)
         {

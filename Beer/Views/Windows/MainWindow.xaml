@@ -16,7 +16,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <headerComponents:Header Grid.Row="0"/>
+        <headerComponents:Header x:Name="HeaderComponent" Grid.Row="0"/>
         <Frame x:Name="MainFrame" Grid.Row="1"/>
     </Grid>
 </Window>

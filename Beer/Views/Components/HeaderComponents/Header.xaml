@@ -41,9 +41,11 @@
             </Button>
             <TextBox x:Name="DrinkSearchBox" 
                      PlaceholderText="Search drinks..."
-                     Width="300"/>
+                     Width="300"
+                     Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}"/>
             <Button x:Name="SearchDrinksButton"
-                    Click="SearchDrinksButton_Click">
+                    Click="SearchDrinksButton_Click"
+                    Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}">
                 <SymbolIcon Symbol="Find"/>
             </Button>
         </StackPanel>
