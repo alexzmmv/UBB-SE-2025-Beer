@@ -39,7 +39,7 @@ namespace WinUIApp.ProxyServices
         {
             try
             {
-                var response = this.httpClient.GetAsync($"Rating/get-average-rating-by-drink?drinkId={drinkID}").Result;
+                var response = this.httpClient.GetAsync($"api/reviews/get-average-rating-by-drink?drinkId={drinkID}").Result;
                 response.EnsureSuccessStatusCode();
                 return response.Content.ReadFromJsonAsync<float>().Result;
             }

@@ -25,9 +25,6 @@ namespace WinUiApp.Data.Data
             this.IsActive = false;
             this.NumberOfFlags = 0;
             this.IsHidden = false;
-            this.User = new User();
-            this.Drink = new Drink();
-
         }
 
         public Review(int reviewId, Guid userId, int drinkId, float ratingValue, string content, DateTime createdDate, int numberOfFlags = 0, bool isHidden = false)

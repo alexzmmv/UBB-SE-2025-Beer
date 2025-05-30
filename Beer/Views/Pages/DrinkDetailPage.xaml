@@ -13,18 +13,19 @@
     
     <ScrollViewer>
         <StackPanel Orientation="Vertical">
-            <TextBlock Text="{Binding DrinkDTO.DrinkName}"
+            <TextBlock Text="{Binding Drink.DrinkName}"
                    HorizontalAlignment="Center"
                    x:Name="Name" 
                    FontSize="18" 
-                   FontWeight="Bold"/>
-            <Image Source="{Binding DrinkDTO.DrinkImageUrl}"
+                   FontWeight="Bold" 
+                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+            <Image Source="{Binding Drink.DrinkImageUrl}"
                x:Name="DrinkImage"
                Height="180"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
-                <components:AddRemoveFromDrinkListButton DrinkId="{Binding DrinkDTO}" />
-                <!--
-                <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding DrinkDTO}" /> -->
+                <components:AddRemoveFromDrinkListButton DrinkId="{Binding Drink}" />
+
+                <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
                 <Button Content="Add Rating" 
             Click="AddRatingButton_Click"
             Margin="5,0" />
@@ -37,18 +38,18 @@
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
-                    <TextBlock x:Name="RemoveButtonText" Foreground="Black"/>
+                    <TextBlock x:Name="RemoveButtonText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                 </Button>
                 <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click"  DrinkId="{Binding DrinkDTO.DrinkId}" />
             </StackPanel>
-            <StackPanel HorizontalAlignment="Center">
-                <TextBlock Text="Brand" FontSize="18" FontWeight="Bold"/>
-                <TextBlock Text="{Binding DrinkDTO.DrinkBrand.BrandName}" FontSize="14"/>
-                <TextBlock Text="Alcohol percentage" FontSize="18" FontWeight="Bold"/>
-                <TextBlock Text="{Binding DrinkDTO.AlcoholContent}" FontSize="14"/>
-                <TextBlock Text="Categories" FontSize="18" FontWeight="Bold"/>
-                <TextBlock Text="{Binding CategoriesDisplay}" FontSize="14"/>
-                <TextBlock Text="Review score" FontSize="18" FontWeight="Bold"/>
+            <StackPanel HorizontalAlignment="Left" Padding="16">
+                <TextBlock Text="Brand" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock Text="{Binding Drink.DrinkBrand.BrandName}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock Text="Alcohol percentage" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock Text="{Binding Drink.AlcoholContent}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock Text="Categories" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock Text="{Binding CategoriesDisplay}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock Text="Review score" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                 <TextBlock FontSize="14">
                 <Run Text="⭐" />
                 <Run Text="{Binding AverageReviewScore}" />

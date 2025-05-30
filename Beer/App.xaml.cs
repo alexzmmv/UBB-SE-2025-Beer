@@ -67,7 +67,7 @@ namespace WinUIApp
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
             services.AddSingleton<IConfiguration>(configuration);
-                    string apiRoute = "http://localhost:5078/";
+                    string apiRoute = "https://localhost:44353/";
 
                     services.AddSingleton<ISessionService, SessionServiceProxy>(sp => new SessionServiceProxy(apiRoute));
                     services.AddSingleton<IAuthenticationService>(sp => new AuthenticationServiceProxy(apiRoute));

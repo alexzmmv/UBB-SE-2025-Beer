@@ -35,10 +35,10 @@ namespace WinUIApp.Views.Pages
 
             this.UpdateRemoveButtonText();
 
-            //this.UpdateButton.OnDrinkUpdated = () =>
-            //{
-            //    this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
-            //};
+            this.UpdateButton.OnDrinkUpdated = () =>
+            {
+                this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
+            };
         }
 
         public DrinkDetailPageViewModel ViewModel { get; }
@@ -77,27 +77,19 @@ namespace WinUIApp.Views.Pages
 
         private void AddRatingButton_Click(object sender, RoutedEventArgs e)
         {
-            //if (this.ViewModel?.Drink == null)
-            //{
-            //    return;
-            //}
+            if (this.ViewModel?.Drink == null)
+            {
+                return;
+            }
 
-            //int productId = this.ViewModel.Drink.DrinkId;
+            int productId = this.ViewModel.Drink.DrinkId;
 
-            //IConfiguration configuration = App.GetService<IConfiguration>();
-            //IRatingService ratingService = App.GetService<IRatingService>();
-            //IReviewService reviewService = App.GetService<IReviewService>();
-            //IUserService userService = App.GetService<IUserService>();
+            IConfiguration configuration = App.Host.Services.GetRequiredService<IConfiguration>();
+            IReviewService reviewService = App.Host.Services.GetRequiredService<IReviewService>();
+            IUserService userService = App.Host.Services.GetRequiredService<IUserService>();
 
-            //RatingViewModel ratingViewModel = new RatingViewModel(ratingService);
-            //ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
+            ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
 
-            //RatingMainPageViewModel mainVm = new RatingMainPageViewModel(configuration, ratingViewModel, reviewViewModel, productId);
-
-            //ratingViewModel.LoadRatingsForProduct(productId);
-
-            //RatingReviewWindow window = new RatingReviewWindow(mainVm, productId);
-            //window.Activate();
         }
     }
 }
