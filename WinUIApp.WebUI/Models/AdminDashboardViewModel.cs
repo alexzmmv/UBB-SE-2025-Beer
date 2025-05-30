@@ -6,7 +6,7 @@ namespace WebServer.Models
 {
     public class AdminDashboardViewModel
     {
-        public required IEnumerable<Review> Reviews { get; set; }
+        public required IEnumerable<DataAccess.DTOModels.ReviewDTO> Reviews { get; set; }
 
         public required IEnumerable<UpgradeRequest> UpgradeRequests { get; set; }
 

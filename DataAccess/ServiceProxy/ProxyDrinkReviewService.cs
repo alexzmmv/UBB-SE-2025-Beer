@@ -1,4 +1,4 @@
-// <copyright file="ProxyDrinkService.cs" company="PlaceholderCompany">
+﻿// <copyright file="ProxyDrinkService.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -10,9 +10,7 @@ namespace WinUIApp.ProxyServices
     using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Json;
-    using WinUIApp.ProxyServices;
-    using WinUiApp.Data.Data;
-
+    using DataAccess.DTOModels;
 
     /// <summary>
     /// Proxy service for managing drink-related operations.
@@ -39,7 +37,7 @@ namespace WinUIApp.ProxyServices
         {
             try
             {
-                var response = this.httpClient.GetAsync($"Rating/get-average-rating-by-drink?drinkId={drinkID}").Result;
+                var response = this.httpClient.GetAsync($"api/reviews/get-average-rating-by-drink?drinkId={drinkID}").Result;
                 response.EnsureSuccessStatusCode();
                 return response.Content.ReadFromJsonAsync<float>().Result;
             }
@@ -48,43 +46,18 @@ namespace WinUIApp.ProxyServices
                 throw new Exception($"Error happened while getting average for drink with ID {drinkID}:", exception);
             }
         }
-        public List<Review> GetAllReviewsForRatings(List<Rating> ratings)
-        {
-            var allReviews = new List<Review>();
 
-            foreach (var rating in ratings)
-            {
-                try
-                {
-                    var response = this.httpClient.GetAsync($"Review/get-by-rating?ratingId={rating.RatingId}").Result;
-                    response.EnsureSuccessStatusCode();
-
-                    var reviews = response.Content.ReadFromJsonAsync<List<Review>>().Result;
-                    if (reviews != null)
-                        allReviews.AddRange(reviews);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"Error while getting reviews for rating ID {rating.RatingId}:", ex);
-                }
-            }
-
-            return allReviews;
-        }
-
-        public List<Review> GetReviewsByDrinkID(int drinkID)
+        public List<ReviewDTO> GetReviewsByDrinkID(int drinkID)
         {
             try
             {
-                var response = this.httpClient.GetAsync($"Rating/get-ratings-by-drink?drinkId={drinkID}").Result;
+                var response = this.httpClient.GetAsync($"api/reviews/get-reviews-by-drink?drinkId={drinkID}").Result;
                 response.EnsureSuccessStatusCode();
-                var ratings = response.Content.ReadFromJsonAsync<List<Rating>>().Result;
-
-                return GetAllReviewsForRatings(ratings);
+                return response.Content.ReadFromJsonAsync<List<ReviewDTO>>().Result ?? new List<ReviewDTO>();
             }
             catch (Exception exception)
             {
-                throw new Exception($"Error happened while getting average for drink with ID {drinkID}:", exception);
+                throw new Exception($"Error happened while getting reviews for drink with ID {drinkID}:", exception);
             }
         }
     }

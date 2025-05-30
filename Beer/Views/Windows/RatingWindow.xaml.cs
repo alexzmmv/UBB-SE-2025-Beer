@@ -41,7 +41,7 @@ namespace WinUIApp.Views.Windows
 
         private void RateButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ratingViewModel.AddRating(this.productId);
+            this.ratingViewModel.AddReview(this.productId);
             this.Close();
         }
     }

@@ -1,13 +1,17 @@
 ﻿namespace WinUIApp.Views.ViewModels
 {
     using DataAccess.Constants;
+    using DataAccess.DTOModels;
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using System.Windows.Input;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
@@ -23,6 +27,31 @@
         private float averageReviewScore;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool _isPopupOpen;
+        public bool IsPopupOpen
+        {
+            get => _isPopupOpen;
+            set
+            {
+                _isPopupOpen = value;
+                this.OnPropertyChanged(nameof(this.IsPopupOpen));
+            }
+        }
+
+        public event EventHandler RequestOpenPopup;
+        public event EventHandler RequestClosePopup;
+
+        public ICommand ShowPopupCommand => new RelayCommand(() => 
+        {
+            IsPopupOpen = true;
+            RequestOpenPopup?.Invoke(this, EventArgs.Empty);
+        });
+        public ICommand ClosePopupCommand => new RelayCommand(() =>
+        {
+            IsPopupOpen = true;
+            RequestClosePopup?.Invoke(this, EventArgs.Empty);
+        });
 
         public DrinkDTO Drink
         {
@@ -64,15 +93,15 @@
             }
         }
 
-        public ObservableCollection<Review> Reviews { get; set; } = new ObservableCollection<Review>();
+        public ObservableCollection<ReviewDTO> Reviews { get; set; } = new ObservableCollection<ReviewDTO>();
 
         public void LoadDrink(int drinkId)
         {
             this.Drink = this.drinkService.GetDrinkById(drinkId);
             this.AverageReviewScore = this.reviewService.GetReviewAverageByDrinkID(drinkId);
-            List<Review> reviews = this.reviewService.GetReviewsByDrinkID(drinkId);
+            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(drinkId);
             this.Reviews.Clear();
-            foreach (Review review in reviews)
+            foreach (ReviewDTO review in reviews)
             {
                 this.Reviews.Add(review);
             }

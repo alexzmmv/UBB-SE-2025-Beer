@@ -13,5 +13,15 @@ namespace WinUIApp.WebAPI.Constants
         /// The maximum allowed length for review content.
         /// </summary>
         public const int MaxContentLength = 500;
+        
+        /// <summary>
+        /// The minimum allowed rating value.
+        /// </summary>
+        public const int MinRatingValue = 1;
+
+        /// <summary>
+        /// The maximum allowed rating value.
+        /// </summary>
+        public const int MaxRatingValue = 5;
     }
 } 

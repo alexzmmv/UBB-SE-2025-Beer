@@ -10,18 +10,14 @@ namespace WinUIApp.WebUI.Models
     {
         public DrinkDetailViewModel()
         {
-            Reviews = new List<Review>();
-            Ratings = new List<Rating>();
-            ReviewsByRating = new Dictionary<int, List<Review>>();
+            Reviews = new List<DataAccess.DTOModels.ReviewDTO>();
             NewReview = new RatingReviewViewModel();
         }
         
         public required DrinkDTO Drink { get; set; }
         public required string CategoriesDisplay { get; set; }
         public double AverageRatingScore { get; set; }
-        public List<Review> Reviews { get; set; }
-        public List<Rating> Ratings { get; set; }
-        public Dictionary<int, List<Review>> ReviewsByRating { get; set; }
+        public List<DataAccess.DTOModels.ReviewDTO> Reviews { get; set; }
         public bool IsInFavorites { get; set; }
         
         // For the review form that appears when a rating is tapped

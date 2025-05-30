@@ -30,7 +30,7 @@
             <input type="text" class="form-control mb-2" placeholder="Search reviews…" />
 
             <ul class="list-group mb-3 shadow-sm" style="height: 250px; overflow-y: auto;">
-                @foreach (Review review in Model.Reviews)
+                @foreach (DataAccess.DTOModels.ReviewDTO review in Model.Reviews)
                 {
                     <li class="list-group-item review-item" ondblclick="toggleReviewActions(@review.ReviewId)">
                         <div>
