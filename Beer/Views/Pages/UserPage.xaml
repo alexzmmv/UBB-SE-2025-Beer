@@ -63,10 +63,14 @@
                             Foreground="DarkGray" />
                     </StackPanel>
 
-                    <!-- Status text -->
-                    <TextBlock 
-                        x:Name="StatusTextBlock"
-                        FontSize="16" />
+                    <!-- Appeal button - only visible for banned users who haven't appealed -->
+                    <Button 
+                        x:Name="AppealButton"
+                        Content="Submit Appeal"
+                        Click="AppealButton_Click"
+                        Visibility="Collapsed"
+                        Background="Red"
+                        Foreground="White"/>
 
                     <!-- Edit account button -->
                     <Button 
