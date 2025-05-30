@@ -61,6 +61,27 @@
     <Page Update="Views\Components\Modals\AddReviewModal.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Content Update="Assets\beers-logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\facebook_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\github_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\google_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\x-twitter-logo-on-black.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\linkedin_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\X_Logo.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Update="Views\Windows\AuthenticationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
@@ -174,15 +195,13 @@
       <Compile Remove="Review.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Remove="Assets\beers-logo.png" />
-      <Content Remove="Assets\facebook_logo.png" />
-      <Content Remove="Assets\github_logo.png" />
-      <Content Remove="Assets\google_logo.png" />
-      <Content Remove="Assets\linkedin_logo.png" />
-      <Content Remove="Assets\x-twitter-logo-on-black.png" />
-      <Content Remove="Assets\X_Logo.jpg" />
-    </ItemGroup>
-    <ItemGroup>
+      <None Remove="Assets\beers-logo.png" />
+      <None Remove="Assets\facebook_logo.png" />
+      <None Remove="Assets\github_logo.png" />
+      <None Remove="Assets\google_logo.png" />
+      <None Remove="Assets\linkedin_logo.png" />
+      <None Remove="Assets\x-twitter-logo-on-black.png" />
+      <None Remove="Assets\X_Logo.jpg" />
       <None Remove="Views\Components\Modals\AddReviewModal.xaml" />
     </ItemGroup>
     <ItemGroup>
