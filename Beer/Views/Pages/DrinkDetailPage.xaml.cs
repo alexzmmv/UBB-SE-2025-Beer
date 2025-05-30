@@ -1,6 +1,7 @@
 ﻿using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -16,13 +17,21 @@ namespace WinUIApp.Views.Pages
         private IDrinkService drinkService;
         private IDrinkReviewService drinkReviewService;
         private IUserService userService;
+        public DrinkDetailPageViewModel ViewModel { get; }
 
         public DrinkDetailPage()
         {
             this.InitializeComponent();
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
+            this.userService = App.Host.Services.GetRequiredService<IUserService>();
+
+            this.ViewModel = new DrinkDetailPageViewModel(
+                this.drinkService,
+                this.drinkReviewService,
+                this.userService);
             this.DataContext = this.ViewModel;
-            // Possible deadlock
-            if (this.ViewModel.IsCurrentUserAdminAsync().Result)
+            if (false/*this.ViewModel.IsCurrentUserAdminAsync().Result*/)
             {
                 this.RemoveButtonText.Text = "Remove drink";
             }
@@ -35,18 +44,8 @@ namespace WinUIApp.Views.Pages
             {
                 this.ViewModel.LoadDrink(this.ViewModel.Drink.DrinkId);
             };
-
-            this.drinkService = App.GetService<IDrinkService>();
-            this.drinkReviewService = App.GetService<IDrinkReviewService>();
-            this.userService = App.GetService<IUserService>();
-
-            this.ViewModel = new DrinkDetailPageViewModel(
-                this.drinkService,
-                this.drinkReviewService,
-                this.userService);
         }
 
-        public DrinkDetailPageViewModel ViewModel { get; }
 
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
@@ -73,14 +72,14 @@ namespace WinUIApp.Views.Pages
             if (this.ViewModel?.Drink == null)
             {
                 return;
-            }
+            }/*
 
             int productId = this.ViewModel.Drink.DrinkId;
 
-            IConfiguration configuration = App.GetService<IConfiguration>();
-            IRatingService ratingService = App.GetService<IRatingService>();
-            IReviewService reviewService = App.GetService<IReviewService>();
-            IUserService userService = App.GetService<IUserService>();
+            IConfiguration configuration = App.Host.Services.GetRequiredService<IConfiguration>();
+            IRatingService ratingService = App.Host.Services.GetRequiredService<IRatingService>();
+            IReviewService reviewService = App.Host.Services.GetRequiredService<IReviewService>();
+            IUserService userService = App.Host.Services.GetRequiredService<IUserService>();
 
             RatingViewModel ratingViewModel = new RatingViewModel(ratingService);
             ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
@@ -90,7 +89,7 @@ namespace WinUIApp.Views.Pages
             ratingViewModel.LoadRatingsForProduct(productId);
 
             RatingReviewWindow window = new RatingReviewWindow(mainVm, productId);
-            window.Activate();
+            window.Activate();*/
         }
     }
 }

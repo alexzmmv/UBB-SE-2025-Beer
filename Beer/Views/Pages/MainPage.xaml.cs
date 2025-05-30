@@ -36,7 +36,8 @@ namespace WinUIApp.Views.Pages
 
         private void DrinkOfTheDayComponent_Tapped(object sender, TappedRoutedEventArgs eventArguments)
         {
-            MainWindow.AppMainFrame.Navigate(typeof(DrinkDetailPage), this.viewModel.GetDrinkOfTheDayId());
+            var drinkId = this.viewModel.GetDrinkOfTheDayId();
+            MainWindow.AppMainFrame.Navigate(typeof(DrinkDetailPage), drinkId);
         }
     }
 }

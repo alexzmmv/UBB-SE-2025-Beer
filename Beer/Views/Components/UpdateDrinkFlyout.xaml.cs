@@ -31,7 +31,7 @@ namespace WinUIApp.Views.Components
         public UpdateDrinkFlyout()
         {
             this.InitializeComponent();
-            drinkService = App.Host.Services.GetRequiredService<ProxyDrinkService>();
+            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
             userService = App.Host.Services.GetRequiredService<IUserService>();
 
             this.Loaded += this.UpdateDrinkFlyout_LoadedAsync;

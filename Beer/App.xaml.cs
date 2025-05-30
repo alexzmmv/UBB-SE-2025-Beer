@@ -19,7 +19,9 @@ using Microsoft.UI.Xaml;
 using Quartz.Impl;
 using Quartz;
 using WinUIApp.ProxyServices;
-using DrinkDb_Auth.View;
+using WinUIApp.Views;
+using WinUIApp.Views.Pages;
+using MainPage = WinUIApp.Views.Pages.MainPage;
 
 namespace WinUIApp
 {
@@ -71,7 +73,7 @@ namespace WinUIApp
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
             services.AddSingleton<IConfiguration>(configuration);
-                    string apiRoute = "http://localhost:5280/";
+                    string apiRoute = "https://localhost:44353/";
 
                     services.AddSingleton<ISessionService, SessionServiceProxy>(sp => new SessionServiceProxy(apiRoute));
                     services.AddSingleton<IAuthenticationService>(sp => new AuthenticationServiceProxy(apiRoute));
@@ -84,6 +86,8 @@ namespace WinUIApp
                     services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
                     services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));
                     services.AddSingleton<IRatingService, ProxyRatingService>(sp => new ProxyRatingService(apiRoute));
+                    services.AddSingleton<IDrinkService, ProxyDrinkService>(sp => new ProxyDrinkService(apiRoute));
+                    services.AddSingleton<IDrinkReviewService, ProxyDrinkReviewService>(sp => new ProxyDrinkReviewService(apiRoute));
 
                     services.AddSingleton<LinkedInLocalOAuthServer>(sp => new LinkedInLocalOAuthServer("http://localhost:8891/"));
                     services.AddSingleton<GitHubLocalOAuthServer>(sp => new GitHubLocalOAuthServer("http://localhost:8890/"));
@@ -130,6 +134,8 @@ namespace WinUIApp
                     });
 
                     services.AddTransient<MainPage>();
+                    //services.AddTransient<DrinkDetailPage>();
+                    services.AddTransient<MainWindow>();
                     services.AddTransient<AuthenticationWindow>();
                     services.AddTransient<UserPage>();
                 })
