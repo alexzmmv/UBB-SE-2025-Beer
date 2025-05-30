@@ -12,7 +12,7 @@ using WinUiApp.Data;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250529224916_NukeRating")]
+    [Migration("20250530010728_NukeRating")]
     partial class NukeRating
     {
         /// <inheritdoc />
@@ -54,6 +54,36 @@ namespace DataAccess.Migrations
                     b.HasIndex("RequestingUserUserId");
 
                     b.ToTable("DrinkModificationRequests");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.DrinkRequestingApproval", b =>
+                {
+                    b.Property<int>("DrinkId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DrinkId"));
+
+                    b.Property<decimal>("AlcoholContent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DrinkName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("DrinkURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DrinkId");
+
+                    b.HasIndex("BrandId");
+
+                    b.ToTable("DrinksRequestingApproval");
                 });
 
             modelBuilder.Entity("DataAccess.Model.AdminDashboard.OffensiveWord", b =>
@@ -208,7 +238,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Drink");
+                    b.ToTable("Drinks");
                 });
 
             modelBuilder.Entity("WinUiApp.Data.Data.DrinkCategory", b =>
@@ -382,7 +412,7 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.DrinkModificationRequest", b =>
                 {
-                    b.HasOne("WinUiApp.Data.Data.Drink", "NewDrink")
+                    b.HasOne("DataAccess.Data.DrinkRequestingApproval", "NewDrink")
                         .WithMany()
                         .HasForeignKey("NewDrinkDrinkId");
 
@@ -401,6 +431,15 @@ namespace DataAccess.Migrations
                     b.Navigation("OldDrink");
 
                     b.Navigation("RequestingUser");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.DrinkRequestingApproval", b =>
+                {
+                    b.HasOne("WinUiApp.Data.Data.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrandId");
+
+                    b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("DataAccess.Model.AdminDashboard.UpgradeRequest", b =>

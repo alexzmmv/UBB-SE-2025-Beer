@@ -12,8 +12,8 @@ namespace DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Drink_Brands_BrandId",
-                table: "Drink");
+                name: "FK_Drinks_Brands_BrandId",
+                table: "Drinks");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Reviews_Ratings_RatingId",
@@ -65,18 +65,18 @@ namespace DataAccess.Migrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Drink_Brands_BrandId",
-                table: "Drink",
+                name: "FK_Drinks_Brands_BrandId",
+                table: "Drinks",
                 column: "BrandId",
                 principalTable: "Brands",
                 principalColumn: "BrandId",
                 onDelete: ReferentialAction.SetNull);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Reviews_Drink_DrinkId",
+                name: "FK_Reviews_Drinks_DrinkId",
                 table: "Reviews",
                 column: "DrinkId",
-                principalTable: "Drink",
+                principalTable: "Drinks",
                 principalColumn: "DrinkId",
                 onDelete: ReferentialAction.Cascade);
 
@@ -93,11 +93,11 @@ namespace DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Drink_Brands_BrandId",
-                table: "Drink");
+                name: "FK_Drinks_Brands_BrandId",
+                table: "Drinks");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Reviews_Drink_DrinkId",
+                name: "FK_Reviews_Drinks_DrinkId",
                 table: "Reviews");
 
             migrationBuilder.DropForeignKey(
@@ -152,9 +152,9 @@ namespace DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Ratings", x => x.RatingId);
                     table.ForeignKey(
-                        name: "FK_Ratings_Drink_DrinkId",
+                        name: "FK_Ratings_Drinks_DrinkId",
                         column: x => x.DrinkId,
-                        principalTable: "Drink",
+                        principalTable: "Drinks",
                         principalColumn: "DrinkId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -182,8 +182,8 @@ namespace DataAccess.Migrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Drink_Brands_BrandId",
-                table: "Drink",
+                name: "FK_Drinks_Brands_BrandId",
+                table: "Drinks",
                 column: "BrandId",
                 principalTable: "Brands",
                 principalColumn: "BrandId");
