@@ -16,6 +16,8 @@ namespace DrinkDb_Auth.View
     using DataAccess.Service.Interfaces;
     using WinUIApp;
     using WinUiApp.Data.Data;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
 
     public sealed partial class MainPage : Page
     {
@@ -31,12 +33,26 @@ namespace DrinkDb_Auth.View
             IAutoCheck autoCheck = App.Host.Services.GetRequiredService<IAutoCheck>();
 
             this.ViewModel = new MainPageViewModel(reviewsService, userService, upgradeRequestsService, checkersService);
-
-            this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
             this.DataContext = ViewModel;
 
+            this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.Unloaded += MainPage_Unloaded;
+
+            // Load data after initialization
+            this.Loaded += async (s, e) => await LoadInitialData();
+        }
+
+        private async Task LoadInitialData()
+        {
+            try
+            {
+                await this.ViewModel.LoadAllData();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading initial data: {ex.Message}");
+                // Show error to user if needed
+            }
         }
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
@@ -208,6 +224,34 @@ namespace DrinkDb_Auth.View
             if (this.Frame != null)
             {
                 this.Frame.Navigate(typeof(UserPage));
+            }
+        }
+
+        private async void BanUserButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is Guid userId)
+            {
+                ContentDialog confirmDialog = new ContentDialog
+                {
+                    Title = "Confirm Ban",
+                    Content = "Are you sure you want to ban this user?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No",
+                    XamlRoot = this.XamlRoot
+                };
+
+                try
+                {
+                    var result = await confirmDialog.ShowAsync();
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        await Task.Run(() => this.ViewModel.BanUser(userId));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error showing dialog: {ex.Message}");
+                }
             }
         }
     }

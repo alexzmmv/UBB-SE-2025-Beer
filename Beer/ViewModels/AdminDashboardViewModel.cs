@@ -13,6 +13,7 @@ using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
 using WinUiApp.Data.Data;
+using System.Diagnostics;
 
 namespace DrinkDb_Auth.ViewModel.AdminDashboard
 {
@@ -35,6 +36,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         private string userUpgradeInfo;
         private bool isAppealUserBanned = true;
         private bool isWordListVisible = false;
+        private ObservableCollection<User> usersWithHiddenReviews;
+        private User selectedUserWithHiddenReviews;
 
         // Constructor of warnings
         public MainPageViewModel(IReviewService reviewsService, IUserService userService,
@@ -46,9 +49,6 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             this.checkersService = checkersService;
 
             this.InitializeCommands();
-
-            // Check this line if ui is deadlocking
-            this.LoadAllData();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -76,6 +76,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         public ICommand ShowWordListPopupCommand { get; private set; }
 
         public ICommand HideWordListPopupCommand { get; private set; }
+
+        public ICommand BanUserCommand { get; private set; }
 
         public ObservableCollection<Review> FlaggedReviews
         {
@@ -206,37 +208,98 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             }
         }
 
+        public ObservableCollection<User> UsersWithHiddenReviews
+        {
+            get => this.usersWithHiddenReviews;
+            set
+            {
+                this.usersWithHiddenReviews = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public User SelectedUserWithHiddenReviews
+        {
+            get => this.selectedUserWithHiddenReviews;
+            set
+            {
+                this.selectedUserWithHiddenReviews = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         public async Task LoadAllData()
         {
-            await Task.WhenAll(
-                LoadFlaggedReviews(),
-                LoadAppeals(),
-                LoadRoleRequests(),
-                LoadOffensiveWords());
+            try
+            {
+                await Task.WhenAll(
+                    LoadFlaggedReviews(),
+                    LoadAppeals(),
+                    LoadRoleRequests(),
+                    LoadOffensiveWords(),
+                    LoadUsersWithHiddenReviews());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in LoadAllData: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task LoadFlaggedReviews()
         {
-            List<Review> reviews = await this.reviewsService.GetFlaggedReviews();
-            this.FlaggedReviews = new ObservableCollection<Review>(reviews);
+            try
+            {
+                List<Review> reviews = await this.reviewsService.GetFlaggedReviews();
+                this.FlaggedReviews = new ObservableCollection<Review>(reviews);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading flagged reviews: {ex.Message}");
+                this.FlaggedReviews = new ObservableCollection<Review>();
+            }
         }
 
         public async Task LoadAppeals()
         {
-            List<User> appeals = await this.userService.GetBannedUsersWhoHaveSubmittedAppeals();
-            this.AppealsUsers = new ObservableCollection<User>(appeals);
+            try
+            {
+                List<User> appeals = await this.userService.GetBannedUsersWhoHaveSubmittedAppeals();
+                this.AppealsUsers = new ObservableCollection<User>(appeals);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading appeals: {ex.Message}");
+                this.AppealsUsers = new ObservableCollection<User>();
+            }
         }
 
         public async Task LoadRoleRequests()
         {
-            List<UpgradeRequest> requests = await Task.Run(() => this.requestsService.RetrieveAllUpgradeRequests());
-            this.UpgradeRequests = new ObservableCollection<UpgradeRequest>(requests);
+            try
+            {
+                List<UpgradeRequest> requests = await this.requestsService.RetrieveAllUpgradeRequests();
+                this.UpgradeRequests = new ObservableCollection<UpgradeRequest>(requests);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading role requests: {ex.Message}");
+                this.UpgradeRequests = new ObservableCollection<UpgradeRequest>();
+            }
         }
 
         public async Task LoadOffensiveWords()
         {
-            HashSet<string> words = await this.checkersService.GetOffensiveWordsList();
-            this.OffensiveWords = new ObservableCollection<string>(words);
+            try
+            {
+                HashSet<string> words = await this.checkersService.GetOffensiveWordsList();
+                this.OffensiveWords = new ObservableCollection<string>(words);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading offensive words: {ex.Message}");
+                this.OffensiveWords = new ObservableCollection<string>();
+            }
         }
 
         public async Task FilterReviews(string filter)
@@ -602,11 +665,55 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
             this.ShowWordListPopupCommand = new RelayCommand(() => this.ShowWordListPopup());
             this.HideWordListPopupCommand = new RelayCommand(() => this.HideWordListPopup());
+
+            this.BanUserCommand = new AsyncRelayCommand<Guid>(async (userId) => await this.BanUser(userId));
         }
 
         private void UpdateUserRole(User user, RoleType roleType)
         {
             this.userService.UpdateUserRole(user.UserId, roleType);
+        }
+
+        public async Task LoadUsersWithHiddenReviews()
+        {
+            try
+            {
+                List<User> users = await this.userService.GetUsersWithHiddenReviews();
+                // Filter out admins and already banned users
+                users = users.Where(u => u.AssignedRole != RoleType.Admin && u.AssignedRole != RoleType.Banned).ToList();
+                this.UsersWithHiddenReviews = new ObservableCollection<User>(users);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading users with hidden reviews: {ex.Message}");
+                this.UsersWithHiddenReviews = new ObservableCollection<User>();
+            }
+        }
+
+        public async Task BanUser(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return;
+            }
+
+            try
+            {
+                await this.userService.UpdateUserRole(userId, RoleType.Banned);
+                // Remove the user from the list immediately
+                var userToRemove = this.UsersWithHiddenReviews.FirstOrDefault(u => u.UserId == userId);
+                if (userToRemove != null)
+                {
+                    this.UsersWithHiddenReviews.Remove(userToRemove);
+                    this.OnPropertyChanged(nameof(UsersWithHiddenReviews));
+                }
+                // Also refresh the full list to ensure consistency
+                await this.LoadUsersWithHiddenReviews();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error banning user: {ex.Message}");
+            }
         }
     }
 }

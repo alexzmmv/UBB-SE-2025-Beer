@@ -25,13 +25,13 @@ namespace DrinkDb_Auth
 
         private void ContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            //if (this.mainWindow != null)
-            //{
-            //    this.mainWindow.NavigationFrame.Navigate(typeof(UserPage));
-            //}
+            if (this.mainWindow != null)
+            {
+                this.mainWindow.NavigationFrame.Navigate(typeof(UserPage));
+            }
 
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Activate();
+            //MainWindow mainWindow = new MainWindow();
+            //mainWindow.Activate();
         }
     }
 }
