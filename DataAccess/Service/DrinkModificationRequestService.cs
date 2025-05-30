@@ -1,6 +1,8 @@
-﻿using DataAccess.Data;
+﻿using DataAccess.Constants;
+using DataAccess.Data;
 using DataAccess.IRepository;
 using DataAccess.Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,19 +19,21 @@ using DataAccess.DTOModels;
 
 namespace DataAccess.Service
 {
-    public class DrinkModificationRequestService : IDrinkModificationRequestService
+    public class DrinkModificationRequestService: IDrinkModificationRequestService
     {
-        private readonly IDrinkModificationRequestRepository drinkModificationRequestRepository;
+        private readonly IDrinkModificationRequestRepository drinkModificationRepository;
+        private readonly IDrinkRepository drinkRepository;
 
-        public DrinkModificationRequestService(IDrinkModificationRequestRepository drinkModificationRequestRepository)
+        public DrinkModificationRequestService(IDrinkModificationRequestRepository drinkModificationRepository, IDrinkRepository drinkRepository)
         {
-            this.drinkModificationRequestRepository = drinkModificationRequestRepository;
+            this.drinkModificationRepository = drinkModificationRepository;
+            this.drinkRepository = drinkRepository;
         }
 
         public DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId)
         {
-            DrinkModificationRequestDTO request = new ()
-        {
+            DrinkModificationRequestDTO request = new()
+            {
                 ModificationType = type,
                 OldDrinkId = oldDrinkId,
                 NewDrinkId = newDrinkId,
@@ -44,6 +48,19 @@ namespace DataAccess.Service
         public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
         {
             return await drinkModificationRequestRepository.GetAllModificationRequests();
+        }
+
+        public async Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId)
+        {
+            return await drinkModificationRepository.GetModificationRequest(modificationRequestId);
+        }
+
+        public async Task DenyRequest(int modificationRequestId)
+        {
+            var modificationRequest = await drinkModificationRepository.GetModificationRequest(modificationRequestId);
+            drinkRepository.DeleteRequestingApprovalDrink(modificationRequest.NewDrink.DrinkId);
+
+            await drinkModificationRepository.DeleteRequest(modificationRequestId);
         }
     }
 }

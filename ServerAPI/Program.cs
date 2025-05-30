@@ -32,10 +32,8 @@ builder.Services.AddHttpClient("DrinkDbClient", client =>
 
 builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddScoped<IReviewService, ReviewsService>();
-builder.Services.AddScoped<IRatingService, RatingService>();
-
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
-builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+
 builder.Services.AddScoped<IReviewsRepository, ReviewsRepository>();
 builder.Services.AddScoped<IDrinkModificationRequestRepository, DrinkModificationRequestRepository>();
 

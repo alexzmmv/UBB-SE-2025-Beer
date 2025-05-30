@@ -43,5 +43,25 @@ namespace DataAccess.Repository
                 return DrinkModificationRequestExtensions.ConvertEntityToDTO(request);
             });
         }
+
+        public async Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId)
+        {
+            return await dbContext.DrinkModificationRequests
+                .Where(drink => drink.DrinkModificationRequestId == modificationRequestId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task DeleteRequest(int modificationRequestId)
+        {
+            var request = await dbContext.DrinkModificationRequests
+                .FirstOrDefaultAsync(drink => drink.DrinkModificationRequestId == modificationRequestId);
+
+
+            if (request != null)
+            {
+                dbContext.DrinkModificationRequests.Remove(request);
+                await dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

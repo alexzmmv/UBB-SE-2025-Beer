@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.Views.Pages;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.Views.Components
 {
@@ -12,7 +13,7 @@ namespace WinUIApp.Views.Components
         public static readonly DependencyProperty DrinksProperty =
            DependencyProperty.Register(
                "Drinks",
-               typeof(List<Drink>),
+               typeof(List<DrinkDTO>),
                typeof(DrinkListComponent),
                new PropertyMetadata(null));
 
@@ -21,9 +22,9 @@ namespace WinUIApp.Views.Components
             this.InitializeComponent();
         }
 
-        public List<Drink> Drinks
+        public List<DrinkDTO> Drinks
         {
-            get => (List<Drink>)this.GetValue(DrinksProperty);
+            get => (List<DrinkDTO>)this.GetValue(DrinksProperty);
             set => this.SetValue(DrinksProperty, value);
         }
 

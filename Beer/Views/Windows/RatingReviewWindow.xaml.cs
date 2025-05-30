@@ -37,7 +37,7 @@ namespace WinUIApp.Views.Windows
 
         private async void AddReview_Click(object sender, RoutedEventArgs e)
         {
-            if (this.ratingMainPageViewModel.SelectedRating != null)
+            /*if (this.ratingMainPageViewModel.SelectedRating != null)
             {
                 ReviewWindow reviewWindow = new ReviewWindow(
                     this.ratingMainPageViewModel.Configuration,
@@ -48,7 +48,7 @@ namespace WinUIApp.Views.Windows
             else
             {
                 await this.NoRatingSelectedDialog.ShowAsync();
-            }
+            }*/
         }
 
         private void AddRating_Click(object sender, RoutedEventArgs e)

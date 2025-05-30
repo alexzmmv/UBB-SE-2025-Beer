@@ -12,11 +12,13 @@ namespace WinUiApp.Data.Configurations
 
             builder.HasOne(drinkCategory => drinkCategory.Drink)
                    .WithMany(drink => drink.DrinkCategories)
-                   .HasForeignKey(drinkCategory => drinkCategory.DrinkId);
+                   .HasForeignKey(drinkCategory => drinkCategory.DrinkId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(drinkCategory => drinkCategory.Category)
                    .WithMany(category => category.DrinkCategories)
-                   .HasForeignKey(drinkCategory => drinkCategory.CategoryId);
+                   .HasForeignKey(drinkCategory => drinkCategory.CategoryId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -13,36 +13,37 @@ namespace WinUiApp.Data.Configurations
             builder.Property(review => review.ReviewId)
                    .ValueGeneratedOnAdd();
 
-            builder.Property(review => review.RatingId)
+            builder.Property(review => review.DrinkId)
                    .IsRequired();
 
             builder.Property(review => review.UserId)
                    .IsRequired();
 
+            builder.Property(review => review.RatingValue)
+                .HasColumnType("float");
             // Added IsRequired
             builder.Property(review => review.Content)
                    .HasColumnType("text")
                    .IsRequired();
 
-            builder.Property(review => review.CreationDate)
-                   .HasColumnType("datetime");
-
             builder.Property(review => review.IsActive)
                    .HasColumnType("tinyint")
                    .HasDefaultValue(null);
-                   
-            builder.HasOne(review => review.Rating)
-                   .WithMany()
-                   .HasForeignKey(review => review.RatingId)
-                   .OnDelete(DeleteBehavior.Cascade);
 
-            // Leaving this as it was from 923
+            builder.HasOne(review => review.Drink)
+                .WithMany()
+                .HasForeignKey(review => review.DrinkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(review => review.User)
                    .WithMany()
                    .HasForeignKey(review => review.UserId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(currentReview => currentReview.CreatedDate).IsRequired();
+            builder.HasIndex(review => new { review.UserId, review.DrinkId })
+                .IsUnique();
+
+            builder.Property(currentReview => currentReview.CreatedDate).HasColumnType("datetime").IsRequired();
             builder.Property(currentReview => currentReview.NumberOfFlags).IsRequired();
             builder.Property(currentReview => currentReview.IsHidden).IsRequired();
         }

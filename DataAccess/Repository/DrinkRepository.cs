@@ -20,6 +20,7 @@ namespace WinUIApp.WebAPI.Repositories
     using WinUiApp.Data.Data;
     using WinUiApp.Data.Interfaces;
     using WinUIApp.WebAPI.Models;
+    using DataAccess.Extensions;
 
     /// <summary>
     /// Repository for managing drink-related operations.
@@ -42,7 +43,7 @@ namespace WinUIApp.WebAPI.Repositories
         /// Retrieves a list of all drinks.
         /// </summary>
         /// <returns> List of drinks. </returns>
-        public List<Models.DrinkDTO> GetDrinks()
+        public List<DrinkDTO> GetDrinks()
         {
             return dbContext.Drinks
                 .Include(drink => drink.Brand)
@@ -59,13 +60,13 @@ namespace WinUIApp.WebAPI.Repositories
         /// <returns> The drink. </returns>
         public DrinkDTO? GetDrinkById(int drinkId)
         {
-            return dbContext.Drinks
+            var drink = dbContext.Drinks
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                     .ThenInclude(drinkCategory => drinkCategory.Category)
-                .Where(drink => drink.DrinkId == drinkId)
-                .Select(drink => DrinkExtensions.ConvertEntityToDTO(drink))
-                .FirstOrDefault();
+                .FirstOrDefault(drink => drink.DrinkId == drinkId);
+
+            return drink != null ? DrinkExtensions.ConvertEntityToDTO(drink) : null;
         }
 
         private Brand RetrieveBrand(string brandName)
@@ -109,7 +110,6 @@ namespace WinUIApp.WebAPI.Repositories
 
             return dataCategory;
         }
-
 
         /// <summary>
         /// Adds a new drink to the database.
@@ -205,7 +205,6 @@ namespace WinUIApp.WebAPI.Repositories
             {
                 throw new Exception("Database error occurred while updating drink." + exception.Message, exception);
             }
-
         }
 
         /// <summary>
@@ -224,6 +223,19 @@ namespace WinUIApp.WebAPI.Repositories
             dbContext.DrinkCategories.RemoveRange(drink.DrinkCategories);
 
             dbContext.Drinks.Remove(drink);
+
+            dbContext.SaveChanges();
+        }
+
+        public void DeleteRequestingApprovalDrink(int drinkId)
+        {
+            var drink = dbContext.DrinksRequestingApproval
+                                    .FirstOrDefault(drink => drink.DrinkId == drinkId);
+
+            if (drink == null)
+                throw new Exception("No drink found with the provided ID.");
+
+            dbContext.DrinksRequestingApproval.Remove(drink);
 
             dbContext.SaveChanges();
         }

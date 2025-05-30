@@ -5,7 +5,7 @@
 namespace WinUIApp.ProxyServices
 {
     using System.Collections.Generic;
-    using WinUiApp.Data.Data;
+    using DataAccess.DTOModels;
 
     /// <summary>
     /// Interface for managing drink reviews.
@@ -24,6 +24,6 @@ namespace WinUIApp.ProxyServices
         /// </summary>
         /// <param name="drinkID"> Drink id. </param>
         /// <returns> All reviews. </returns>
-        List<Review> GetReviewsByDrinkID(int drinkID);
+        List<ReviewDTO> GetReviewsByDrinkID(int drinkID);
     }
 }

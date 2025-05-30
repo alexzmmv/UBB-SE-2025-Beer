@@ -1,4 +1,5 @@
 ﻿using DataAccess.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace DataAccess.IRepository
         DrinkModificationRequestDTO AddRequest(DrinkModificationRequestDTO request);
 
         Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests();
+        Task DeleteRequest(int modificationRequestId);
     }
 }

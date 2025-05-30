@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using DataAccess.DTOModels;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
-using WinUIApp.ProxyServices.Constants;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.ViewHelpers;
 
@@ -15,28 +16,45 @@ namespace WinUIApp.ViewModels
         private const int BottleRatingToIndexOffset = 1;
         private const int RatingsCountToUserOffset = 1;
 
-        private readonly IRatingService ratingService;
-        private ObservableCollection<Rating> ratings;
-        private Rating? selectedRating;
+        private ObservableCollection<float> ratings;
+        private float? selectedRating;
         private double averageRating;
         private ObservableCollection<BottleAsset> bottles;
         private int ratingScore;
+        private string content;
+        private IReviewService reviewService;
+        private const int MINIMUM_RATING = 1;
+        private const int MAXIMUM_RATING = 5;
 
-        public RatingViewModel(IRatingService ratingService)
+        public RatingViewModel(IReviewService reviewService)
         {
-            this.ratingService = ratingService ?? throw new ArgumentNullException(nameof(ratingService));
-            this.ratings = new ObservableCollection<Rating>();
+            this.reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
+            this.ratings = new ObservableCollection<float>();
             this.bottles = new ObservableCollection<BottleAsset>();
             this.InitializeBottles();
         }
 
-        public virtual ObservableCollection<Rating> Ratings
+
+        public string Content
+        {
+            get => content;
+            set
+            {
+                if (content != value)
+                {
+                    content = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public virtual ObservableCollection<float> Ratings
         {
             get => this.ratings;
             set => this.SetProperty(ref this.ratings, value);
         }
 
-        public virtual Rating? SelectedRating
+        public virtual float? SelectedRating
         {
             get => this.selectedRating;
             set => this.SetProperty(ref this.selectedRating, value);
@@ -61,7 +79,7 @@ namespace WinUIApp.ViewModels
 
         public virtual void UpdateBottleRating(int clickedBottleNumber)
         {
-            foreach (int currentRatingBottle in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
+            foreach (int currentRatingBottle in Enumerable.Range(RatingViewModel.MINIMUM_RATING, RatingViewModel.MAXIMUM_RATING))
             {
                 int bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
                 this.Bottles[bottleIndex].ImageSource = currentRatingBottle <= clickedBottleNumber
@@ -72,39 +90,43 @@ namespace WinUIApp.ViewModels
             this.RatingScore = clickedBottleNumber;
         }
 
-        public virtual void AddRating(int productId)
+        public virtual void AddReview(int drinkId)
         {
-            if (this.RatingScore < RatingDomainConstants.MinRatingValue)
+            if (this.RatingScore < RatingViewModel.MINIMUM_RATING)
             {
                 return;
             }
 
-            Rating rating = new Rating
+            ReviewDTO newReview = new ReviewDTO
             {
-                DrinkId = productId,
+                ReviewId = 0,
+                DrinkId = drinkId,
+                Content = Content,
                 RatingValue = this.RatingScore,
-                RatingDate = DateTime.Now,
                 UserId = App.CurrentUserId,
+                IsHidden = true,
+                CreatedDate = DateTime.UtcNow,
+                NumberOfFlags = 0,
             };
 
-            this.ratingService.CreateRating(rating);
-            this.LoadRatingsForProduct(productId);
+            this.reviewService.AddReview(newReview);
+            //this.LoadRatingsForProduct(productId);
         }
 
         public virtual void LoadRatingsForProduct(int productId)
         {
-            IEnumerable<Rating> ratingsForProduct = this.ratingService.GetRatingsByDrink(productId);
+            //IEnumerable<Rating> ratingsForProduct = this.ratingService.GetRatingsByDrink(productId);
 
-            IEnumerable<Rating> ratingsOrderedByNewest = ratingsForProduct.Reverse();
+            //IEnumerable<Rating> ratingsOrderedByNewest = ratingsForProduct.Reverse();
 
-            this.Ratings.Clear();
-            foreach (var rating in ratingsOrderedByNewest)
-            {
-                this.Ratings.Add(rating);
-            }
+            //this.Ratings.Clear();
+            //foreach (var rating in ratingsOrderedByNewest)
+            //{
+            //    this.Ratings.Add(rating);
+            //}
 
-            double avg = this.ratingService.GetAverageRating(productId);
-            this.AverageRating = avg;
+            //double avg = this.ratingService.GetAverageRating(productId);
+            //this.AverageRating = avg;
         }
 
         protected virtual void InitializeBottles()

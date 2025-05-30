@@ -12,11 +12,13 @@ namespace WinUiApp.Data.Configurations
 
             builder.HasOne(vote => vote.User)
                    .WithMany()
-                   .HasForeignKey(vote => vote.UserId);
+                   .HasForeignKey(vote => vote.UserId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(vote => vote.Drink)
                    .WithMany()
-                   .HasForeignKey(vote => vote.DrinkId);
+                   .HasForeignKey(vote => vote.DrinkId)
+                   .OnDelete(DeleteBehavior.Cascade);
             
         }
     }

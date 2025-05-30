@@ -52,7 +52,7 @@ namespace WinUIApp.Views.Windows
                     return;
                 }
 
-                this.reviewViewModel.AddReview(this.ratingViewModel.SelectedRating.RatingId);
+                //this.reviewViewModel.AddReview(this.ratingViewModel.SelectedRating.RatingId);
             }
             catch (Microsoft.Data.SqlClient.SqlException ex)
             {
