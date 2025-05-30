@@ -1,6 +1,7 @@
 ﻿@using DataAccess.Model.AdminDashboard
 @using WebServer.Models
 @using WinUiApp.Data.Data
+@using DataAccess.Constants
 @model UserPageModel
 @{
     ViewData["Title"] = "UserPage";
@@ -23,13 +24,6 @@
 
                 <div class="text-center mb-3">
                     <p id="StatusTextBlock">Status: Online</p>
-                </div>
-                <div class="d-grid gap-2">
-                    @if (@Model.CurrentUser.AssignedRole == RoleType.Admin)
-                    {
-                        <a asp-controller="Admin" asp-action="AdminDashboard" class="btn btn-primary">Admin Dashboard</a>
-                    }
-                    <a asp-controller="Profile" asp-action="LogOut" class="btn btn-outline-dark">Logout</a>
                 </div>
             </div>
         </div>

@@ -4,7 +4,6 @@ using DataAccess.Constants;
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
-using IRepository;
 using Microsoft.AspNetCore.Mvc;
 using WebServer.Models;
 using WinUiApp.Data.Data;
