@@ -8,6 +8,7 @@ using DataAccess.Model.AdminDashboard;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
+using System.Diagnostics;
 
 namespace DataAccess.ServiceProxy
 {
@@ -24,7 +25,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<int> AddReview(Review review)
         {
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync(ApiRoute, review);
+            HttpResponseMessage response = await httpClient.PostAsJsonAsync($"{ApiRoute}/add", review);
             response.EnsureSuccessStatusCode();
             return review.ReviewId + 1;
         }
