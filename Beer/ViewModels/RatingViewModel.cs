@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using DataAccess.DTOModels;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
@@ -96,17 +97,14 @@ namespace WinUIApp.ViewModels
                 return;
             }
 
-            Review newReview = new Review
+            ReviewDTO newReview = new ReviewDTO
             {
                 ReviewId = 0,
                 DrinkId = drinkId,
                 Content = Content,
                 RatingValue = this.RatingScore,
                 UserId = App.CurrentUserId,
-                User = new User(),
-                Drink = new Drink(),
-                IsActive = false,
-                IsHidden = false,
+                IsHidden = true,
                 CreatedDate = DateTime.UtcNow,
                 NumberOfFlags = 0,
             };

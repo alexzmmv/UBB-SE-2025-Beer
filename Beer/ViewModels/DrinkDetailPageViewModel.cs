@@ -1,6 +1,7 @@
 ﻿namespace WinUIApp.Views.ViewModels
 {
     using DataAccess.Constants;
+    using DataAccess.DTOModels;
     using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
     using System;
@@ -92,15 +93,15 @@
             }
         }
 
-        public ObservableCollection<Review> Reviews { get; set; } = new ObservableCollection<Review>();
+        public ObservableCollection<ReviewDTO> Reviews { get; set; } = new ObservableCollection<ReviewDTO>();
 
         public void LoadDrink(int drinkId)
         {
             this.Drink = this.drinkService.GetDrinkById(drinkId);
             this.AverageReviewScore = this.reviewService.GetReviewAverageByDrinkID(drinkId);
-            List<Review> reviews = this.reviewService.GetReviewsByDrinkID(drinkId);
+            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(drinkId);
             this.Reviews.Clear();
-            foreach (Review review in reviews)
+            foreach (ReviewDTO review in reviews)
             {
                 this.Reviews.Add(review);
             }

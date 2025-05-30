@@ -16,6 +16,7 @@ namespace DrinkDb_Auth.View
     using DataAccess.Service.Interfaces;
     using WinUIApp;
     using WinUiApp.Data.Data;
+    using DataAccess.DTOModels;
 
     public sealed partial class MainPage : Page
     {
@@ -177,7 +178,7 @@ namespace DrinkDb_Auth.View
 
         private async void MenuFlyoutAICheck_Click_2(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Review review)
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
             {
                 await ViewModel.RunAICheck(review);
             }
