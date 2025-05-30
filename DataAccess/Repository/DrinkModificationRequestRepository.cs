@@ -44,18 +44,20 @@ namespace DataAccess.Repository
             });
         }
 
-        public async Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId)
         {
-            return await dbContext.DrinkModificationRequests
+            DrinkModificationRequest request = await dbContext.DrinkModificationRequests
                 .Where(drink => drink.DrinkModificationRequestId == modificationRequestId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync() ?? throw new Exception("No request with given id");
+
+            return DrinkModificationRequestExtensions.ConvertEntityToDTO(request);
         }
 
+        // this should ideally return the request object back
         public async Task DeleteRequest(int modificationRequestId)
         {
             var request = await dbContext.DrinkModificationRequests
                 .FirstOrDefaultAsync(drink => drink.DrinkModificationRequestId == modificationRequestId);
-
 
             if (request != null)
             {

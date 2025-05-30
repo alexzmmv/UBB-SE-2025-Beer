@@ -21,12 +21,12 @@ namespace DataAccess.Service
 {
     public class DrinkModificationRequestService: IDrinkModificationRequestService
     {
-        private readonly IDrinkModificationRequestRepository drinkModificationRepository;
+        private readonly IDrinkModificationRequestRepository drinkModificationRequestRepository;
         private readonly IDrinkRepository drinkRepository;
 
-        public DrinkModificationRequestService(IDrinkModificationRequestRepository drinkModificationRepository, IDrinkRepository drinkRepository)
+        public DrinkModificationRequestService(IDrinkModificationRequestRepository drinkModificationRequestRepository, IDrinkRepository drinkRepository)
         {
-            this.drinkModificationRepository = drinkModificationRepository;
+            this.drinkModificationRequestRepository = drinkModificationRequestRepository;
             this.drinkRepository = drinkRepository;
         }
 
@@ -47,20 +47,26 @@ namespace DataAccess.Service
 
         public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
         {
-            return await drinkModificationRequestRepository.GetAllModificationRequests();
+            return await this.drinkModificationRequestRepository.GetAllModificationRequests();
         }
 
-        public async Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId)
         {
-            return await drinkModificationRepository.GetModificationRequest(modificationRequestId);
+            return await this.drinkModificationRequestRepository.GetModificationRequest(modificationRequestId);
         }
 
         public async Task DenyRequest(int modificationRequestId)
         {
-            var modificationRequest = await drinkModificationRepository.GetModificationRequest(modificationRequestId);
-            drinkRepository.DeleteRequestingApprovalDrink(modificationRequest.NewDrink.DrinkId);
+            var modificationRequest = await drinkModificationRequestRepository
+                .GetModificationRequest(modificationRequestId) ?? throw new InvalidOperationException($"Modification request {modificationRequestId} not found.");
 
-            await drinkModificationRepository.DeleteRequest(modificationRequestId);
+            await drinkModificationRequestRepository.DeleteRequest(modificationRequestId);
+
+            if (modificationRequest.NewDrinkId.HasValue)
+            {
+                drinkRepository.DeleteDrink(modificationRequest.NewDrinkId.Value);
+            }
         }
+
     }
 }

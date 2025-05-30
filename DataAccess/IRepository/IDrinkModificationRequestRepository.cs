@@ -15,6 +15,9 @@ namespace DataAccess.IRepository
         DrinkModificationRequestDTO AddRequest(DrinkModificationRequestDTO request);
 
         Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests();
+
+        Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId);
+
         Task DeleteRequest(int modificationRequestId);
     }
 }

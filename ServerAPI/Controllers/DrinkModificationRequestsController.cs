@@ -28,7 +28,7 @@ namespace ServerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<DrinkModificationRequest> Get(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> Get(int modificationRequestId)
         {
             return await this.drinkModificationService.GetModificationRequest(modificationRequestId);
         }

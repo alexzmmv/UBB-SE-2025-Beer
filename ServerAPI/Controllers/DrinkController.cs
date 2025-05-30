@@ -133,6 +133,10 @@ namespace WinUIApp.WebAPI.Controllers
                 }
                 else
                 {
+                    if (oldDrink.IsRequestingApproval)
+                    {
+                        throw new Exception("Cant update unapproved drink");
+                    }
                     drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Edit, request.Drink.DrinkId, newDrink.DrinkId, user.UserId);
                 }
             }
@@ -149,7 +153,11 @@ namespace WinUIApp.WebAPI.Controllers
             }
             else
             {
-                _ = this.drinkService.GetDrinkById(request.drinkId) ?? throw new Exception("Drink requested for removal does not exist.");
+                var drink = this.drinkService.GetDrinkById(request.drinkId) ?? throw new Exception("Drink requested for removal does not exist.");
+                if (drink.IsRequestingApproval)
+                {
+                    throw new Exception("Can't delete unapproved drink");
+                }
                 this.drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Remove, request.drinkId, null, request.RequestingUserId);
             }
             return Ok();
