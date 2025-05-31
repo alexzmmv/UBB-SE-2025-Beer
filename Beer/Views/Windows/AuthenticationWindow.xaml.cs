@@ -219,5 +219,14 @@ namespace DrinkDb_Auth
             };
             await errorDialog.ShowAsync();
         }
+
+        public void ResetToLoginView()
+        {
+            if (this.NavigationFrame != null)
+            {
+                this.NavigationFrame.BackStack.Clear();
+                this.NavigationFrame.Content = this.MainFrame.Content;
+            }
+        }
     }
 }

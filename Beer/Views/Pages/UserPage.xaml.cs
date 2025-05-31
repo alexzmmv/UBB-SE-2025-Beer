@@ -14,6 +14,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinUiApp.Data.Data;
 using WinUIApp;
+using Microsoft.UI.Xaml.Navigation;
+using WinUIApplication.Views.Components;
 
 namespace DrinkDb_Auth
 {
@@ -24,6 +26,9 @@ namespace DrinkDb_Auth
         private readonly IReviewService reviewService;
         private readonly IUpgradeRequestsService upgradeRequestsService;
         private User? currentUser;
+        private bool isAdmin;
+
+        public bool IsAdmin => isAdmin;
 
         public UserPage()
         {
@@ -33,8 +38,24 @@ namespace DrinkDb_Auth
             this.authenticationService = App.Host.Services.GetRequiredService<IAuthenticationService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
             this.upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
+            InitializeAdminStatus();
 
             this.RequestAdminButtonVisibility();
+        }
+
+        private async void InitializeAdminStatus()
+        {
+            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (this.Frame != null)
+            {
+                NavMenu.SetNavigationFrame(this.Frame);
+            }
+            LoadUserData();
         }
 
         private void UserPage_Loaded(object sender, RoutedEventArgs e)

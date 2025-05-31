@@ -15,11 +15,20 @@ namespace DrinkDb_Auth
     {
         private AuthenticationWindow mainWindow;
         private readonly IUserService userService;
+        private bool isAdmin;
+
+        public bool IsAdmin => isAdmin;
 
         public SuccessPage()
         {
             this.InitializeComponent();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
+            InitializeAdminStatus();
+        }
+
+        private async void InitializeAdminStatus()
+        {
+            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -28,6 +37,8 @@ namespace DrinkDb_Auth
             if (e.Parameter is AuthenticationWindow window)
             {
                 this.mainWindow = window;
+                // Set the navigation frame for the menu
+                NavMenu.SetNavigationFrame(this.mainWindow.NavigationFrame);
             }
         }
 
