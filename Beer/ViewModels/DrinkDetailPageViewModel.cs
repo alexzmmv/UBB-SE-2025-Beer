@@ -106,7 +106,7 @@
         {
             if (await this.IsCurrentUserAdminAsync())
             {
-                this.drinkService.DeleteDrink(this.Drink.DrinkId);
+                this.drinkService.DeleteDrink(this.Drink.DrinkId, App.CurrentUserId);
             }
             else
             {

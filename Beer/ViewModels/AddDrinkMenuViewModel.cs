@@ -128,7 +128,8 @@
                     inputtedDrinkPath: this.DrinkURL,
                     inputtedDrinkCategories: categories,
                     inputtedDrinkBrandName: this.BrandName,
-                    inputtedAlcoholPercentage: alcoholContent);
+                    inputtedAlcoholPercentage: alcoholContent,
+                    userId: App.CurrentUserId);
                 Debug.WriteLine("Drink added successfully (admin).");
             }
             catch (Exception drinkValidationException)
