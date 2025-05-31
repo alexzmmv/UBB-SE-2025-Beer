@@ -13,6 +13,7 @@ namespace DrinkDb_Auth
         public SuccessPage()
         {
             this.InitializeComponent();
+            Loaded += SuccessPage_Loaded;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -33,6 +34,11 @@ namespace DrinkDb_Auth
 
             //MainWindow mainWindow = new MainWindow();
             //mainWindow.Activate();
+        }
+
+        private void SuccessPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.CircleAnimation.Begin();
         }
     }
 }
