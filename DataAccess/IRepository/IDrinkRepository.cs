@@ -1,6 +1,7 @@
 ﻿namespace DataAccess.IRepository
 {
     using System.Collections.Generic;
+    using DataAccess.Data;
     using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
 
@@ -10,12 +11,11 @@
 
         DrinkDTO? GetDrinkById(int drinkId);
 
-        void AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent);
+        DrinkDTO AddDrink(string drinkName, string drinkUrl, List<Category> categories, string brandName, float alcoholContent, bool isDrinkRequestingApproval = false);
 
         void UpdateDrink(DrinkDTO drinkDto);
 
         void DeleteDrink(int drinkId);
-        void DeleteRequestingApprovalDrink(int drinkId);
 
         DrinkDTO GetDrinkOfTheDay();
 
