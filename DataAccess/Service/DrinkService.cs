@@ -131,7 +131,7 @@ namespace WinUIApp.WebAPI.Services
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        public DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
+        public DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, Guid userId, bool isDrinkRequestingApproval = false)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <param name="drinkDto"> Drink. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        public void UpdateDrink(DrinkDTO drinkDto)
+        public void UpdateDrink(DrinkDTO drinkDto, Guid userId)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace WinUIApp.WebAPI.Services
         /// </summary>
         /// <param name="drinkId"> Drink id. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        public void DeleteDrink(int drinkId)
+        public void DeleteDrink(int drinkId, Guid userId)
         {
             try
             {

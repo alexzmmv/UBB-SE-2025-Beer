@@ -1,4 +1,5 @@
 ﻿using DataAccess.Constants;
+using DataAccess.DTORequests.Drink;
 using DataAccess.Service;
 using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -80,6 +81,7 @@ namespace WinUIApp.WebAPI.Controllers
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
                     request.inputtedAlcoholPercentage,
+                    new Guid(),
                     false);
             }
             else
@@ -90,6 +92,7 @@ namespace WinUIApp.WebAPI.Controllers
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
                     request.inputtedAlcoholPercentage,
+                    new Guid(),
                     true);
 
                 drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Add, null, drinkRequestingAddition.DrinkId, user.UserId);
@@ -115,7 +118,7 @@ namespace WinUIApp.WebAPI.Controllers
             var user = await userService.GetUserById(request.requestingUserId) ?? throw new Exception("No user with given ID");
             if (user.AssignedRole == RoleType.Admin)
             {
-                drinkService.UpdateDrink(request.Drink);
+                drinkService.UpdateDrink(request.Drink, new Guid());
             }
             else
             {
@@ -125,6 +128,7 @@ namespace WinUIApp.WebAPI.Controllers
                     request.Drink.CategoryList,
                     request.Drink.DrinkBrand.BrandName,
                     request.Drink.AlcoholContent,
+                    new Guid(),
                     true);
                 var oldDrink = drinkService.GetDrinkById(request.Drink.DrinkId);
                 if (oldDrink == null)
@@ -149,7 +153,7 @@ namespace WinUIApp.WebAPI.Controllers
             var requestingUser = await this.userService.GetUserById(request.RequestingUserId);
             if (requestingUser.AssignedRole == RoleType.Admin)
             {
-                drinkService.DeleteDrink(request.drinkId);
+                drinkService.DeleteDrink(request.drinkId, new Guid());
             }
             else
             {
