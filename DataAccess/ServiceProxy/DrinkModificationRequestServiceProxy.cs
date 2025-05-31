@@ -1,6 +1,7 @@
 ﻿using DataAccess.Constants;
 using DataAccess.Data;
 using DataAccess.DTOModels;
+using DataAccess.Requests.Drinks;
 using DataAccess.Service.Interfaces;
 using Newtonsoft.Json;
 using System;
@@ -41,25 +42,63 @@ namespace DataAccess.ServiceProxy
 
         public async Task DenyRequest(int modificationRequestId, Guid userId)
         {
-            var jsonBody = JsonConvert.SerializeObject(userId);
+            var request = new DenyDrinkModificationRequest
+            {
+                ModificationRequestId = modificationRequestId,
+                userId = userId
+            };
+
+            var jsonBody = JsonConvert.SerializeObject(request);
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync(
-                $"{baseUrl}/{ApiBaseRoute}/deny?modificationRequestId={modificationRequestId}",
+                $"{baseUrl}/{ApiBaseRoute}/deny",
                 content
             );
 
             response.EnsureSuccessStatusCode();
         }
 
-        public Task DenyRequest(int modificationRequestId)
+        public async Task ApproveRequest(int modificationRequestId, Guid userId)
         {
-            throw new NotImplementedException();
+            var request = new ApproveDrinkModificationRequest
+            {
+                ModificationRequestId = modificationRequestId,
+                userId = userId
+            };
+
+            var jsonBody = JsonConvert.SerializeObject(request);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync(
+                $"{baseUrl}/{ApiBaseRoute}/approve",
+                content
+            );
+
+            response.EnsureSuccessStatusCode();
         }
 
         public DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId)
         {
-            throw new NotImplementedException();
+            var request = new
+            {
+                ModificationType = type,
+                OldDrinkId = oldDrinkId,
+                NewDrinkId = newDrinkId,
+                RequestingUserId = requestingUserId
+            };
+
+            var jsonBody = JsonConvert.SerializeObject(request);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+            var response = httpClient.PostAsync(
+                $"{baseUrl}/{ApiBaseRoute}/add",
+                content
+            ).Result;
+
+            response.EnsureSuccessStatusCode();
+            var responseJson = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<DrinkModificationRequestDTO>(responseJson);
         }
     }
 }

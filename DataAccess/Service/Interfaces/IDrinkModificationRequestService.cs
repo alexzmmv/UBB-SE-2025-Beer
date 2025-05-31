@@ -17,6 +17,7 @@ namespace DataAccess.Service.Interfaces
         DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId);
         Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests();
         Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId);
-        Task DenyRequest(int modificationRequestId);
+        Task DenyRequest(int modificationRequestId, Guid userId);
+        Task ApproveRequest(int modificationRequestId, Guid userId);
     }
 }

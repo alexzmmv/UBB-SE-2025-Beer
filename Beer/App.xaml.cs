@@ -76,6 +76,7 @@ namespace WinUIApp
                     services.AddSingleton<IReviewService>(sp => new ReviewsServiceProxy(apiRoute));
                     services.AddSingleton<IUpgradeRequestsService>(sp => new UpgradeRequestsServiceProxy(apiRoute));
                     services.AddSingleton<IRolesService, RolesProxyService>(sp => new RolesProxyService(apiRoute));
+                    services.AddSingleton<IDrinkModificationRequestService>(sp => new DrinkModificationRequestServiceProxy(apiRoute));
                     services.AddSingleton<IAutoCheck, AutoCheckerProxy>(sp => new AutoCheckerProxy(apiRoute));
                     services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
                     services.AddSingleton<ITwoFactorAuthenticationService>(sp => new TwoFactorAuthenticationServiceProxy(apiRoute));

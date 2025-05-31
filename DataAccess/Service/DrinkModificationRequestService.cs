@@ -55,7 +55,7 @@ namespace DataAccess.Service
             return await this.drinkModificationRequestRepository.GetModificationRequest(modificationRequestId);
         }
 
-        public async Task DenyRequest(int modificationRequestId)
+        public async Task DenyRequest(int modificationRequestId, Guid userId)
         {
             var modificationRequest = await drinkModificationRequestRepository
                 .GetModificationRequest(modificationRequestId) ?? throw new InvalidOperationException($"Modification request {modificationRequestId} not found.");
@@ -68,5 +68,43 @@ namespace DataAccess.Service
             }
         }
 
+        public async Task ApproveRequest(int modificationRequestId, Guid userId)
+        {
+            var request = await drinkModificationRequestRepository
+                .GetModificationRequest(modificationRequestId) ?? throw new InvalidOperationException($"Modification request {modificationRequestId} not found.");
+
+            switch (request.ModificationType)
+            {
+                case DrinkModificationRequestType.Add:
+                    var newDrink = drinkRepository.GetDrinkById(request.NewDrinkId.Value);
+                    
+                    newDrink.IsRequestingApproval = false;
+                    drinkRepository.UpdateDrink(newDrink);
+                    break;
+
+                case DrinkModificationRequestType.Edit:
+                    var oldDrink = drinkRepository.GetDrinkById(request.OldDrinkId.Value);
+                    var updatedDrink = drinkRepository.GetDrinkById(request.NewDrinkId.Value);
+
+                    oldDrink.DrinkName = updatedDrink.DrinkName;
+                    oldDrink.DrinkImageUrl = updatedDrink.DrinkImageUrl;
+                    oldDrink.CategoryList = updatedDrink.CategoryList;
+                    oldDrink.DrinkBrand = updatedDrink.DrinkBrand;
+                    oldDrink.AlcoholContent = updatedDrink.AlcoholContent;
+
+                    drinkRepository.UpdateDrink(oldDrink);
+                    drinkRepository.DeleteDrink(request.NewDrinkId.Value);
+                    break;
+
+                case DrinkModificationRequestType.Remove:
+                    drinkRepository.DeleteDrink(request.OldDrinkId.Value);
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"Unknown modification type: {request.ModificationType}");
+            }
+
+            await drinkModificationRequestRepository.DeleteRequest(modificationRequestId);
+        }
     }
 }
