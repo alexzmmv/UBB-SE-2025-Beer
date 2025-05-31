@@ -5,11 +5,11 @@
     xmlns:local="using:WinUIApp.Views.Components">
 
     <Button x:Name="AddRemoveButton"
+            Background="White"
             Click="{x:Bind ViewModel.AddRemoveFromListAsync}"
-            Style="{StaticResource DefaultButton}"
-            Padding="10,5"
-            Margin="5,0">
+            Margin="5">
         <TextBlock x:Name="ButtonText"
+                   Foreground="Black"
                    Text="{x:Bind ViewModel.ButtonText, Mode=OneWay}"
                    FontSize="14" />
     </Button>

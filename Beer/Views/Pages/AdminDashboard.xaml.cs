@@ -22,7 +22,7 @@ namespace DrinkDb_Auth.View
     using Microsoft.UI.Xaml.Navigation;
     using WinUIApplication.Views.Components;
 
-    public sealed partial class MainPage : Page
+    public sealed partial class AdminPage : Page
     {
         public MainPageViewModel ViewModel { get; }
         private readonly IUserService userService;
@@ -242,7 +242,7 @@ namespace DrinkDb_Auth.View
         {
             if (this.Frame != null)
             {
-                this.Frame.Navigate(typeof(UserPage));
+                this.Frame.Navigate(typeof(ProfilePage));
             }
         }
 

@@ -15,26 +15,27 @@
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
+    using WinUIApp.ViewModels;
     using WinUIApp.WebAPI.Models;
 
-    public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService) : INotifyPropertyChanged
+    public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService) : ViewModelBase
     {
-        private const string CategorySeparator = ", ";
         private readonly IDrinkService drinkService = drinkService;
         private readonly IDrinkReviewService reviewService = reviewService;
         private readonly IUserService userService = userService;
         private DrinkDTO drink;
         private float averageReviewScore;
+        private const int NUMBER_OF_DECIMALS_DISPLAYED = 1;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private bool _isPopupOpen;
+        private bool isPopupOpen;
         public bool IsPopupOpen
         {
-            get => _isPopupOpen;
+            get => isPopupOpen;
             set
             {
-                _isPopupOpen = value;
+                isPopupOpen = value;
                 this.OnPropertyChanged(nameof(this.IsPopupOpen));
             }
         }
@@ -64,22 +65,6 @@
             {
                 this.drink = value;
                 this.OnPropertyChanged(nameof(this.Drink));
-                this.OnPropertyChanged(nameof(this.CategoriesDisplay));
-            }
-        }
-
-        public string CategoriesDisplay
-        {
-            get
-            {
-                if (this.Drink != null && this.Drink.CategoryList != null)
-                {
-                    return string.Join(CategorySeparator, this.Drink.CategoryList.Select(drinkCategory => drinkCategory.CategoryName));
-                }
-                else
-                {
-                    return string.Empty;
-                }
             }
         }
 
@@ -98,8 +83,13 @@
         public void LoadDrink(int drinkId)
         {
             this.Drink = this.drinkService.GetDrinkById(drinkId);
-            this.AverageReviewScore = this.reviewService.GetReviewAverageByDrinkID(drinkId);
-            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(drinkId);
+            this.RefreshReviews();
+        }
+
+        public void RefreshReviews()
+        {
+            this.AverageReviewScore = (float)Math.Round(this.reviewService.GetReviewAverageByDrinkID(this.Drink.DrinkId), NUMBER_OF_DECIMALS_DISPLAYED);
+            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(this.Drink.DrinkId);
             this.Reviews.Clear();
             foreach (ReviewDTO review in reviews)
             {
@@ -134,14 +124,6 @@
             catch (Exception voteForDrinkException)
             {
                 throw new Exception("Error happened while voting for a drink:", voteForDrinkException);
-            }
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

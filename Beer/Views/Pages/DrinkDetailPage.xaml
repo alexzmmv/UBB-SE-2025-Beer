@@ -14,61 +14,135 @@
 
     <Grid
         HorizontalAlignment="Stretch"
-           Margin="32,0,32,0">
+           Padding="32,32,32,0" Background="{ThemeResource LayerFillColorDefaultBrush}">
         <ScrollViewer>
             <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Border CornerRadius="12">
+                        <Image Source="{Binding Drink.DrinkImageUrl}"
+                           x:Name="DrinkImage"
+                           Width="200" Height="200" Stretch="UniformToFill" />
+                    </Border>
 
-                <TextBlock Text="{Binding Drink.DrinkName}"
-                   HorizontalAlignment="Center"
-                   x:Name="Name" 
-                   FontSize="18" 
-                   FontWeight="Bold" 
-                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                <Image Source="{Binding Drink.DrinkImageUrl}"
-               x:Name="DrinkImage"
-               Height="180"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
-                    <components:AddRemoveFromDrinkListButton DrinkId="{Binding Drink.DrinkId}" />
+                    <StackPanel Orientation="Vertical"
+                   Margin="24,0,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                            <Border 
+                            Width="48" 
+                            Height="48"
+                            Background="{ThemeResource AccentFillColorSecondaryBrush}" 
+                            CornerRadius="8" 
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
+                            BorderThickness="1" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock FontSize="16"  TextAlignment="Center" FontWeight="Bold" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}">
+                            <Run Text="{Binding AverageReviewScore}" />
+                                    </TextBlock>
+                            </Grid>
+                        </Border>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left"
+                               Margin="8,0,0,0">
+                                <TextBlock Text="{Binding Drink.DrinkName}"
+                                       HorizontalAlignment="Left"
+                                       x:Name="Name" 
+                                       FontSize="26" 
+                                       FontWeight="Bold" 
+                                       Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
 
-                    <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
-                    <Button Content="Add Review"
-                            x:Name="ReviewButton"
-                            Command="{x:Bind ViewModel.ShowPopupCommand, Mode=OneWay}"
-                            Margin="5,0" />
-                    <Button x:Name="RemoveButton">
-                        <Button.Flyout>
-                            <Flyout Placement="Bottom">
-                                <StackPanel>
-                                    <TextBlock Text="Are you sure?" HorizontalAlignment="Center" />
-                                    <Button x:Name="ConfirmRemoveButton" Click="ConfirmRemoveButton_Click" HorizontalAlignment="Center" Margin="0 5 0 0">Confirm</Button>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Spacing="8">
+                                    <TextBlock Text="{Binding Drink.DrinkBrand.BrandName}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Drink.AlcoholContent}" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                        <TextBlock Text="% Alcohol" FontSize="14" FontWeight="SemiBold" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                    </StackPanel>
                                 </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                        <TextBlock x:Name="RemoveButtonText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </Button>
-                    <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click" x:Name="VoteButton"  DrinkId="{Binding DrinkDTO.DrinkId}" />
+                            </StackPanel>
 
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
+                            <components:AddRemoveFromDrinkListButton DrinkId="{Binding Drink.DrinkId}" />
+
+                            <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
+                            <Button x:Name="RemoveButton">
+                                <Button.Flyout>
+                                    <Flyout Placement="Bottom">
+                                        <StackPanel>
+                                            <TextBlock Text="Are you sure?" HorizontalAlignment="Center" />
+                                            <Button x:Name="ConfirmRemoveButton" Click="ConfirmRemoveButton_Click" HorizontalAlignment="Center" Margin="0 5 0 0">Confirm</Button>
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                                <TextBlock x:Name="RemoveButtonText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            </Button>
+                            <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click" x:Name="VoteButton"  DrinkId="{Binding DrinkDTO.DrinkId}" />
+
+                        </StackPanel>
+                        <TextBlock Text="Categories" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,0,8"/>
+                        <ItemsControl ItemsSource="{Binding Drink.CategoryList}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="8"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                                            Padding="14,4" CornerRadius="8" Width="auto" HorizontalAlignment="Left" 
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding CategoryName}" FontSize="14"  Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel HorizontalAlignment="Left">
-                    <TextBlock Text="Brand" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="{Binding Drink.DrinkBrand.BrandName}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="Alcohol percentage" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="{Binding Drink.AlcoholContent}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="Categories" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="{Binding CategoriesDisplay}" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="Review score" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock FontSize="14">
-                <Run Text="⭐" />
-                <Run Text="{Binding AverageReviewScore}" />
-                <Run Text="/ 5" />
-                    </TextBlock>
-                    <TextBlock Text="Reviews" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                    <Grid  Margin="0,16,0,0" HorizontalAlignment="Stretch" Width="Auto">
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="0">
+                            <FontIcon Glyph="&#xE90A;" Margin="0,0,8,0"/>
+                            <TextBlock Text="Reviews" FontSize="24" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        </StackPanel>
+
+                        <Button Content="Add Review" Grid.Column="1" HorizontalAlignment="Right"
+                            x:Name="ReviewButton"
+                            Command="{x:Bind ViewModel.ShowPopupCommand, Mode=OneWay}"  Style="{StaticResource AccentButtonStyle}"
+                            Margin="5,0" />
+                    </Grid>
+                    <Rectangle Height="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Stretch"
+                               Margin="0,8,0,16"/>
+
                     <ItemsControl ItemsSource="{Binding Reviews}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border BorderThickness="1" BorderBrush="Goldenrod" Padding="10" Margin="0 0 0 10">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Content}" TextWrapping="WrapWholeWords"/>
+                                <Border BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Padding="10" Margin="0 0 0 10" 
+                        CornerRadius="8" >
+                                    <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                        <Border 
+                                            Width="32" 
+                                            Height="32"
+                                            Background="{ThemeResource AccentFillColorSecondaryBrush}" 
+                                            CornerRadius="8" 
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
+                                            BorderThickness="1" 
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center">
+                                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock FontSize="14"  TextAlignment="Center" FontWeight="SemiBold" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}">
+                                                    <Run Text="{Binding RatingValue}" />
+                                                </TextBlock>
+                                            </Grid>
+                                        </Border>
+                                        <TextBlock Text="{Binding Content}" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="WrapWholeWords" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
@@ -86,7 +160,9 @@
                 VerticalAlignment="Stretch"
                 Canvas.ZIndex="999">
             <modals:AddReviewModal x:Name="AddReviewModal"
-                                   CloseRequested="CloseAddReviewModal" DrinkId="{Binding Drink.DrinkId}"/>
+                                   CloseRequested="CloseAddReviewModal" 
+                                   RefreshReviewsRequested="RefreshReviews"
+                                   DrinkId="{Binding Drink.DrinkId}"/>
         </Grid>
     </Grid>
 </Page>

@@ -1,3 +1,4 @@
+using DrinkDb_Auth.View;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -67,8 +68,8 @@ namespace DrinkDb_Auth
                 }
             }
 
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Activate();
+            //MainWindow mainWindow = new MainWindow();
+            //mainWindow.Activate();
         }
     }
 }

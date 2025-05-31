@@ -8,13 +8,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="IMBD for Drinks - Admin"
-    xmlns:models="using:DataAccess.Model.AdminDashboard" 
-    xmlns:views="using:DrinkDb_Auth.View"
-    >
+    xmlns:models="using:DataAccess.Model.AdminDashboard"
+    xmlns:headerComponents="using:WinUIApp.Views.Components.HeaderComponents"
+    xmlns:views="using:DrinkDb_Auth.View">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-    <Frame x:Name="MainFrame">
-        <Frame.Content>
-            <Grid x:Name="RootGrid">
+        <!-- Header fixed at the very top -->
+        <headerComponents:Header 
+            x:Name="HeaderComponent" 
+            Grid.Row="0"
+            VerticalAlignment="Top"/>
+
+        <!-- Main content area below header -->
+        <Frame 
+            x:Name="MainFrame"
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <Grid x:Name="RootGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -104,7 +119,7 @@
                                 <TextBlock Text="Sign in with GitHub"/>
                             </StackPanel>
                         </Button>
-                      
+
                         <Button x:Name="FacebookSignInButton"
                                 Margin="0,10,0,0"
                                 Height="45"
@@ -161,6 +176,6 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-        </Frame.Content>
-    </Frame>
+        </Frame>
+    </Grid>
 </Window>

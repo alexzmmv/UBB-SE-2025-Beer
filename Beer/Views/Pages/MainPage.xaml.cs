@@ -2,6 +2,7 @@ namespace WinUIApp.Views.Pages
 {
     using DataAccess.Service;
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Input;
@@ -31,13 +32,13 @@ namespace WinUIApp.Views.Pages
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
             base.OnNavigatedTo(eventArguments);
-            MainWindow.CurrentPage = typeof(MainPage);
-            MainWindow.PreviousPage = typeof(MainPage);
+            AuthenticationWindow.CurrentPage = typeof(MainPage);
+            AuthenticationWindow.PreviousPage = typeof(MainPage);
         }
 
         private void DrinkOfTheDayComponent_Tapped(object sender, TappedRoutedEventArgs eventArguments)
         {
-            MainWindow.AppMainFrame.Navigate(typeof(DrinkDetailPage), this.viewModel.GetDrinkOfTheDayId());
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.viewModel.GetDrinkOfTheDayId());
         }
     }
 }

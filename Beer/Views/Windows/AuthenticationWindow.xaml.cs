@@ -24,6 +24,8 @@ namespace DrinkDb_Auth
     using Windows.Graphics;
     using WinUIApp;
     using WinUiApp.Data.Data;
+    using Microsoft.UI.Xaml.Navigation;
+    using WinUIApp.Views.Pages;
 
     public sealed partial class AuthenticationWindow : Window
     {
@@ -32,7 +34,11 @@ namespace DrinkDb_Auth
         private IUserService userService;
         private TwitterOAuth2Provider twitterOAuth2Provider;
         private IGoogleOAuth2Provider googleOAuth2Provider;
-        public Frame NavigationFrame { get; private set; }
+        public static Frame NavigationFrame { get; private set; }
+
+        public static Type PreviousPage { get; set; }
+
+        public static Type CurrentPage { get; set; }
 
         public AuthenticationWindow(IAuthenticationService authenticationService, ITwoFactorAuthenticationService twoFactorAuthenticationService,
             IUserService userService, TwitterOAuth2Provider twitterOAuth2Provider, IGoogleOAuth2Provider googleOAuth2Provider)
@@ -40,12 +46,15 @@ namespace DrinkDb_Auth
             this.authenticationService = authenticationService;
             this.twoFactorAuthentificationService = twoFactorAuthenticationService;
             this.InitializeComponent();
-            this.NavigationFrame = this.MainFrame;
+            AuthenticationWindow.NavigationFrame = this.MainFrame;
             this.userService = userService;
             this.twitterOAuth2Provider = twitterOAuth2Provider;
             this.googleOAuth2Provider = googleOAuth2Provider;
+            this.MainFrame.Navigated += FrameNavigated;
 
             this.Title = "DrinkDb - Sign In";
+
+            this.HeaderComponent.Visibility = Visibility.Collapsed;
 
             this.AppWindow.Resize(new SizeInt32
             {
@@ -94,7 +103,7 @@ namespace DrinkDb_Auth
                 {
                     App.CurrentUserId = user.UserId;
                     App.CurrentSessionId = response.SessionId;
-                    this.NavigationFrame.Navigate(typeof(SuccessPage), this);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(SuccessPage), this);
                 }
 
                 return twoFAresponse;
@@ -218,6 +227,19 @@ namespace DrinkDb_Auth
                 XamlRoot = this.Content.XamlRoot,
             };
             await errorDialog.ShowAsync();
+        }
+
+        private void FrameNavigated(object sender, NavigationEventArgs e)
+        {
+            if (this.HeaderComponent != null)
+            {
+                this.HeaderComponent.UpdateHeaderComponentsVisibility(e.SourcePageType);
+            }
+
+            if (this.HeaderComponent != null && e.SourcePageType == typeof(MainPage))
+            {
+                this.HeaderComponent.Visibility = Visibility.Visible;
+            }
         }
 
         public void ResetToLoginView()
