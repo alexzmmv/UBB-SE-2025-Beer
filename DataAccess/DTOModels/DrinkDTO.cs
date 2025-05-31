@@ -13,8 +13,8 @@ namespace WinUIApp.WebAPI.Models
     /// </summary>
     public class DrinkDTO
     {
-        private const float MaximumAlcoholContent = 100.0f;
-        private const int MinimumAlcohoolContent = 0;
+        private const float MAXIMUM_ALCOHOOL_CONTENT = 100.0f;
+        private const int MINIMUM_ALCOHOOL_CONTENT = 0;
 
         private string? drinkName;
         private string drinkImageUrl = string.Empty;
@@ -90,14 +90,14 @@ namespace WinUIApp.WebAPI.Models
             get => this.alcoholContent;
             set
             {
-                if (value < MinimumAlcohoolContent)
+                if (value < MINIMUM_ALCOHOOL_CONTENT)
                 {
                     throw new ArgumentOutOfRangeException(nameof(this.AlcoholContent), "Alcohol content must be a positive value.");
                 }
 
-                if (value > MaximumAlcoholContent)
+                if (value > MAXIMUM_ALCOHOOL_CONTENT)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(this.AlcoholContent), $"Alcohol content must not exceed {MaximumAlcoholContent}.");
+                    throw new ArgumentOutOfRangeException(nameof(this.AlcoholContent), $"Alcohol content must not exceed {MAXIMUM_ALCOHOOL_CONTENT}.");
                 }
 
                 this.alcoholContent = value;

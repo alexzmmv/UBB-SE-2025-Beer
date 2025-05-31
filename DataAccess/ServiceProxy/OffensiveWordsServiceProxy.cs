@@ -14,11 +14,11 @@ namespace DataAccess.ServiceProxy
     {
         private readonly HttpClient httpClient;
         private readonly string baseUrl;
-        private const string ApiBaseRoute = "api/offensiveWords";
+        private const string API_BASE_ROUTE = "api/offensiveWords";
 
         public OffensiveWordsServiceProxy(string baseUrl)
         {
-            httpClient = new HttpClient();
+            this.httpClient = new HttpClient();
             this.baseUrl = baseUrl.TrimEnd('/');
         }
 
@@ -26,7 +26,7 @@ namespace DataAccess.ServiceProxy
         {
             try
             {
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync($"{baseUrl}/{ApiBaseRoute}/check", reviews);
+                HttpResponseMessage response = await this.httpClient.PostAsJsonAsync($"{this.baseUrl}/{API_BASE_ROUTE}/check", reviews);
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<List<string>>() ?? new List<string>();
             }
@@ -68,7 +68,7 @@ namespace DataAccess.ServiceProxy
 
             try
             {
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync($"{baseUrl}/{ApiBaseRoute}/checkOne", review);
+                HttpResponseMessage response = await this.httpClient.PostAsJsonAsync($"{this.baseUrl}/{API_BASE_ROUTE}/checkOne", review);
                 response.EnsureSuccessStatusCode();
             }
             catch
@@ -78,7 +78,7 @@ namespace DataAccess.ServiceProxy
 
         private async Task AddWord(string word)
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{this.baseUrl}/{API_BASE_ROUTE}");
             response.EnsureSuccessStatusCode();
 
             List<OffensiveWord> offensiveWords = await response.Content.ReadFromJsonAsync<List<OffensiveWord>>() ?? new List<OffensiveWord>();
@@ -95,20 +95,20 @@ namespace DataAccess.ServiceProxy
 
             if (!wordExists)
             {
-                HttpResponseMessage postResponse = await httpClient.PostAsJsonAsync($"{baseUrl}/{ApiBaseRoute}/add", new OffensiveWord { Word = word });
+                HttpResponseMessage postResponse = await this.httpClient.PostAsJsonAsync($"{this.baseUrl}/{API_BASE_ROUTE}/add", new OffensiveWord { Word = word });
                 postResponse.EnsureSuccessStatusCode();
             }
         }
 
         private async Task DeleteWord(string word)
         {
-            HttpResponseMessage response = await httpClient.DeleteAsync($"{baseUrl}/{ApiBaseRoute}/delete/{Uri.EscapeDataString(word)}");
+            HttpResponseMessage response = await this.httpClient.DeleteAsync($"{this.baseUrl}/{API_BASE_ROUTE}/delete/{Uri.EscapeDataString(word)}");
             response.EnsureSuccessStatusCode();
         }
 
         private async Task<HashSet<string>> LoadOffensiveWords()
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{this.baseUrl}/{API_BASE_ROUTE}");
             response.EnsureSuccessStatusCode();
 
             List<OffensiveWord> offensiveWords = await response.Content.ReadFromJsonAsync<List<OffensiveWord>>() ?? new List<OffensiveWord>();

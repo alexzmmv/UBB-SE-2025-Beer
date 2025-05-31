@@ -44,7 +44,7 @@
         {
             try
             {
-                return await userRepository.GetAllUsers();
+                return await this.userRepository.GetAllUsers();
             }
             catch
             {

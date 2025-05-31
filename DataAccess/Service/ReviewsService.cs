@@ -29,7 +29,7 @@
                 {
                     throw new ArgumentException("Invalid review data.");
                 }
-                return await reviewsRepository.AddReview(reviewDto);
+                return await this.reviewsRepository.AddReview(reviewDto);
             }
             catch
             {
@@ -41,7 +41,7 @@
         {
             try
             {
-                await reviewsRepository.RemoveReviewById(reviewId);
+                await this.reviewsRepository.RemoveReviewById(reviewId);
             }
             catch
             {
@@ -52,7 +52,7 @@
         {
             try
             {
-                var reviewDto = await reviewsRepository.GetReviewById(reviewId);
+                ReviewDTO? reviewDto = await this.reviewsRepository.GetReviewById(reviewId);
                 return reviewDto;
             }
             catch
@@ -65,7 +65,7 @@
         {
             try
             {
-                await reviewsRepository.UpdateNumberOfFlagsForReview(reviewId, numberOfFlags);
+                await this.reviewsRepository.UpdateNumberOfFlagsForReview(reviewId, numberOfFlags);
             }
             catch
             {
@@ -76,12 +76,12 @@
         {
             try
             {
-                var reviewDto = await reviewsRepository.GetReviewById(reviewId);
+                ReviewDTO? reviewDto = await this.reviewsRepository.GetReviewById(reviewId);
                 if (reviewDto == null || !ReviewValidator.IsValid(reviewDto))
                 {
                     throw new ArgumentException("Invalid review data.");
                 }
-                await reviewsRepository.UpdateReviewVisibility(reviewId, isHidden);
+                await this.reviewsRepository.UpdateReviewVisibility(reviewId, isHidden);
             }
             catch
             {
@@ -92,7 +92,7 @@
         {
             try
             {
-                await reviewsRepository.UpdateNumberOfFlagsForReview(reviewId, 0);
+                await this.reviewsRepository.UpdateNumberOfFlagsForReview(reviewId, 0);
                 Console.WriteLine("Review has 0 flags: " + reviewId);
             }
             catch
@@ -104,7 +104,7 @@
         {
             try
             {
-                await reviewsRepository.UpdateReviewVisibility(reviewId, true);
+                await this.reviewsRepository.UpdateReviewVisibility(reviewId, true);
                 Console.WriteLine("Review is hidden");
             }
             catch
@@ -116,7 +116,7 @@
         {
             try
             {
-                return await reviewsRepository.GetFlaggedReviews(minFlags);
+                return await this.reviewsRepository.GetFlaggedReviews(minFlags);
             }
             catch
             {
@@ -128,7 +128,7 @@
         {
             try
             {
-                var reviews = await reviewsRepository.GetAllReviews();
+                List<ReviewDTO> reviews = await this.reviewsRepository.GetAllReviews();
                 return reviews.Where(review => review.IsHidden == true).ToList();
             }
             catch
@@ -141,7 +141,7 @@
         {
             try
             {
-                return await reviewsRepository.GetAllReviews();
+                return await this.reviewsRepository.GetAllReviews();
             }
             catch
             {
@@ -153,7 +153,7 @@
         {
             try
             {
-                return await reviewsRepository.GetReviewsSince(date);
+                return await this.reviewsRepository.GetReviewsSince(date);
             }
             catch
             {
@@ -165,7 +165,7 @@
         {
             try
             {
-                return await reviewsRepository.GetAverageRatingForVisibleReviews();
+                return await this.reviewsRepository.GetAverageRatingForVisibleReviews();
             }
             catch
             {
@@ -177,7 +177,7 @@
         {
             try
             {
-                return await reviewsRepository.GetMostRecentReviews(count);
+                return await this.reviewsRepository.GetMostRecentReviews(count);
             }
             catch
             {
@@ -189,7 +189,7 @@
         {
             try
             {
-                return await reviewsRepository.GetReviewCountAfterDate(date);
+                return await this.reviewsRepository.GetReviewCountAfterDate(date);
             }
             catch
             {
@@ -201,7 +201,7 @@
         {
             try
             {
-                return await reviewsRepository.GetReviewsByUserId(userId);
+                return await this.reviewsRepository.GetReviewsByUserId(userId);
             }
             catch
             {
@@ -214,9 +214,9 @@
             try
             {
                 DateTime date = DateTime.Now.AddDays(-1);
-                int count = await reviewsRepository.GetReviewCountAfterDate(date);
+                int count = await this.reviewsRepository.GetReviewCountAfterDate(date);
 
-                var reviews = await reviewsRepository.GetMostRecentReviews(count);
+                List<ReviewDTO> reviews = await this.reviewsRepository.GetMostRecentReviews(count);
                 return reviews ?? new List<ReviewDTO>();
             }
             catch
@@ -235,7 +235,7 @@
                 }
 
                 content = content.ToLower();
-                var reviews = await GetFlaggedReviews();
+                List<ReviewDTO> reviews = await GetFlaggedReviews();
                 return reviews.Where(review => review.Content.ToLower().Contains(content)).ToList();
             }
             catch
@@ -248,7 +248,7 @@
         {
             try
             {
-                return await reviewsRepository.GetReviewsByDrinkId(drinkId);
+                return await this.reviewsRepository.GetReviewsByDrinkId(drinkId);
             }
             catch
             {
@@ -260,15 +260,17 @@
         {
             try
             {
-                var allReviews = await reviewsRepository.GetReviewsByDrinkId(drinkId);
+                List<ReviewDTO> allReviews = await this.reviewsRepository.GetReviewsByDrinkId(drinkId);
 
-                var validRatings = allReviews
+                List<float> validRatings = allReviews
                     .Where(review => review.RatingValue.HasValue)
                     .Select(review => review.RatingValue.Value)
                     .ToList();
 
                 if (!validRatings.Any())
+                {
                     return 0.0;
+                }
 
                 return (double)validRatings.Average();
             }

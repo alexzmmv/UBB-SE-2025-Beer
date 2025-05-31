@@ -5,11 +5,11 @@ namespace DataAccess.DTORequests.Drink
 {
     public class AddDrinkRequest
     {
-        public Guid requestingUserId { get; set; }
-        public string inputtedDrinkName { get; set; }
-        public string inputtedDrinkPath { get; set; }
-        public List<Category> inputtedDrinkCategories { get; set; }
-        public string inputtedDrinkBrandName { get; set; }
-        public float inputtedAlcoholPercentage { get; set; }
+        public Guid RequestingUserId { get; set; }
+        public string InputtedDrinkName { get; set; }
+        public string InputtedDrinkPath { get; set; }
+        public List<Category> InputtedDrinkCategories { get; set; }
+        public string InputtedDrinkBrandName { get; set; }
+        public float InputtedAlcoholPercentage { get; set; }
     }
 }

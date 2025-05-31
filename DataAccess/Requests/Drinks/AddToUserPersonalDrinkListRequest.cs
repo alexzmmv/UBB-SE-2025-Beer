@@ -2,7 +2,7 @@
 {
     public class AddToUserPersonalDrinkListRequest
     {
-        public Guid userId { get; set; }
-        public int drinkId { get; set; }
+        public Guid UserId { get; set; }
+        public int DrinkId { get; set; }
     }
 }

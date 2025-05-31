@@ -91,7 +91,7 @@ namespace DataAccess.AuthProviders.LinkedIn
                 string body = await response.Content.ReadAsStringAsync();
 
                 using JsonDocument document = JsonDocument.Parse(body);
-                if (document.RootElement.TryGetProperty("access_token", out var tokenProp))
+                if (document.RootElement.TryGetProperty("access_token", out JsonElement tokenProp))
                 {
                     return tokenProp.GetString() ?? throw new Exception("Token is null");
                 }

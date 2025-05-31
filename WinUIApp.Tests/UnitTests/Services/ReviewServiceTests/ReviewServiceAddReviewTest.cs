@@ -57,7 +57,7 @@ namespace WinUIApp.Tests.UnitTests.Services
 
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => service.AddReview(dto));
-            Assert.Equal(ServiceErrorMessages.InvalidReview, exception.Message);
+            Assert.Equal(ServiceErrorMessages.INVALID_REVIEW, exception.Message);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace WinUIApp.Tests.UnitTests.Services
 
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => service.AddReview(dto));
-            Assert.Equal(ServiceErrorMessages.InvalidReview, exception.Message);
+            Assert.Equal(ServiceErrorMessages.INVALID_REVIEW, exception.Message);
         }
     }
 }

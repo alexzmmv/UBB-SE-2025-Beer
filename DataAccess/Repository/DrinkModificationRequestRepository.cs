@@ -1,13 +1,6 @@
 ﻿using DataAccess.Data;
 using DataAccess.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess.Data;
-using DataAccess.IRepository;
 using WinUiApp.Data.Interfaces;
 using DataAccess.DTOModels;
 using DataAccess.Extensions;
@@ -56,7 +49,7 @@ namespace DataAccess.Repository
         // this should ideally return the request object back
         public async Task DeleteRequest(int modificationRequestId)
         {
-            var request = await dbContext.DrinkModificationRequests
+            DrinkModificationRequest? request = await dbContext.DrinkModificationRequests
                 .FirstOrDefaultAsync(drink => drink.DrinkModificationRequestId == modificationRequestId);
 
             if (request != null)

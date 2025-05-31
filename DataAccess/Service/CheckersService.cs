@@ -39,12 +39,12 @@
                         continue;
                     }
 
-                    bool reviewIsOffensive = await autoCheck.AutoCheckReview(currentReview.Content);
+                    bool reviewIsOffensive = await this.autoCheck.AutoCheckReview(currentReview.Content);
                     if (reviewIsOffensive)
                     {
                         checkingMessages.Add($"Review {currentReview.ReviewId} is offensive. Hiding the review.");
-                        await reviewsService.HideReview(currentReview.ReviewId);
-                        await reviewsService.ResetReviewFlags(currentReview.ReviewId);
+                        await this.reviewsService.HideReview(currentReview.ReviewId);
+                        await this.reviewsService.ResetReviewFlags(currentReview.ReviewId);
                     }
                     else
                     {
@@ -64,7 +64,7 @@
         {
             try
             {
-                return await autoCheck.GetOffensiveWordsList();
+                return await this.autoCheck.GetOffensiveWordsList();
             }
             catch
             {
@@ -86,7 +86,7 @@
 
             try
             {
-                await autoCheck.AddOffensiveWordAsync(newWord);
+                await this.autoCheck.AddOffensiveWordAsync(newWord);
             }
             catch
             {
@@ -107,7 +107,7 @@
 
             try
             {
-                await autoCheck.DeleteOffensiveWordAsync(word);
+                await this.autoCheck.DeleteOffensiveWordAsync(word);
             }
             catch
             {
@@ -128,8 +128,8 @@
                 {
                     return;
                 }
-                reviewsService.HideReview(review.ReviewId);
-                reviewsService.ResetReviewFlags(review.ReviewId);
+                this.reviewsService.HideReview(review.ReviewId);
+                this.reviewsService.ResetReviewFlags(review.ReviewId);
             }
             catch
             {

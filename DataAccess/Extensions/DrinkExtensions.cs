@@ -53,8 +53,7 @@ namespace DataAccess.Extensions
                         BrandName = drink.Brand.BrandName
                     },
                     (float)drink.AlcoholContent,
-                    drink.IsRequestingApproval
-                );
+                    drink.IsRequestingApproval);
         }
     }
 }

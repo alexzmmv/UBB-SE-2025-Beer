@@ -2,21 +2,6 @@ namespace WinUiApp.Data.Data
 {
     public class Review
     {
-        //public Review()
-        //{
-        //    this.Content = string.Empty;
-        //}
-
-        //public Review(int reviewId, Guid userId, Rating rating, string content, DateTime createdDate, int numberOfFlags = 0, bool isHidden = false)
-        //{
-        //    this.ReviewId = reviewId;
-        //    this.UserId = userId;
-        //    this.Rating = rating;
-        //    this.Content = content;
-        //    this.CreatedDate = createdDate;
-        //    this.NumberOfFlags = numberOfFlags;
-        //    this.IsHidden = isHidden;
-        //}
          public Review()
         {
             this.Content = string.Empty;
@@ -50,7 +35,7 @@ namespace WinUiApp.Data.Data
         public bool? IsActive { get; set; }
 
         public User User { get; set; }
-        
+
         public Drink Drink { get; set; }
 
         public DateTime CreatedDate { get; set; }
@@ -58,7 +43,7 @@ namespace WinUiApp.Data.Data
         public int NumberOfFlags { get; set; }
 
         public bool IsHidden { get; set; }
-        
+
         public float? RatingValue { get; set; }
     }
 }

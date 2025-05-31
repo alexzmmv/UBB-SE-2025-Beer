@@ -1,14 +1,10 @@
-﻿using DataAccess.Constants;
+﻿using System.Text;
+using DataAccess.Constants;
 using DataAccess.Data;
 using DataAccess.DTOModels;
 using DataAccess.Requests.Drinks;
 using DataAccess.Service.Interfaces;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.ServiceProxy
 {
@@ -16,7 +12,7 @@ namespace DataAccess.ServiceProxy
     {
         private readonly HttpClient httpClient;
         private readonly string baseUrl;
-        private const string ApiBaseRoute = "api/DrinkModificationRequests";
+        private const string API_BASE_ROUTE = "api/DrinkModificationRequests";
 
         public DrinkModificationRequestServiceProxy(string baseUrl)
         {
@@ -26,33 +22,33 @@ namespace DataAccess.ServiceProxy
 
         public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
         {
-            var response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}/get-all");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{this.baseUrl}/{API_BASE_ROUTE}/get-all");
             response.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
+            string json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<IEnumerable<DrinkModificationRequestDTO>>(json);
         }
 
         public async Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId)
         {
-            var response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}?modificationRequestId={modificationRequestId}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{this.baseUrl}/{API_BASE_ROUTE}?modificationRequestId={modificationRequestId}");
             response.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
+            string json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<DrinkModificationRequestDTO>(json);
         }
 
         public async Task DenyRequest(int modificationRequestId, Guid userId)
         {
-            var request = new DenyDrinkModificationRequest
+            DenyDrinkModificationRequest request = new DenyDrinkModificationRequest
             {
                 ModificationRequestId = modificationRequestId,
-                userId = userId
+                UserId = userId
             };
 
-            var jsonBody = JsonConvert.SerializeObject(request);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            string jsonBody = JsonConvert.SerializeObject(request);
+            StringContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(
-                $"{baseUrl}/{ApiBaseRoute}/deny",
+            HttpResponseMessage response = await this.httpClient.PostAsync(
+                $"{this.baseUrl}/{API_BASE_ROUTE}/deny",
                 content
             );
 
@@ -61,17 +57,17 @@ namespace DataAccess.ServiceProxy
 
         public async Task ApproveRequest(int modificationRequestId, Guid userId)
         {
-            var request = new ApproveDrinkModificationRequest
+            ApproveDrinkModificationRequest request = new ApproveDrinkModificationRequest
             {
                 ModificationRequestId = modificationRequestId,
-                userId = userId
+                UserId = userId
             };
 
-            var jsonBody = JsonConvert.SerializeObject(request);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            string jsonBody = JsonConvert.SerializeObject(request);
+            StringContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(
-                $"{baseUrl}/{ApiBaseRoute}/approve",
+            HttpResponseMessage response = await httpClient.PostAsync(
+                $"{baseUrl}/{API_BASE_ROUTE}/approve",
                 content
             );
 
@@ -88,16 +84,15 @@ namespace DataAccess.ServiceProxy
                 RequestingUserId = requestingUserId
             };
 
-            var jsonBody = JsonConvert.SerializeObject(request);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            string jsonBody = JsonConvert.SerializeObject(request);
+            StringContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PostAsync(
-                $"{baseUrl}/{ApiBaseRoute}/add",
-                content
-            ).Result;
+            HttpResponseMessage response = httpClient.PostAsync(
+                $"{baseUrl}/{API_BASE_ROUTE}/add",
+                content).Result;
 
             response.EnsureSuccessStatusCode();
-            var responseJson = response.Content.ReadAsStringAsync().Result;
+            string responseJson = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<DrinkModificationRequestDTO>(responseJson);
         }
     }

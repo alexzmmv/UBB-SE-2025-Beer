@@ -2,6 +2,6 @@
 {
     public class GetUserDrinkListRequest
     {
-        public Guid userId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

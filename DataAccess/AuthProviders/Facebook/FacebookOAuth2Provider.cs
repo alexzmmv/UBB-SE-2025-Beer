@@ -32,7 +32,7 @@ namespace DataAccess.AuthProviders.Facebook
 
                         Console.WriteLine(doc.ToString());
 
-                        if (doc.TryGetProperty("id", out var idProp))
+                        if (doc.TryGetProperty("id", out JsonElement idProp))
                         {
                             Console.WriteLine(idProp);
                             string fbId = idProp.GetString() ?? throw new Exception("Facebook ID is null.");

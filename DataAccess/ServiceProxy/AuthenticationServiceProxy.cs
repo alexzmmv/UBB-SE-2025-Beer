@@ -14,12 +14,12 @@ namespace DataAccess.ServiceProxy
     public class AuthenticationServiceProxy : IAuthenticationService
     {
         private readonly HttpClient httpClient;
-        private const string ApiBaseRoute = "api/auth";
+        private const string API_BASE_ROUTE = "api/auth";
 
         public AuthenticationServiceProxy(string baseUrl)
         {
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(baseUrl);
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new Uri(baseUrl);
         }
 
         public async Task<AuthenticationResponse> AuthWithUserPass(string username, string password)
@@ -29,7 +29,7 @@ namespace DataAccess.ServiceProxy
                 Encoding.UTF8,
                 "application/json");
 
-            HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseRoute}/login", content);
+            HttpResponseMessage response = await this.httpClient.PostAsync($"{API_BASE_ROUTE}/login", content);
             response.EnsureSuccessStatusCode();
             string json = await response.Content.ReadAsStringAsync();
             AuthenticationResponse? authenticationResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(json);
@@ -42,7 +42,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<AuthenticationResponse> AuthWithOAuth(OAuthService selectedService, object authProvider)
         {
-            HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseRoute}/oauth?service={selectedService}", null);
+            HttpResponseMessage response = await this.httpClient.PostAsync($"{API_BASE_ROUTE}/oauth?service={selectedService}", null);
             response.EnsureSuccessStatusCode();
             string json = await response.Content.ReadAsStringAsync();
            AuthenticationResponse? authenticationResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(json);
@@ -55,7 +55,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<User?> GetUser(Guid sessionId)
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"api/auth/user?sessionId={sessionId}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"api/auth/user?sessionId={sessionId}");
             response.EnsureSuccessStatusCode();
             string json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<User>(json);
@@ -63,7 +63,7 @@ namespace DataAccess.ServiceProxy
 
         public async void Logout()
         {
-            HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseRoute}/logout", null);
+            HttpResponseMessage response = await this.httpClient.PostAsync($"{API_BASE_ROUTE}/logout", null);
             response.EnsureSuccessStatusCode();
         }
     }

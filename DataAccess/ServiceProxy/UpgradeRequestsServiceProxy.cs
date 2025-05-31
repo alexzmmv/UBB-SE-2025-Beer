@@ -14,17 +14,17 @@ namespace DataAccess.ServiceProxy
     {
         private readonly HttpClient httpClient;
         private readonly string baseUrl;
-        private const string ApiBaseRoute = "api/upgradeRequests";
+        private const string API_BASE_ROUTE = "api/upgradeRequests";
 
         public UpgradeRequestsServiceProxy(string baseUrl)
         {
-            httpClient = new HttpClient();
+            this.httpClient = new HttpClient();
             this.baseUrl = baseUrl.TrimEnd('/');
         }
 
         public async Task<List<UpgradeRequest>> RetrieveAllUpgradeRequests()
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{this.baseUrl}/{API_BASE_ROUTE}");
             response.EnsureSuccessStatusCode();
             string json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<UpgradeRequest>>(json) ?? new List<UpgradeRequest>();
@@ -37,8 +37,8 @@ namespace DataAccess.ServiceProxy
                 Encoding.UTF8,
                 "application/json");
 
-            HttpResponseMessage response = await httpClient.PostAsync(
-                $"{baseUrl}/{ApiBaseRoute}/{upgradeRequestIdentifier}/process",
+            HttpResponseMessage response = await this.httpClient.PostAsync(
+                $"{this.baseUrl}/{API_BASE_ROUTE}/{upgradeRequestIdentifier}/process",
                 content);
             response.EnsureSuccessStatusCode();
         }
@@ -50,13 +50,13 @@ namespace DataAccess.ServiceProxy
 
         public async Task RemoveUpgradeRequestByIdentifier(int upgradeRequestIdentifier)
         {
-            HttpResponseMessage response = await httpClient.DeleteAsync($"{baseUrl}/{ApiBaseRoute}/{upgradeRequestIdentifier}/delete");
+            HttpResponseMessage response = await this.httpClient.DeleteAsync($"{this.baseUrl}/{API_BASE_ROUTE}/{upgradeRequestIdentifier}/delete");
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<UpgradeRequest?> RetrieveUpgradeRequestByIdentifier(int upgradeRequestIdentifier)
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}/{upgradeRequestIdentifier}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"{this.baseUrl}/{API_BASE_ROUTE}/{upgradeRequestIdentifier}");
             response.EnsureSuccessStatusCode();
             string json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<UpgradeRequest>(json);
@@ -69,7 +69,7 @@ namespace DataAccess.ServiceProxy
                 Encoding.UTF8,
                 "application/json");
 
-            HttpResponseMessage response = await httpClient.PostAsync($"{baseUrl}/{ApiBaseRoute}/add", content);
+            HttpResponseMessage response = await this.httpClient.PostAsync($"{this.baseUrl}/{API_BASE_ROUTE}/add", content);
             response.EnsureSuccessStatusCode();
         }
     }

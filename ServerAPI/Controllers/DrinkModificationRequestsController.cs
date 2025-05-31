@@ -11,7 +11,7 @@ namespace ServerAPI.Controllers
 {
     [ApiController]
     [Route("api/DrinkModificationRequests")]
-    public class DrinkModificationRequestsController: ControllerBase
+    public class DrinkModificationRequestsController : ControllerBase
     {
         private readonly IDrinkModificationRequestService drinkModificationService;
         private readonly IUserService userService;
@@ -37,10 +37,12 @@ namespace ServerAPI.Controllers
         [HttpPost("deny")]
         public async Task<IActionResult> Deny([FromBody] DenyDrinkModificationRequest request)
         {
-            var userRole = await userService.GetHighestRoleTypeForUser(request.userId);
+            RoleType? userRole = await userService.GetHighestRoleTypeForUser(request.UserId);
             if (userRole != RoleType.Admin)
+            {
                 return Unauthorized();
-            
+            }
+
             await this.drinkModificationService.DenyRequest(request.ModificationRequestId, new Guid());
             return Ok();
         }
@@ -48,9 +50,11 @@ namespace ServerAPI.Controllers
         [HttpPost("approve")]
         public async Task<IActionResult> Approve([FromBody] ApproveDrinkModificationRequest request)
         {
-            var userRole = await userService.GetHighestRoleTypeForUser(request.userId);
+            RoleType? userRole = await userService.GetHighestRoleTypeForUser(request.UserId);
             if (userRole != RoleType.Admin)
+            {
                 return Unauthorized();
+            }
 
             await this.drinkModificationService.ApproveRequest(request.ModificationRequestId, new Guid());
             return Ok();

@@ -11,6 +11,6 @@ namespace DataAccess.Requests.Drinks
         /// Gets or sets the ID of the modification request to approve.
         /// </summary>
         public int ModificationRequestId { get; set; }
-        public Guid userId { get; set; }
+        public Guid UserId { get; set; }
     }
 } 

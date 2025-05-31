@@ -67,7 +67,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories
 
             var exception = Assert.Throws<Exception>(() => repository.DeleteRating(invalidRatingId));
 
-            Assert.Equal(RepositoryErrorMessages.EntityNotFound, exception.Message);
+            Assert.Equal(RepositoryErrorMessages.ENTITY_NOT_FOUND, exception.Message);
         }
     }
 }

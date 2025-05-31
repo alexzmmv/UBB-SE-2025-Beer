@@ -3,6 +3,6 @@
     public class DeleteDrinkRequest
     {
         public Guid RequestingUserId { get; set; }
-        public int drinkId { get; set; }
+        public int DrinkId { get; set; }
     }
 }

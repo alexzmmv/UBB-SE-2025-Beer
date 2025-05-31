@@ -17,7 +17,7 @@ namespace DataAccess.Service
         {
             try
             {
-                return await sessionRepository.CreateSession(userId);
+                return await this.sessionRepository.CreateSession(userId);
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace DataAccess.Service
         {
             try
             {
-                return await sessionRepository.EndSession(sessionId);
+                return await this.sessionRepository.EndSession(sessionId);
             }
             catch
             {
@@ -41,7 +41,7 @@ namespace DataAccess.Service
         {
             try
             {
-                return await sessionRepository.GetSession(sessionId);
+                return await this.sessionRepository.GetSession(sessionId);
             }
             catch
             {
@@ -53,7 +53,7 @@ namespace DataAccess.Service
         {
             try
             {
-                return await sessionRepository.GetSessionByUserId(userId);
+                return await this.sessionRepository.GetSessionByUserId(userId);
             }
             catch
             {

@@ -122,7 +122,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories
             };
 
             Exception exception = Assert.Throws<Exception>(() => repository.UpdateRating(updatedRating));
-            Assert.Equal(RepositoryErrorMessages.EntityNotFound, exception.Message);
+            Assert.Equal(RepositoryErrorMessages.ENTITY_NOT_FOUND, exception.Message);
         }
 
         [Fact]

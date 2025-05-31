@@ -42,8 +42,7 @@ builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        sql => sql.MigrationsAssembly("DataAccess")
-    ));
+        sql => sql.MigrationsAssembly("DataAccess")));
 
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 
@@ -122,14 +121,12 @@ using (IServiceScope scope = app.Services.CreateScope())
     _ = gitHubServer.StartAsync();
 }
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseHttpsRedirection();
 

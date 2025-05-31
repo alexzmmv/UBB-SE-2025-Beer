@@ -18,38 +18,38 @@
         private readonly IAppDbContext dataContext;
         public UserRepository(IAppDbContext context)
         {
-            dataContext = context;
+            this.dataContext = context;
         }
 
         public async Task<List<User>> GetUsersWhoHaveSubmittedAppeals()
         {
-            return await dataContext.Users
+            return await this.dataContext.Users
                 .Where(user => user.HasSubmittedAppeal)
                 .ToListAsync();
         }
 
         public async Task<List<User>> GetUsersByRoleType(RoleType roleType)
         {
-            return await dataContext.Users
+            return await this.dataContext.Users
                 .Where(user => user.AssignedRole == roleType)
                 .ToListAsync();
         }
 
         public async Task<RoleType?> GetRoleTypeForUser(Guid userId)
         {
-            User? user = await GetUserById(userId);
+            User? user = await this.GetUserById(userId);
             return user?.AssignedRole;
         }
 
         public async Task<List<User>> GetBannedUsersWhoHaveSubmittedAppeals()
         {
-             return await dataContext.Users
+             return await this.dataContext.Users
                 .Where(user => user.HasSubmittedAppeal && user.AssignedRole == RoleType.Banned).ToListAsync();
         }
 
         public async Task ChangeRoleToUser(Guid userId, Role roleToAdd)
         {
-            User? user = await GetUserById(userId);
+            User? user = await this.GetUserById(userId);
 
             if (user == null)
             {
@@ -57,28 +57,28 @@
             }
 
             user.AssignedRole = roleToAdd.RoleType;
-            dataContext.Users.Update(user);
-            await dataContext.SaveChangesAsync();
+            this.dataContext.Users.Update(user);
+            await this.dataContext.SaveChangesAsync();
         }
 
         public async Task<List<User>> GetAllUsers()
         {
-            return await dataContext.Users.ToListAsync();
+            return await this.dataContext.Users.ToListAsync();
         }
 
         public virtual async Task<User?> GetUserById(Guid userId)
         {
-            return await dataContext.Users.Where(user => user.UserId == userId).FirstOrDefaultAsync();
+            return await this.dataContext.Users.Where(user => user.UserId == userId).FirstOrDefaultAsync();
         }
 
         public virtual async Task<User?> GetUserByUsername(string username)
         {
-            return await dataContext.Users.Where(user => user.Username == username).FirstOrDefaultAsync();
+            return await this.dataContext.Users.Where(user => user.Username == username).FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateUser(User user)
         {
-            User? dbUser = await dataContext.Users.FindAsync(user.UserId);
+            User? dbUser = await this.dataContext.Users.FindAsync(user.UserId);
 
             if (dbUser == null)
             {
@@ -99,30 +99,30 @@
             }
 
             // If the update itself has no changes, but no errors occured, return true
-            return await dataContext.SaveChangesAsync() >= 0;
+            return await this.dataContext.SaveChangesAsync() >= 0;
         }
         public async Task<bool> DeleteUser(Guid userId)
         {
-            User? user = await GetUserById(userId);
+            User? user = await this.GetUserById(userId);
 
             if (user == null)
             {
                 return false;
             }
 
-            dataContext.Users.Remove(user);
-            return await dataContext.SaveChangesAsync() > 0;
+            this.dataContext.Users.Remove(user);
+            return await this.dataContext.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> CreateUser(User user)
         {
-            dataContext.Users.Add(user);
-            return await dataContext.SaveChangesAsync() > 0;
+            this.dataContext.Users.Add(user);
+            return await this.dataContext.SaveChangesAsync() > 0;
         }
 
         public async Task<List<User>> GetUsersWithHiddenReviews()
         {
-            return await dataContext.Reviews
+            return await this.dataContext.Reviews
                 .Where(review => review.IsHidden)
                 .Select(review => review.User)
                 .Distinct()

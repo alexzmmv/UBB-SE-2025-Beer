@@ -15,19 +15,19 @@
 
         public RolesRepository(IAppDbContext context)
         {
-            dataContext = context;
+            this.dataContext = context;
         }
 
         public async Task<List<Role>> GetAllRoles()
         {
-            CheckForExistingRoles();
+            this.CheckForExistingRoles();
 
             return await dataContext.Roles.ToListAsync();
         }
 
         public async Task<Role?> GetNextRoleInHierarchy(RoleType currentRoleType)
         {
-            CheckForExistingRoles();
+            this.CheckForExistingRoles();
 
             if (currentRoleType.Equals(RoleType.Admin))
             {
@@ -39,7 +39,7 @@
 
         private void CheckForExistingRoles()
         {
-            if (!dataContext.Roles.Any())
+            if (!this.dataContext.Roles.Any())
             {
                 AddRole(RoleType.Banned, "Banned");
                 AddRole(RoleType.User, "User");
@@ -49,8 +49,8 @@
 
         private void AddRole(RoleType roleType, string roleName)
         {
-            dataContext.Roles.Add(new Role(roleType, roleName));
-            dataContext.SaveChanges();
+            this.dataContext.Roles.Add(new Role(roleType, roleName));
+            this.dataContext.SaveChanges();
         }
     }
 }

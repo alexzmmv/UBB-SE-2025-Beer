@@ -4,7 +4,7 @@ namespace DataAccess.DTORequests.Drink
 {
     public class UpdateDrinkRequest
     {
-        public Guid requestingUserId { get; set; }
+        public Guid RequestingUserId { get; set; }
 
         public DrinkDTO Drink { get; set; }
     }

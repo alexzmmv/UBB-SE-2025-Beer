@@ -8,24 +8,23 @@ using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using WinUiApp.Data.Data;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
-using System.Diagnostics;
 
 namespace DataAccess.ServiceProxy
 {
     public class ReviewsServiceProxy : IReviewService
     {
         private readonly HttpClient httpClient;
-        private const string ApiRoute = "api/reviews";
+        private const string API_ROUTE = "api/reviews";
 
         public ReviewsServiceProxy(string baseUrl)
         {
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(baseUrl);
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new Uri(baseUrl);
         }
 
         public async Task<int> AddReview(ReviewDTO reviewDto)
         {
-            HttpResponseMessage response = await httpClient.PostAsJsonAsync($"{ApiRoute}/add", reviewDto);
+            HttpResponseMessage response = await this.httpClient.PostAsJsonAsync($"{API_ROUTE}/add", reviewDto);
             response.EnsureSuccessStatusCode();
             return reviewDto.ReviewId + 1;
         }
@@ -34,7 +33,7 @@ namespace DataAccess.ServiceProxy
         {
             try
             {
-                var response = this.httpClient.GetAsync($"Review/get-by-rating?ratingId={ratingId}").Result;
+                HttpResponseMessage response = this.httpClient.GetAsync($"Review/get-by-rating?ratingId={ratingId}").Result;
                 response.EnsureSuccessStatusCode();
                 return response.Content.ReadFromJsonAsync<IEnumerable<ReviewDTO>>().Result;
             }
@@ -46,7 +45,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<List<ReviewDTO>> GetAllReviews()
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO>? reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>();
             return reviews ?? new List<ReviewDTO>();
@@ -54,7 +53,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<double> GetAverageRatingForVisibleReviews()
         {
-            List<ReviewDTO> reviews = await GetAllReviews();
+            List<ReviewDTO> reviews = await this.GetAllReviews();
             double average = 0;
             int numberOfVisibleReviews = 0;
             foreach (ReviewDTO review in reviews)
@@ -70,7 +69,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
@@ -79,7 +78,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<List<ReviewDTO>> GetHiddenReviews()
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
             return reviews.Where(review => review.IsHidden).ToList();
@@ -87,7 +86,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<List<ReviewDTO>> GetMostRecentReviews(int count)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
@@ -96,7 +95,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<ReviewDTO?> GetReviewById(int reviewID)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
@@ -105,7 +104,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<int> GetReviewCountAfterDate(DateTime date)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
@@ -114,7 +113,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
@@ -123,7 +122,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<List<ReviewDTO>> GetReviewsSince(DateTime date)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<ReviewDTO> reviews = await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
 
@@ -132,43 +131,43 @@ namespace DataAccess.ServiceProxy
 
         public async Task RemoveReviewById(int reviewID)
         {
-            string reviewUrl = $"{ApiRoute}/{reviewID}";
+            string reviewUrl = $"{API_ROUTE}/{reviewID}";
             HttpResponseMessage response = await httpClient.DeleteAsync(reviewUrl);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task UpdateNumberOfFlagsForReview(int reviewID, int numberOfFlags)
         {
-            string reviewUrl = $"{ApiRoute}/{reviewID}/updateFlags";
-            HttpResponseMessage response = await httpClient.PatchAsJsonAsync(reviewUrl, numberOfFlags);
+            string reviewUrl = $"{API_ROUTE}/{reviewID}/updateFlags";
+            HttpResponseMessage response = await this.httpClient.PatchAsJsonAsync(reviewUrl, numberOfFlags);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task UpdateReviewVisibility(int reviewID, bool isHidden)
         {
-            string reviewUrl = $"{ApiRoute}/{reviewID}/updateVisibility";
-            HttpResponseMessage response = await httpClient.PatchAsJsonAsync(reviewUrl, isHidden);
+            string reviewUrl = $"{API_ROUTE}/{reviewID}/updateVisibility";
+            HttpResponseMessage response = await this.httpClient.PatchAsJsonAsync(reviewUrl, isHidden);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task HideReview(int reviewID)
         {
-            await UpdateReviewVisibility(reviewID, true);
+            await this.UpdateReviewVisibility(reviewID, true);
         }
 
         public async Task ResetReviewFlags(int reviewId)
         {
-            await UpdateNumberOfFlagsForReview(reviewId, 0);
+            await this.UpdateNumberOfFlagsForReview(reviewId, 0);
         }
 
         public async Task<List<ReviewDTO>> GetReviewsForReport()
         {
-            return await GetAllReviews();
+            return await this.GetAllReviews();
         }
 
         public async Task<List<ReviewDTO>> FilterReviewsByContent(string content)
         {
-            List<ReviewDTO> reviews = await GetAllReviews();
+            List<ReviewDTO> reviews = await this.GetAllReviews();
             return reviews.Where(review => review.Content.Contains(content, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
@@ -176,7 +175,7 @@ namespace DataAccess.ServiceProxy
         {
             try
             {
-                var response = await this.httpClient.GetAsync($"{ApiRoute}/get-reviews-by-drink?drinkId={drinkId}");
+                HttpResponseMessage response = await this.httpClient.GetAsync($"{API_ROUTE}/get-reviews-by-drink?drinkId={drinkId}");
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
             }
@@ -190,7 +189,7 @@ namespace DataAccess.ServiceProxy
         {
             try
             {
-                var response = await this.httpClient.GetAsync($"{ApiRoute}/get-average-rating-by-drink?drinkId={drinkId}");
+                HttpResponseMessage response = await this.httpClient.GetAsync($"{API_ROUTE}/get-average-rating-by-drink?drinkId={drinkId}");
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<double>();
             }
