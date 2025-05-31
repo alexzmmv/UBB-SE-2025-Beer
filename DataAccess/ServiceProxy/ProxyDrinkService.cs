@@ -5,6 +5,7 @@
 namespace WinUIApp.ProxyServices
 {
     using DataAccess.Data;
+    using DataAccess.DTORequests.Drink;
     using DataAccess.Service.Interfaces;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -103,7 +104,7 @@ namespace WinUIApp.ProxyServices
         /// <param name="inputtedDrinkBrandName"> brand. </param>
         /// <param name="inputtedAlcoholPercentage"> alcohol. </param>
         /// <exception cref="Exception"> any issues. </exception>
-        public DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false)
+        public DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, Guid userId, bool isDrinkRequestingApproval = false)
         {
             try
             {
@@ -124,6 +125,7 @@ namespace WinUIApp.ProxyServices
                     inputtedDrinkCategories = convertedCategories,
                     inputtedDrinkBrandName = inputtedDrinkBrandName,
                     inputtedAlcoholPercentage = inputtedAlcoholPercentage,
+                    requestingUserId = userId
                 };
 
                 var response = httpClient.PostAsJsonAsync("Drink/add", request).Result;
@@ -142,7 +144,7 @@ namespace WinUIApp.ProxyServices
         /// </summary>
         /// <param name="drink"> drink. </param>
         /// <exception cref="Exception"> any issues. </exception>
-        public void UpdateDrink(DrinkDTO drink)
+        public void UpdateDrink(DrinkDTO drink, Guid userId)
         {
             DrinkDTO convertedDrink = new()
             {
@@ -155,7 +157,7 @@ namespace WinUIApp.ProxyServices
 
             try
             {
-                var request = new UpdateDrinkRequest { drink = convertedDrink };
+                var request = new UpdateDrinkRequest { Drink = convertedDrink, requestingUserId = userId};
                 ///////////
                 string json = JsonSerializer.Serialize(request, new JsonSerializerOptions
                 {
@@ -177,11 +179,11 @@ namespace WinUIApp.ProxyServices
         /// </summary>
         /// <param name="drinkId"> drink id. </param>
         /// <exception cref="Exception"> any issues. </exception>
-        public void DeleteDrink(int drinkId)
+        public void DeleteDrink(int drinkId, Guid userId)
         {
             try
             {
-                var request = new DeleteDrinkRequest { drinkId = drinkId };
+                var request = new DeleteDrinkRequest { drinkId = drinkId, RequestingUserId = userId };
                 var message = new HttpRequestMessage(HttpMethod.Delete, "Drink/delete")
                 {
                     Content = JsonContent.Create(request),
