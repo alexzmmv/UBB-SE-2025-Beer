@@ -30,7 +30,7 @@ namespace DrinkDb_Auth.View
         private readonly IReviewService reviewService;
         private readonly IUpgradeRequestsService upgradeRequestsService;
 
-        public MainPage()
+        public AdminPage()
         {
             this.InitializeComponent();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
@@ -54,10 +54,7 @@ namespace DrinkDb_Auth.View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (this.Frame != null)
-            {
-                NavMenu.SetNavigationFrame(this.Frame);
-            }
+            AuthenticationWindow.CurrentPage = typeof(AdminPage);
             LoadDashboardData();
         }
 

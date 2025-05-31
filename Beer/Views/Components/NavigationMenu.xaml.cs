@@ -15,7 +15,6 @@ namespace WinUIApplication.Views.Components
     {
         private readonly IUserService userService;
         private bool isAdmin;
-        private Frame navigationFrame;
 
         public bool IsAdmin
         {
@@ -30,34 +29,25 @@ namespace WinUIApplication.Views.Components
         {
             this.InitializeComponent();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
-            InitializeAdminStatus();
         }
 
-        public void SetNavigationFrame(Frame frame)
+        public async void Initialize()
         {
-            this.navigationFrame = frame;
-        }
-
-        private async void InitializeAdminStatus()
-        {
-            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
-            IsAdmin = isAdmin;
+            if (App.CurrentUserId != Guid.Empty)
+            {
+                isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+                IsAdmin = isAdmin;
+            }
         }
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            if (navigationFrame != null)
-            {
-                navigationFrame.Navigate(typeof(UserPage));
-            }
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(ProfilePage));
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
         {
-            if (navigationFrame != null)
-            {
-                navigationFrame.Navigate(typeof(DrinkDb_Auth.View.MainPage));
-            }
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(AdminPage));
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -66,11 +56,17 @@ namespace WinUIApplication.Views.Components
             App.CurrentUserId = Guid.Empty;
             App.CurrentSessionId = Guid.Empty;
             
-            // Reset the existing window to login view
-            if (App.MainWindow is AuthenticationWindow authWindow)
+            // Reset the window state using the helper method
+            var window = Window.Current;
+            if (window is AuthenticationWindow authWindow)
             {
-                authWindow.ResetToLoginView();
+                authWindow.HandleLogout();
             }
+        }
+
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
         }
     }
 } 

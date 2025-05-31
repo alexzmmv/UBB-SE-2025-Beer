@@ -2,6 +2,7 @@ namespace WinUIApp.Views.Pages
 {
     using DataAccess.Service;
     using DataAccess.Service.Interfaces;
+    using DataAccess.Constants;
     using DrinkDb_Auth;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml.Controls;
@@ -9,6 +10,7 @@ namespace WinUIApp.Views.Pages
     using Microsoft.UI.Xaml.Navigation;
     using WinUIApp.ProxyServices;
     using WinUIApp.ViewModels;
+    using WinUIApplication.Views.Components;
 
     public sealed partial class MainPage : Page
     {
@@ -16,6 +18,9 @@ namespace WinUIApp.Views.Pages
         private IDrinkReviewService drinkReviewService;
         private IDrinkService drinkService;
         private IUserService userService;
+        private bool isAdmin;
+
+        public bool IsAdmin => isAdmin;
 
         public MainPage()
         {
@@ -27,6 +32,12 @@ namespace WinUIApp.Views.Pages
 
             this.viewModel = new MainPageViewModel(drinkService, userService);
             this.DataContext = this.viewModel;
+            InitializeAdminStatus();
+        }
+
+        private async void InitializeAdminStatus()
+        {
+            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)

@@ -51,10 +51,7 @@ namespace DrinkDb_Auth
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (this.Frame != null)
-            {
-                NavMenu.SetNavigationFrame(this.Frame);
-            }
+            AuthenticationWindow.CurrentPage = typeof(ProfilePage);
             LoadUserData();
         }
 

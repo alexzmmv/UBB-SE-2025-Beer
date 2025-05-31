@@ -26,6 +26,7 @@ namespace DrinkDb_Auth
     using WinUiApp.Data.Data;
     using Microsoft.UI.Xaml.Navigation;
     using WinUIApp.Views.Pages;
+    using DrinkDb_Auth.View;
 
     public sealed partial class AuthenticationWindow : Window
     {
@@ -103,6 +104,11 @@ namespace DrinkDb_Auth
                 {
                     App.CurrentUserId = user.UserId;
                     App.CurrentSessionId = response.SessionId;
+
+                    // Initialize the header after successful 2FA
+                    this.HeaderComponent.Initialize();
+                    this.HeaderComponent.Visibility = Visibility.Visible;
+
                     AuthenticationWindow.NavigationFrame.Navigate(typeof(SuccessPage), this);
                 }
 
@@ -119,7 +125,6 @@ namespace DrinkDb_Auth
                 };
                 await errorDialog.ShowAsync();
             }
-
             return false;
         }
 
@@ -233,22 +238,29 @@ namespace DrinkDb_Auth
         {
             if (this.HeaderComponent != null)
             {
-                this.HeaderComponent.UpdateHeaderComponentsVisibility(e.SourcePageType);
-            }
-
-            if (this.HeaderComponent != null && e.SourcePageType == typeof(MainPage))
-            {
-                this.HeaderComponent.Visibility = Visibility.Visible;
+                // Hide header for Success, Profile and Admin pages
+                if (e.SourcePageType == typeof(SuccessPage) || e.SourcePageType == typeof(ProfilePage) || e.SourcePageType == typeof(AdminPage))
+                {
+                    this.HeaderComponent.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    this.HeaderComponent.Visibility = Visibility.Visible;
+                    this.HeaderComponent.UpdateHeaderComponentsVisibility(e.SourcePageType);
+                }
             }
         }
 
-        public void ResetToLoginView()
+        public void HandleLogout()
         {
-            if (this.NavigationFrame != null)
-            {
-                this.NavigationFrame.BackStack.Clear();
-                this.NavigationFrame.Content = this.MainFrame.Content;
-            }
+            // Hide the header
+            this.HeaderComponent.Visibility = Visibility.Collapsed;
+            
+            // Reset the window title
+            this.Title = "DrinkDb - Sign In";
+            
+            // Go back to the initial state
+            this.MainFrame.GoBack();
         }
     }
 }

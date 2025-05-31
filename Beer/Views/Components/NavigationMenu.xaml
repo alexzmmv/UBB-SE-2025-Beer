@@ -13,6 +13,7 @@
                 Style="{StaticResource DefaultButtonStyle}">
             <Button.Flyout>
                 <MenuFlyout x:Name="NavigationMenuFlyout">
+                    <MenuFlyoutItem x:Name="HomeButton" Text="Home" Click="HomeButton_Click"/>
                     <MenuFlyoutItem x:Name="ProfileButton" Text="Profile" Click="ProfileButton_Click"/>
                     <MenuFlyoutItem x:Name="DashboardButton" Text="Dashboard" Click="DashboardButton_Click" Visibility="{x:Bind IsAdmin, Mode=OneWay}"/>
                     <MenuFlyoutSeparator/>

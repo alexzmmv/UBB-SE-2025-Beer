@@ -10,19 +10,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <components:NavigationMenu x:Name="NavMenu" 
-                                 Grid.Row="0"
-                                 HorizontalAlignment="Right"
-                                 Margin="0,10,20,0"
-                                 IsAdmin="{x:Bind IsAdmin, Mode=OneWay}"/>
-
-        <StackPanel Grid.Row="1" 
-                    VerticalAlignment="Center" 
+        <StackPanel VerticalAlignment="Center" 
                     HorizontalAlignment="Center" 
                     Spacing="20">
             <SymbolIcon Symbol="Accept" 
