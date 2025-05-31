@@ -259,8 +259,15 @@ namespace DrinkDb_Auth
             // Reset the window title
             this.Title = "DrinkDb - Sign In";
             
-            // Go back to the initial state
-            this.MainFrame.GoBack();
+            // Clear username and password fields
+            this.UsernameTextBox.Text = string.Empty;
+            this.PasswordBox.Password = string.Empty;
+
+            // Clear the navigation stack and show the default content
+            this.MainFrame.BackStack.Clear();
+            this.MainFrame.Content = this.RootGrid;
+
+
         }
     }
 }

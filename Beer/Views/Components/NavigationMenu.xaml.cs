@@ -56,12 +56,9 @@ namespace WinUIApplication.Views.Components
             App.CurrentUserId = Guid.Empty;
             App.CurrentSessionId = Guid.Empty;
             
-            // Reset the window state using the helper method
-            var window = Window.Current;
-            if (window is AuthenticationWindow authWindow)
-            {
-                authWindow.HandleLogout();
-            }
+            // Get the window from the XAML root
+            var window = (AuthenticationWindow)App.MainWindow;
+            window.HandleLogout();
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
