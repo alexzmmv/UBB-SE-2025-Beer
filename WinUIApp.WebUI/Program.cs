@@ -66,6 +66,7 @@ static void DependencyInjection(WebApplicationBuilder builder)
     builder.Services.AddSingleton<ICheckersService>(sp => new OffensiveWordsServiceProxy(apiRoute));
     builder.Services.AddSingleton<IReviewService>(sp => new ReviewsServiceProxy(apiRoute));
     builder.Services.AddSingleton<IUpgradeRequestsService>(sp => new UpgradeRequestsServiceProxy(apiRoute));
+    builder.Services.AddSingleton<IDrinkModificationRequestService>(sp => new DrinkModificationRequestServiceProxy(apiRoute));
     builder.Services.AddSingleton<IRolesService, RolesProxyService>(sp => new RolesProxyService(apiRoute));
     builder.Services.AddSingleton<IAutoCheck, AutoCheckerProxy>(sp => new AutoCheckerProxy(apiRoute));
     builder.Services.AddSingleton<IBasicAuthenticationProvider>(sp => new BasicAuthenticationProviderServiceProxy(apiRoute));
