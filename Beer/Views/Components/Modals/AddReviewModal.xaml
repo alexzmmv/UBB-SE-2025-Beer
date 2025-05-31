@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:Name="Self">
-    <Grid>
+    <Grid DataContext="{x:Bind ViewModel, Mode=OneWay}">
         <!-- Centering Grid -->
         <Grid>
             <Grid.RowDefinitions>
@@ -39,7 +39,7 @@
                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                Margin="0,0,0,12"/>
 
-                        <!-- Dynamic Bottle Rating -->
+                    <!-- Dynamic Bottle Rating -->
                     <ItemsControl ItemsSource="{Binding Bottles}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

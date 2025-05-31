@@ -120,7 +120,7 @@
                     </Grid>
                     <Rectangle Height="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Stretch"
                                Margin="0,8,0,16"/>
-                    
+
                     <ItemsControl ItemsSource="{Binding Reviews}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -160,7 +160,9 @@
                 VerticalAlignment="Stretch"
                 Canvas.ZIndex="999">
             <modals:AddReviewModal x:Name="AddReviewModal"
-                                   CloseRequested="CloseAddReviewModal" DrinkId="{Binding Drink.DrinkId}"/>
+                                   CloseRequested="CloseAddReviewModal" 
+                                   RefreshReviewsRequested="RefreshReviews"
+                                   DrinkId="{Binding Drink.DrinkId}"/>
         </Grid>
     </Grid>
 </Page>

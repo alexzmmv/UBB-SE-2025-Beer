@@ -117,5 +117,9 @@ namespace WinUIApp.Views.Pages
 
             AddReviewModalOverlay.Visibility = Visibility.Collapsed;
         }
+        private void RefreshReviews(object sender, EventArgs e)
+        {
+            this.ViewModel.RefreshReviews();
+        }
 }
 }
