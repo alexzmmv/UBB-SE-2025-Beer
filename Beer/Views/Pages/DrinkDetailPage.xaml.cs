@@ -25,18 +25,18 @@ namespace WinUIApp.Views.Pages
         private IUserService userService;
         private IReviewService reviewService;
         private ICheckersService checkersService;
-        private bool isAdmin;
+        private RoleType userRole;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool IsAdmin
+        public RoleType UserRole
         {
-            get => isAdmin;
+            get => userRole;
             private set
             {
-                if (isAdmin != value)
+                if (userRole != value)
                 {
-                    isAdmin = value;
+                    userRole = value;
                     OnPropertyChanged();
                 }
             }
@@ -75,13 +75,13 @@ namespace WinUIApp.Views.Pages
             this.ViewModel.RequestClosePopup += CloseAddReviewModal;
 
             this.HideButtonsOnBan();
-            InitializeAdminStatus();
+            InitializeUserRole();
         }
 
-        private async void InitializeAdminStatus()
+        private async void InitializeUserRole()
         {
-            IsAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
-            ViewModel.IsAdmin = IsAdmin;
+            UserRole = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) ?? RoleType.User;
+            ViewModel.IsAdmin = UserRole == RoleType.Admin;
         }
 
         private void FlagReviewMenuItem_Click(object sender, RoutedEventArgs e)

@@ -17,7 +17,7 @@
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
 
     <Page.Resources>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <converters:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter"/>
     </Page.Resources>
 
     <Grid
@@ -137,19 +137,19 @@
                                     <Border.ContextFlyout>
                                         <MenuFlyout>
                                             <MenuFlyoutItem Text="Flag Review" Click="FlagReviewMenuItem_Click"
-                                                          Visibility="{Binding IsAdmin, ElementName=DrinkDetailPageRoot, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                                          Visibility="{Binding UserRole, ElementName=DrinkDetailPageRoot, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter=Inverse}">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE7E7;" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
                                             <MenuFlyoutItem Text="Hide Review" Click="HideReviewMenuItem_Click" 
-                                                          Visibility="{Binding IsAdmin, ElementName=DrinkDetailPageRoot}">
+                                                          Visibility="{Binding UserRole, ElementName=DrinkDetailPageRoot, Converter={StaticResource RoleToVisibilityConverter}}">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE711;" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
                                             <MenuFlyoutItem Text="AI Check" Click="AICheckMenuItem_Click"
-                                                          Visibility="{Binding IsAdmin, ElementName=DrinkDetailPageRoot}">
+                                                          Visibility="{Binding UserRole, ElementName=DrinkDetailPageRoot, Converter={StaticResource RoleToVisibilityConverter}}">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE721;" />
                                                 </MenuFlyoutItem.Icon>
