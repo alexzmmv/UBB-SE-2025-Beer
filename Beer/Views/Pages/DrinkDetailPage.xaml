@@ -9,6 +9,8 @@
     xmlns:components="using:WinUIApp.Views.Components"
     xmlns:votebutton="using:WinUIApp.Views.Components"
     xmlns:modals="using:WinUIApp.Views.Components.Modals"
+    xmlns:data="using:WinUIApp.Models.Data"
+    xmlns:dto="using:DataAccess.DTOModels"
     mc:Ignorable="d"
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
 
@@ -123,9 +125,30 @@
 
                     <ItemsControl ItemsSource="{Binding Reviews}">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="dto:ReviewDTO">
                                 <Border BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Padding="10" Margin="0 0 0 10" 
                         CornerRadius="8" >
+                                    <Border.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="Flag Review" Click="FlagReviewMenuItem_Click">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE7E7;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Text="Hide Review" Click="HideReviewMenuItem_Click" 
+                                                          Visibility="{Binding DataContext.IsAdmin, ElementName=DrinkDetailPage}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE711;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Text="AI Check" Click="AICheckMenuItem_Click"
+                                                          Visibility="{Binding DataContext.IsAdmin, ElementName=DrinkDetailPage}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE721;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Border.ContextFlyout>
                                     <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                                         <Border 
                                             Width="32" 

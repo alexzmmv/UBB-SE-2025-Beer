@@ -26,6 +26,7 @@
         private DrinkDTO drink;
         private float averageReviewScore;
         private const int NUMBER_OF_DECIMALS_DISPLAYED = 1;
+        private bool isAdmin;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -37,6 +38,16 @@
             {
                 isPopupOpen = value;
                 this.OnPropertyChanged(nameof(this.IsPopupOpen));
+            }
+        }
+
+        public bool IsAdmin
+        {
+            get => isAdmin;
+            set
+            {
+                isAdmin = value;
+                this.OnPropertyChanged(nameof(this.IsAdmin));
             }
         }
 
