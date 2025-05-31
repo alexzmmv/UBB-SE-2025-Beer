@@ -23,7 +23,7 @@
         {
             this.drinkService = drinkService;
             this.userService = userService;
-            this.buttonText = "\U0001F5A4";
+            this.buttonText = "Add to Favorites";
         }
 
         public DrinkPageViewModel(int drinkId, IDrinkService drinkService, IUserService userService)
@@ -31,7 +31,7 @@
             this.drinkService = drinkService;
             this.userService = userService;
             this.drinkId = drinkId;
-            this.buttonText = "\U0001F5A4";
+            this.buttonText = "Add to Favorites";
         }
 
         public int UserId
@@ -152,7 +152,7 @@
 
         private void UpdateButtonText()
         {
-            this.ButtonText = this.isInUserDrinksList ? "\u2665" : "\U0001F5A4";
+            this.ButtonText = this.isInUserDrinksList ? "Remove from Favorites" : "Add to Favorites";
         }
     }
 }

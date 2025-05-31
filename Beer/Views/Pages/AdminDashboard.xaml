@@ -17,6 +17,7 @@
         <!-- Windows 11 style resources -->
         <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
         <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
+        <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
         <Thickness x:Key="CardBorderThickness">1</Thickness>
         <SolidColorBrush x:Key="CardBackgroundFillColorDefault" Color="{ThemeResource SystemAltHighColor}" />
         <SolidColorBrush x:Key="CardStrokeColorDefault" Color="{ThemeResource SystemChromeGrayColor}" Opacity="0.2" />
@@ -283,6 +284,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold">
@@ -321,6 +324,47 @@
                             </Border.Shadow>
                             <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
                         </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!-- Users with Hidden Reviews Section -->
+            <TextBlock Grid.Row="3" Margin="0,24,0,12" FontSize="16" FontWeight="SemiBold">
+                Users with Hidden Reviews
+            </TextBlock>
+
+            <ListView Grid.Row="4" 
+                      ItemsSource="{x:Bind ViewModel.UsersWithHiddenReviews, Mode=OneWay}"
+                      SelectionMode="None"
+                      Background="{ThemeResource CardBackgroundFillColorDefault}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefault}"
+                      BorderThickness="{StaticResource CardBorderThickness}"
+                      CornerRadius="{StaticResource CardCornerRadius}"
+                      Padding="12">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:User">
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{x:Bind Username}" 
+                                         FontWeight="SemiBold"/>
+                                <TextBlock Text="{x:Bind EmailAddress}" 
+                                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                         FontSize="12"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="Ban"
+                                    Click="BanUserButton_Click"
+                                    
+                                    Tag="{x:Bind UserId}"
+                                    Background="{StaticResource DeclineButtonColor}"
+                                    Foreground="White"
+                                    Padding="12,4"
+                                    CornerRadius="4"/>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

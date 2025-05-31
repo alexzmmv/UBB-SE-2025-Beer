@@ -31,6 +31,7 @@ namespace WinUIApp.Views.Pages
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
             base.OnNavigatedTo(eventArguments);
+            MainWindow.CurrentPage = typeof(MainPage);
             MainWindow.PreviousPage = typeof(MainPage);
         }
 

@@ -30,7 +30,6 @@ namespace WinUIApp.Views.Pages
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)
         {
             base.OnNavigatedTo(eventArguments);
-            MainWindow.PreviousPage = typeof(SearchPage);
             this.searchPageViewModel = new SearchPageViewModel(this.drinkService, this.drinkReviewService);
             this.SortSelectorControl.SetSortOrder(this.searchPageViewModel.IsAscending);
             if (eventArguments.Parameter is SearchPageNavigationParameters parameters)
@@ -45,6 +44,9 @@ namespace WinUIApp.Views.Pages
                     this.searchPageViewModel.SetSearchedTerms(parameters.InputSearchKeyword);
                 }
             }
+
+            MainWindow.PreviousPage = typeof(MainPage);
+            MainWindow.CurrentPage = typeof(SearchPage);
 
             this.LoadDrinks();
             this.LoadCategoriesFilter();

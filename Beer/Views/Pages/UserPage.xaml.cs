@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccess.Constants;
+using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
 using DataAccess.Service.Interfaces;
@@ -21,6 +22,7 @@ namespace DrinkDb_Auth
         private readonly IUserService userService;
         private readonly IAuthenticationService authenticationService;
         private readonly IReviewService reviewService;
+        private readonly IUpgradeRequestsService upgradeRequestsService;
         private User? currentUser;
 
         public UserPage()
@@ -30,6 +32,9 @@ namespace DrinkDb_Auth
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.authenticationService = App.Host.Services.GetRequiredService<IAuthenticationService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
+            this.upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
+
+            this.RequestAdminButtonVisibility();
         }
 
         private void UserPage_Loaded(object sender, RoutedEventArgs e)
@@ -50,36 +55,29 @@ namespace DrinkDb_Auth
                 {
                     NameTextBlock.Text = currentUser.Username;
                     UsernameTextBlock.Text = "@" + currentUser.Username;
-                    StatusTextBlock.Text = "Status: Online";
+
+                    if (currentUser.AssignedRole == RoleType.Banned && !currentUser.HasSubmittedAppeal)
+                    {
+                        AppealButton.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        AppealButton.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
                     NameTextBlock.Text = "User not found";
                     UsernameTextBlock.Text = string.Empty;
-                    StatusTextBlock.Text = string.Empty;
+                    AppealButton.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 NameTextBlock.Text = "No user logged in";
                 UsernameTextBlock.Text = string.Empty;
-                StatusTextBlock.Text = string.Empty;
+                AppealButton.Visibility = Visibility.Collapsed;
             }
-
-            RoleType userRole = this.currentUser?.AssignedRole ?? RoleType.User;
-
-            bool isAdmin = userRole == RoleType.Admin;
-
-            if (!isAdmin)
-            {
-                this.AdminDashboardButton.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.authenticationService.Logout();
-            App.MainWindow.Close();
         }
 
         private void AdminDashboardButton_Click(object sender, RoutedEventArgs e)
@@ -140,6 +138,62 @@ namespace DrinkDb_Auth
             //    border.Child = reviewStack;
             //    this.ReviewsItemsControl.Items.Add(border);
             //}
+        }
+
+        private async void AppealButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentUser != null)
+            {
+                try
+                {
+                    await userService.UpdateUserAppleaed(currentUser, true);
+                    AppealButton.Visibility = Visibility.Collapsed;
+                }
+                catch (Exception ex)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to submit appeal. Please try again later.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await dialog.ShowAsync();
+                }
+            }
+        }
+
+        public async void RequestAdminButtonVisibility()
+        {
+            RoleType? role = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId);
+
+            if (role == null)
+            {
+                return;
+            }
+
+            if (role != RoleType.User)
+            {
+                this.RequestAdminButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            List<UpgradeRequest> requests = await this.upgradeRequestsService.RetrieveAllUpgradeRequests();
+
+            foreach (UpgradeRequest request in requests)
+            {
+                if (request.RequestingUserIdentifier == App.CurrentUserId)
+                {
+                    this.RequestAdminButton.Visibility = Visibility.Collapsed;
+                    return;
+                }
+            }
+        }
+
+        private async void RequestAdminButton_Click(object sender, RoutedEventArgs e)
+        {
+            await this.upgradeRequestsService.AddUpgradeRequest(App.CurrentUserId);
+            this.RequestAdminButton.Visibility = Visibility.Collapsed;
         }
     }
 
