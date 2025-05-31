@@ -81,15 +81,6 @@ namespace DataAccess.Repository
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
-        
-        public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
-        {
-            var reviews = await dataContext.Review
-                .Where(review => review.UserId == userId && !review.IsHidden)
-                .OrderByDescending(review => review.CreatedDate)
-                .ToListAsync();
-            return reviews.Select(ReviewMapper.ToDTO).ToList();
-        }
 
         public async Task<ReviewDTO?> GetReviewById(int reviewId)
         {
