@@ -2,14 +2,16 @@
 using DataAccess.Constants;
 using DataAccess.Data;
 using DataAccess.Service;
+using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using DataAccess.Requests.Drinks;
 
 namespace ServerAPI.Controllers
 {
     [ApiController]
     [Route("api/DrinkModificationRequests")]
-    public class DrinkModificationRequestsController
+    public class DrinkModificationRequestsController : ControllerBase
     {
         private readonly IDrinkModificationRequestService drinkModificationService;
         private readonly IUserService userService;
@@ -21,25 +23,51 @@ namespace ServerAPI.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAll()
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAll()
         {
             return await this.drinkModificationService.GetAllModificationRequests();
         }
 
         [HttpGet]
-        public async Task<DrinkModificationRequest> Get(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> Get(int modificationRequestId)
         {
             return await this.drinkModificationService.GetModificationRequest(modificationRequestId);
         }
 
         [HttpPost("deny")]
-        public async Task Deny(int modificationRequestId, [FromBody] Guid userId)
+        public async Task<IActionResult> Deny([FromBody] DenyDrinkModificationRequest request)
         {
-            var userRole = await userService.GetHighestRoleTypeForUser(userId);
+            RoleType? userRole = await userService.GetHighestRoleTypeForUser(request.UserId);
             if (userRole != RoleType.Admin)
-                return;
+            {
+                return Unauthorized();
+            }
 
-            await this.drinkModificationService.DenyRequest(modificationRequestId);
+            await this.drinkModificationService.DenyRequest(request.ModificationRequestId, new Guid());
+            return Ok();
+        }
+
+        [HttpPost("approve")]
+        public async Task<IActionResult> Approve([FromBody] ApproveDrinkModificationRequest request)
+        {
+            RoleType? userRole = await userService.GetHighestRoleTypeForUser(request.UserId);
+            if (userRole != RoleType.Admin)
+            {
+                return Unauthorized();
+            }
+
+            await this.drinkModificationService.ApproveRequest(request.ModificationRequestId, new Guid());
+            return Ok();
+        }
+
+        [HttpPost("add")]
+        public async Task<DrinkModificationRequestDTO> Add([FromBody] AddDrinkModificationRequestRequest request)
+        {
+            return this.drinkModificationService.AddRequest(
+                request.ModificationType,
+                request.OldDrinkId,
+                request.NewDrinkId,
+                request.RequestingUserId);
         }
     }
 }

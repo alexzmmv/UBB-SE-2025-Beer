@@ -6,9 +6,13 @@
 
     <Button x:Name="AddRemoveButton"
             Click="{x:Bind ViewModel.AddRemoveFromListAsync}"
-            FontFamily="Segoe UI Emoji">
+            Style="{StaticResource DefaultButton}"
+            Padding="10,5"
+            Margin="5,0">
         <TextBlock x:Name="ButtonText"
-                   Text="{x:Bind ViewModel.ButtonText, Mode=OneWay}" />
+                   Text="{x:Bind ViewModel.ButtonText, Mode=OneWay}"
+                   Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                   FontSize="14" />
     </Button>
 
 </UserControl>

@@ -33,54 +33,24 @@ namespace DataAccess.Migrations
                     b.Property<int>("ModificationType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NewDrinkDrinkId")
+                    b.Property<int?>("NewDrinkId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OldDrinkDrinkId")
+                    b.Property<int?>("OldDrinkId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("RequestingUserUserId")
+                    b.Property<Guid>("RequestingUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("DrinkModificationRequestId");
 
-                    b.HasIndex("NewDrinkDrinkId");
+                    b.HasIndex("NewDrinkId");
 
-                    b.HasIndex("OldDrinkDrinkId");
+                    b.HasIndex("OldDrinkId");
 
-                    b.HasIndex("RequestingUserUserId");
+                    b.HasIndex("RequestingUserId");
 
                     b.ToTable("DrinkModificationRequests");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.DrinkRequestingApproval", b =>
-                {
-                    b.Property<int>("DrinkId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DrinkId"));
-
-                    b.Property<decimal>("AlcoholContent")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DrinkName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("DrinkURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DrinkId");
-
-                    b.HasIndex("BrandId");
-
-                    b.ToTable("DrinksRequestingApproval");
                 });
 
             modelBuilder.Entity("DataAccess.Model.AdminDashboard.OffensiveWord", b =>
@@ -265,6 +235,11 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsRequestingApproval")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.HasKey("DrinkId");
 
                     b.HasIndex("BrandId");
@@ -278,7 +253,8 @@ namespace DataAccess.Migrations
                             AlcoholContent = 5.2m,
                             BrandId = 1,
                             DrinkName = "Golden Ale",
-                            DrinkURL = "https://example.com/drinks/golden-ale.jpg"
+                            DrinkURL = "https://example.com/drinks/golden-ale.jpg",
+                            IsRequestingApproval = false
                         },
                         new
                         {
@@ -286,7 +262,8 @@ namespace DataAccess.Migrations
                             AlcoholContent = 37.5m,
                             BrandId = 2,
                             DrinkName = "Cherry Vodka",
-                            DrinkURL = "https://example.com/drinks/cherry-vodka.jpg"
+                            DrinkURL = "https://example.com/drinks/cherry-vodka.jpg",
+                            IsRequestingApproval = false
                         },
                         new
                         {
@@ -294,7 +271,8 @@ namespace DataAccess.Migrations
                             AlcoholContent = 0.0m,
                             BrandId = 3,
                             DrinkName = "Ginger Beer",
-                            DrinkURL = "https://example.com/drinks/ginger-beer.jpg"
+                            DrinkURL = "https://example.com/drinks/ginger-beer.jpg",
+                            IsRequestingApproval = false
                         });
                 });
 
@@ -534,17 +512,19 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.DrinkModificationRequest", b =>
                 {
-                    b.HasOne("DataAccess.Data.DrinkRequestingApproval", "NewDrink")
+                    b.HasOne("WinUiApp.Data.Data.Drink", "NewDrink")
                         .WithMany()
-                        .HasForeignKey("NewDrinkDrinkId");
+                        .HasForeignKey("NewDrinkId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("WinUiApp.Data.Data.Drink", "OldDrink")
                         .WithMany()
-                        .HasForeignKey("OldDrinkDrinkId");
+                        .HasForeignKey("OldDrinkId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("WinUiApp.Data.Data.User", "RequestingUser")
                         .WithMany()
-                        .HasForeignKey("RequestingUserUserId")
+                        .HasForeignKey("RequestingUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -553,15 +533,6 @@ namespace DataAccess.Migrations
                     b.Navigation("OldDrink");
 
                     b.Navigation("RequestingUser");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.DrinkRequestingApproval", b =>
-                {
-                    b.HasOne("WinUiApp.Data.Data.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId");
-
-                    b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("DataAccess.Model.AdminDashboard.UpgradeRequest", b =>

@@ -29,17 +29,17 @@ namespace WinUIApp.Views.Components.Modals
 {
     public sealed partial class AddReviewModal : UserControl
     {
-
         private const int BottleRatingToIndexOffset = 1;
+        private const int INVALID_REVIEW_ID = 0;
         public event EventHandler CloseRequested;
+        public event EventHandler RefreshReviewsRequested;
         private IReviewService reviewService;
-        public RatingViewModel ViewModel { get; }
+        public AddReviewViewModel ViewModel { get; }
         public AddReviewModal()
         {
             this.InitializeComponent();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
-            this.ViewModel = new RatingViewModel(reviewService);
-            this.DataContext = this.ViewModel;
+            this.ViewModel = new AddReviewViewModel(reviewService);
         }
 
         public int DrinkId
@@ -49,14 +49,25 @@ namespace WinUIApp.Views.Components.Modals
         }
 
         public static readonly DependencyProperty DrinkIdProperty =
-            DependencyProperty.Register(nameof(DrinkId), typeof(int), typeof(AddReviewModal),
-                new PropertyMetadata(0));
+                   DependencyProperty.Register(
+                       "DrinkId",
+                       typeof(int),
+                       typeof(AddReviewModal),
+                       new PropertyMetadata(0));
 
-
-        private void SaveReviewButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveReviewButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ViewModel.AddReview(DrinkId);
-            CloseRequested?.Invoke(this, EventArgs.Empty);
+            int newReviewId = await this.ViewModel.AddReview(DrinkId);
+            if (newReviewId <= INVALID_REVIEW_ID)
+            {
+                // Handle validation error
+                return;
+            }
+            else
+            {
+                RefreshReviewsRequested?.Invoke(this, EventArgs.Empty);
+                CloseRequested?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void CancelReviewButton_Click(object sender, RoutedEventArgs e)

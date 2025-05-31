@@ -17,6 +17,9 @@ namespace WinUiApp.Data.Configurations
                    .IsRequired()
                    .HasMaxLength(255);
 
+            builder.Property(drink => drink.IsRequestingApproval)
+                   .HasDefaultValue(false);
+
             builder.HasOne(drink => drink.Brand)
                    .WithMany()
                    .HasForeignKey(drink => drink.BrandId)

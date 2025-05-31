@@ -30,13 +30,13 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetAllReviews()
         {
-            var reviews = await dataContext.Reviews.ToListAsync();
+            List<Review> reviews = await dataContext.Reviews.ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
         public async Task<List<ReviewDTO>> GetReviewsSince(DateTime date)
         {
-            var reviews = await dataContext.Reviews
+            List<Review> reviews = await dataContext.Reviews
                 .Where(review => review.CreatedDate >= date && !review.IsHidden)
                 .OrderByDescending(review => review.CreatedDate)
                 .ToListAsync();
@@ -60,7 +60,7 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetMostRecentReviews(int count)
         {
-            var reviews = await dataContext.Reviews
+            List<Review> reviews = await dataContext.Reviews
                 .Where(review => !review.IsHidden)
                 .OrderByDescending(review => review.CreatedDate)
                 .Take(count)
@@ -76,15 +76,24 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags)
         {
-            var reviews = await dataContext.Reviews
+            List<Review> reviews = await dataContext.Reviews
                 .Where(review => review.NumberOfFlags >= minFlags && !review.IsHidden)
+                .ToListAsync();
+            return reviews.Select(ReviewMapper.ToDTO).ToList();
+        }
+        
+        public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
+        {
+            var reviews = await dataContext.Review
+                .Where(review => review.UserId == userId && !review.IsHidden)
+                .OrderByDescending(review => review.CreatedDate)
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
 
         public async Task<ReviewDTO?> GetReviewById(int reviewId)
         {
-            var review = await dataContext.Reviews.FirstOrDefaultAsync(r => r.ReviewId == reviewId);
+            Review? review = await dataContext.Reviews.FirstOrDefaultAsync(r => r.ReviewId == reviewId);
             return review != null ? ReviewMapper.ToDTO(review) : null;
         }
 
@@ -118,7 +127,7 @@ namespace DataAccess.Repository
 
         public async Task<int> AddReview(ReviewDTO reviewDto)
         {
-            var review = ReviewMapper.ToEntity(reviewDto);
+            Review? review = ReviewMapper.ToEntity(reviewDto);
             await dataContext.Reviews.AddAsync(review);
             await dataContext.SaveChangesAsync();
             return review.ReviewId;
@@ -139,7 +148,7 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetHiddenReviews()
         {
-            var reviews = await dataContext.Reviews
+            List<Review> reviews = await dataContext.Reviews
                 .Where(review => review.IsHidden)
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
@@ -168,7 +177,7 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetReviewsByDrinkId(int drinkId)
         {
-            var reviews = await dataContext.Reviews
+            List<Review> reviews = await dataContext.Reviews
                 .Where(review => review.DrinkId == drinkId)
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
@@ -176,7 +185,7 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetReviewsByUserId(Guid userId)
         {
-            var reviews = await this.dataContext.Reviews
+            List<Review> reviews = await this.dataContext.Reviews
                 .Where(review => review.UserId == userId)
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
@@ -184,7 +193,7 @@ namespace DataAccess.Repository
 
         public async Task<List<ReviewDTO>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId)
         {
-            var reviews = await this.dataContext.Reviews
+            List<Review> reviews = await this.dataContext.Reviews
                 .Where(review => review.DrinkId == drinkId && review.UserId == userId)
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();

@@ -5,6 +5,7 @@
 namespace DataAccess.Service.Interfaces
 {
     using System.Collections.Generic;
+    using DataAccess.Data;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
     using WinUIApp.WebAPI.Models;
@@ -23,7 +24,7 @@ namespace DataAccess.Service.Interfaces
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage);
+        DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, Guid userId, bool isDrinkRequestingApproval = false);
 
         /// <summary>
         /// Adds a drink to the user's personal drink list.
@@ -39,7 +40,7 @@ namespace DataAccess.Service.Interfaces
         /// </summary>
         /// <param name="drinkId"> Drink id. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        void DeleteDrink(int drinkId);
+        void DeleteDrink(int drinkId, Guid userId);
 
         /// <summary>
         /// Deletes a drink from the user's personal drink list.
@@ -115,7 +116,7 @@ namespace DataAccess.Service.Interfaces
         /// </summary>
         /// <param name="drink"> Drink. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        void UpdateDrink(DrinkDTO drink);
+        void UpdateDrink(DrinkDTO drink, Guid userId);
 
         /// <summary>
         /// Votes for the drink of the day.

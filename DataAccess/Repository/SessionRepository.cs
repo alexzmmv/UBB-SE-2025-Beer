@@ -12,7 +12,7 @@ namespace DataAccess.Repository
 
         public SessionRepository(IAppDbContext context)
         {
-            dataContext = context;
+            this.dataContext = context;
         }
         public async Task<Session> CreateSession(Guid userId)
         {
@@ -22,15 +22,15 @@ namespace DataAccess.Repository
                 UserId = userId
             };
 
-            await dataContext.Sessions.AddAsync(session);
-            await dataContext.SaveChangesAsync();
+            await this.dataContext.Sessions.AddAsync(session);
+            await this.dataContext.SaveChangesAsync();
 
             return session;
         }
 
         public async Task<bool> EndSession(Guid sessionId)
         {
-            Session? session = await dataContext.Sessions.FirstOrDefaultAsync(s => s.SessionId == sessionId);
+            Session? session = await this.dataContext.Sessions.FirstOrDefaultAsync(s => s.SessionId == sessionId);
 
             if (session == null)
             {
@@ -38,18 +38,18 @@ namespace DataAccess.Repository
                 return true;
             }
 
-            dataContext.Sessions.Remove(session);
-            return await dataContext.SaveChangesAsync() > 0;
+            this.dataContext.Sessions.Remove(session);
+            return await this.dataContext.SaveChangesAsync() > 0;
         }
 
         public async Task<Session?> GetSession(Guid sessionId)
         {
-            return await dataContext.Sessions.FirstOrDefaultAsync(item => item.SessionId == sessionId);
+            return await this.dataContext.Sessions.FirstOrDefaultAsync(item => item.SessionId == sessionId);
         }
 
         public async Task<Session?> GetSessionByUserId(Guid userId)
         {
-            return await dataContext.Sessions.FirstOrDefaultAsync(s => s.UserId == userId);
+            return await this.dataContext.Sessions.FirstOrDefaultAsync(s => s.UserId == userId);
         }
     }
 }

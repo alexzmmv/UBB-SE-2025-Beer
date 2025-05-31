@@ -10,12 +10,12 @@ namespace DataAccess.ServiceProxy
     public class BasicAuthenticationProviderServiceProxy : IBasicAuthenticationProvider
     {
         private readonly HttpClient httpClient;
-        private const string ApiBaseRoute = "api/auth";
+        private const string API_BASE_ROUTE = "api/auth";
 
         public BasicAuthenticationProviderServiceProxy(string baseUrl)
         {
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(baseUrl);
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new Uri(baseUrl);
         }
 
         public async Task<bool> AuthenticateAsync(string username, string password)
@@ -27,7 +27,7 @@ namespace DataAccess.ServiceProxy
                     Encoding.UTF8,
                     "application/json");
 
-                HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseRoute}/authenticate", content);
+                HttpResponseMessage response = await this.httpClient.PostAsync($"{API_BASE_ROUTE}/authenticate", content);
                 response.EnsureSuccessStatusCode();
                 return true;
             }
@@ -40,7 +40,7 @@ namespace DataAccess.ServiceProxy
 
         public bool Authenticate(string username, string password)
         {
-            return AuthenticateAsync(username, password).GetAwaiter().GetResult();
+            return this.AuthenticateAsync(username, password).GetAwaiter().GetResult();
         }
     }
 }

@@ -63,24 +63,22 @@
                             Foreground="DarkGray" />
                     </StackPanel>
 
-                    <!-- Status text -->
-                    <TextBlock 
-                        x:Name="StatusTextBlock"
-                        FontSize="16" />
-
-                    <!-- Edit account button -->
+                    <!-- Appeal button - only visible for banned users who haven't appealed -->
                     <Button 
-                        x:Name="AdminDashboardButton"
-                        Content="Admin Dashboard"
-                        Click="AdminDashboardButton_Click" />
+                        x:Name="AppealButton"
+                        Content="Submit Appeal"
+                        Click="AppealButton_Click"
+                        Visibility="Collapsed"
+                        Background="Red"
+                        Foreground="White"/>
 
-                    <!-- Logout button -->
                     <Button 
-                        x:Name="LogoutButton"
-                        Content="Logout"
-                        Click="LogoutButton_Click"
+                        x:Name="RequestAdminButton"
+                        Content="Request Admin"
+                        Click="RequestAdminButton_Click"
                         Background="White"
                         Foreground="Black"/>
+
                 </StackPanel>
             </Border>
         </StackPanel>
@@ -96,11 +94,6 @@
             <TextBlock Text="Reviews" FontSize="20" FontWeight="Bold"/>
             <!-- We will add each review in code-behind -->
             <ItemsControl x:Name="ReviewsItemsControl" />
-
-            <!-- Drinklist Section -->
-            <TextBlock Text="Drinklist" FontSize="20" FontWeight="Bold"/>
-            <!-- We will add each drink in code-behind -->
-            <ItemsControl x:Name="DrinklistItemsControl" />
         </StackPanel>
     </Grid>
 </Page>

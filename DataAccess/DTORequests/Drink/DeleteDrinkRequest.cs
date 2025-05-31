@@ -1,7 +1,8 @@
-﻿namespace WinUIApp.WebAPI.Requests.Drink
+﻿namespace DataAccess.DTORequests.Drink
 {
     public class DeleteDrinkRequest
     {
-        public int drinkId { get; set; }
+        public Guid RequestingUserId { get; set; }
+        public int DrinkId { get; set; }
     }
 }

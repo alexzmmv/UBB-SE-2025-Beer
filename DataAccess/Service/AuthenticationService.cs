@@ -43,9 +43,9 @@ namespace DataAccess.Service
             this.facebookLocalServer = facebookLocalServer;
             this.basicAuthenticationProvider = basicAuthenticationProvider;
 
-            _ = githubLocalServer.StartAsync();
-            _ = facebookLocalServer.StartAsync();
-            _ = linkedinLocalServer.StartAsync();
+            _ = this.githubLocalServer.StartAsync();
+            _ = this.facebookLocalServer.StartAsync();
+            _ = this.linkedinLocalServer.StartAsync();
         }
 
         public async Task<AuthenticationResponse> AuthWithOAuth(OAuthService selectedService, object authProvider)
@@ -69,36 +69,36 @@ namespace DataAccess.Service
 
         public virtual void Logout()
         {
-            sessionRepository.EndSession(currentSessionId);
+            this.sessionRepository.EndSession(currentSessionId);
             currentSessionId = Guid.Empty;
             currentUserId = Guid.Empty;
         }
 
         public virtual async Task<User?> GetUser(Guid sessionId)
         {
-            Session? session = await sessionRepository.GetSession(sessionId);
+            Session? session = await this.sessionRepository.GetSession(sessionId);
 
             if (session == null)
             {
                 return null;
             }
 
-            return await userRepository.GetUserById(session.UserId);
+            return await this.userRepository.GetUserById(session.UserId);
         }
 
         public async Task<AuthenticationResponse> AuthWithUserPass(string username, string password)
         {
             try
             {
-                if (await basicAuthenticationProvider.AuthenticateAsync(username, password))
+                if (await this.basicAuthenticationProvider.AuthenticateAsync(username, password))
                 {
-                    User? user = await userRepository.GetUserByUsername(username);
+                    User? user = await this.userRepository.GetUserByUsername(username);
 
                     if (user == null)
                     {
                         throw new UserNotFoundException("Go to catch");
                     }
-                    Session session = await sessionRepository.CreateSession(user.UserId);
+                    Session session = await this.sessionRepository.CreateSession(user.UserId);
                     return new AuthenticationResponse
                     {
                         AuthenticationSuccessful = true,
@@ -131,8 +131,8 @@ namespace DataAccess.Service
                     EmailAddress = "ionutcora66@gmail.com"
                 };
 
-                await userRepository.CreateUser(user);
-                Session session = await sessionRepository.CreateSession(user.UserId);
+                await this.userRepository.CreateUser(user);
+                Session session = await this.sessionRepository.CreateSession(user.UserId);
                 return new AuthenticationResponse
                 {
                     AuthenticationSuccessful = true,
@@ -148,20 +148,10 @@ namespace DataAccess.Service
             return await gitHubHelper.AuthenticateAsync();
         }
 
-        // private static async Task<AuthenticationResponse> AuthenticateWithGoogleAsync(Window window, IGoogleOAuth2Provider googleProvider)
-        // {
-        //    return await googleProvider.SignInWithGoogleAsync(window);
-        // }
-
         private static async Task<AuthenticationResponse> AuthenticateWithFacebookAsync(IFacebookOAuthHelper faceBookHelper)
         {
             return await faceBookHelper.AuthenticateAsync();
         }
-
-        // private static async Task<AuthenticationResponse> AuthenticateWithTwitterAsync(ITwitterOAuth2Provider twitterProvider)
-        // {
-        //    return await twitterProvider.SignInWithTwitterAsync();
-        // }
 
         private static async Task<AuthenticationResponse> AuthenticateWithLinkedInAsync(ILinkedInOAuthHelper linkedInHelper)
         {

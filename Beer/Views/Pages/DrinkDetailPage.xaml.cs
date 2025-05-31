@@ -1,5 +1,7 @@
-﻿using DataAccess.Service.Interfaces;
+﻿using DataAccess.Constants;
+using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
+using MailKit.Net.Imap;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -7,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using Windows.UI.Notifications;
 using WinUIApp.ProxyServices;
 using WinUIApp.ViewModels;
 using WinUIApp.Views.Components.Modals;
@@ -45,9 +48,29 @@ namespace WinUIApp.Views.Pages
 
             this.ViewModel.RequestOpenPopup += OpenAddReviewModal;
             this.ViewModel.RequestClosePopup += CloseAddReviewModal;
+
+            this.HideButtonsOnBan();
         }
 
         public DrinkDetailPageViewModel ViewModel { get; }
+
+        public async void HideButtonsOnBan()
+        {
+            RoleType? role = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId);
+
+            if (role == null)
+            {
+                return;
+            }
+
+            if (role == RoleType.Banned)
+            {
+                this.RemoveButton.Visibility = Visibility.Collapsed;
+                this.ReviewButton.Visibility = Visibility.Collapsed;
+                this.UpdateButton.Visibility = Visibility.Collapsed;
+                this.VoteButton.Visibility = Visibility.Collapsed;
+            }
+        }
 
         public async void UpdateRemoveButtonText()
         {
@@ -68,6 +91,9 @@ namespace WinUIApp.Views.Pages
             {
                 this.ViewModel.LoadDrink(drinkId);
             }
+
+            MainWindow.PreviousPage = MainWindow.CurrentPage;
+            MainWindow.CurrentPage = typeof(DrinkDetailPage);
         }
 
         private void ConfirmRemoveButton_Click(object sender, RoutedEventArgs eventArguments)
@@ -81,23 +107,6 @@ namespace WinUIApp.Views.Pages
             this.ViewModel.VoteForDrink();
         }
 
-        private void AddRatingButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.ViewModel?.Drink == null)
-            {
-                return;
-            }
-
-            int productId = this.ViewModel.Drink.DrinkId;
-
-            IConfiguration configuration = App.Host.Services.GetRequiredService<IConfiguration>();
-            IReviewService reviewService = App.Host.Services.GetRequiredService<IReviewService>();
-            IUserService userService = App.Host.Services.GetRequiredService<IUserService>();
-
-            ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
-
-        }
-
         private void OpenAddReviewModal(object sender, EventArgs e)
         {
             AddReviewModalOverlay.Visibility = Visibility.Visible;
@@ -107,6 +116,10 @@ namespace WinUIApp.Views.Pages
         {
 
             AddReviewModalOverlay.Visibility = Visibility.Collapsed;
+        }
+        private void RefreshReviews(object sender, EventArgs e)
+        {
+            this.ViewModel.RefreshReviews();
         }
 }
 }

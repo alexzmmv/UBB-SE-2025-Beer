@@ -1,9 +1,11 @@
 ﻿using WinUIApp.WebAPI.Models;
 
-namespace WinUIApp.WebAPI.Requests.Drink
+namespace DataAccess.DTORequests.Drink
 {
     public class UpdateDrinkRequest
     {
+        public Guid RequestingUserId { get; set; }
+
         public DrinkDTO Drink { get; set; }
     }
 }

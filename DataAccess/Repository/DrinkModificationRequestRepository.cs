@@ -1,43 +1,56 @@
 ﻿using DataAccess.Data;
 using DataAccess.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WinUiApp.Data.Interfaces;
+using DataAccess.DTOModels;
+using DataAccess.Extensions;
 
 namespace DataAccess.Repository
 {
-    public class DrinkModificationRequestRepository: IDrinkModificationRequestRepository
+    public class DrinkModificationRequestRepository : IDrinkModificationRequestRepository
     {
-        IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
+
         public DrinkModificationRequestRepository(IAppDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
+        public DrinkModificationRequestDTO AddRequest(DrinkModificationRequestDTO requestDTO)
         {
-            return await dbContext.DrinkModificationRequests
+            this.dbContext.DrinkModificationRequests.Add(DrinkModificationRequestExtensions.ConvertDTOToEntity(requestDTO));
+            this.dbContext.SaveChanges();
+
+            return requestDTO;
+        }
+
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
+        {
+            List<DrinkModificationRequest> requests = await dbContext.DrinkModificationRequests
                 .Include(drink => drink.OldDrink)
                 .Include(drink => drink.NewDrink)
                 .ToListAsync();
+
+            return requests.Select((request) =>
+            {
+                return DrinkModificationRequestExtensions.ConvertEntityToDTO(request);
+            });
         }
 
-        public async Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId)
         {
-            return await dbContext.DrinkModificationRequests
+            DrinkModificationRequest request = await dbContext.DrinkModificationRequests
                 .Where(drink => drink.DrinkModificationRequestId == modificationRequestId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync() ?? throw new Exception("No request with given id");
+
+            return DrinkModificationRequestExtensions.ConvertEntityToDTO(request);
         }
 
+        // this should ideally return the request object back
         public async Task DeleteRequest(int modificationRequestId)
         {
-            var request = await dbContext.DrinkModificationRequests
+            DrinkModificationRequest? request = await dbContext.DrinkModificationRequests
                 .FirstOrDefaultAsync(drink => drink.DrinkModificationRequestId == modificationRequestId);
-
 
             if (request != null)
             {

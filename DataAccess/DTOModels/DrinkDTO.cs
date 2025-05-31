@@ -13,13 +13,14 @@ namespace WinUIApp.WebAPI.Models
     /// </summary>
     public class DrinkDTO
     {
-        private const float MaximumAlcoholContent = 100.0f;
-        private const int MinimumAlcohoolContent = 0;
+        private const float MAXIMUM_ALCOHOOL_CONTENT = 100.0f;
+        private const int MINIMUM_ALCOHOOL_CONTENT = 0;
 
         private string? drinkName;
         private string drinkImageUrl = string.Empty;
         private List<Category> categoryList;
         private float alcoholContent;
+        private bool isRequestingApproval = false;
 
         public DrinkDTO() { }
 
@@ -33,7 +34,7 @@ namespace WinUIApp.WebAPI.Models
         /// <param name="brandDto">Brand of the drink.</param>
         /// <param name="alcoholContent">Alcohol content percentage.</param>
         /// <exception cref="ArgumentNullException">Thrown when brand is null.</exception>
-        public DrinkDTO(int id, string? drinkName, string imageUrl, List<Category> categories, Brand brandDto, float alcoholContent)
+        public DrinkDTO(int id, string? drinkName, string imageUrl, List<Category> categories, Brand brandDto, float alcoholContent, bool isRequestingApproval)
         {
             this.DrinkId = id;
             this.DrinkName = drinkName;
@@ -41,6 +42,7 @@ namespace WinUIApp.WebAPI.Models
             this.CategoryList = categories;
             this.DrinkBrand = brandDto ?? throw new ArgumentNullException(nameof(brandDto), "Brand cannot be null");
             this.AlcoholContent = alcoholContent;
+            this.isRequestingApproval = isRequestingApproval;
         }
 
         /// <summary>
@@ -88,18 +90,20 @@ namespace WinUIApp.WebAPI.Models
             get => this.alcoholContent;
             set
             {
-                if (value < MinimumAlcohoolContent)
+                if (value < MINIMUM_ALCOHOOL_CONTENT)
                 {
                     throw new ArgumentOutOfRangeException(nameof(this.AlcoholContent), "Alcohol content must be a positive value.");
                 }
 
-                if (value > MaximumAlcoholContent)
+                if (value > MAXIMUM_ALCOHOOL_CONTENT)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(this.AlcoholContent), $"Alcohol content must not exceed {MaximumAlcoholContent}.");
+                    throw new ArgumentOutOfRangeException(nameof(this.AlcoholContent), $"Alcohol content must not exceed {MAXIMUM_ALCOHOOL_CONTENT}.");
                 }
 
                 this.alcoholContent = value;
             }
         }
+
+        public bool IsRequestingApproval { get; set; } = false;
     }
 }

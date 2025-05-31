@@ -20,7 +20,7 @@ namespace DataAccess.Service
         {
             try
             {
-                return await rolesRepository.GetAllRoles();
+                return await this.rolesRepository.GetAllRoles();
             }
             catch
             {
@@ -32,7 +32,7 @@ namespace DataAccess.Service
         {
             try
             {
-                return await rolesRepository.GetNextRoleInHierarchy(currentRoleType);
+                return await this.rolesRepository.GetNextRoleInHierarchy(currentRoleType);
             }
             catch
             {

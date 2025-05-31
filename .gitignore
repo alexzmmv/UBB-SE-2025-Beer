@@ -403,4 +403,5 @@ FodyWeavers.xsd
 
 .idea/
 /WinUIApp/appsettings.json
-/WinUIApp.WebAPI/appsettings.json
+/WinUIApp.WebAPI/appsettings.json'**/appsettings.json' 
+'**/Migrations/' 

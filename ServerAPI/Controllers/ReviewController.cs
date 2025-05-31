@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using DataAccess.DTOModels;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 
@@ -111,14 +108,14 @@ namespace WinUIApp.WebAPI.Controllers
         [HttpGet("get-reviews-by-drink")]
         public async Task<IActionResult> GetReviewsByDrink([FromQuery] int drinkId)
         {
-            var reviews = await reviewService.GetReviewsByDrink(drinkId);
+            List<ReviewDTO> reviews = await reviewService.GetReviewsByDrink(drinkId);
             return Ok(reviews);
         }
 
         [HttpGet("get-average-rating-by-drink")]
         public async Task<IActionResult> GetAverageRating([FromQuery] int drinkId)
         {
-            var averageRating = await reviewService.GetAverageRating(drinkId);
+            double averageRating = await reviewService.GetAverageRating(drinkId);
             return Ok(averageRating);
         }
     }
