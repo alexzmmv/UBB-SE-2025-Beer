@@ -1,14 +1,16 @@
 ﻿using DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WinUiApp.Data;
 using WinUiApp.Data.Data;
 using WinUiApp.Data.Interfaces;
-using WinUIApp.Tests.TestHelpers;
+using Xunit;
 
 namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 {
@@ -22,7 +24,6 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         public ReviewsRepositoryRemoveReviewByIdTest()
         {
             mockAppDbContext = new Mock<IAppDbContext>();
-            mockReviewDbSet = new Mock<DbSet<Review>>();
 
             // Test data
             reviewData = new List<Review>
@@ -31,17 +32,8 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 new Review { ReviewId = 2, Content = "Test Review 2" }
             };
 
-            var asyncData = new TestAsyncEnumerable<Review>(reviewData);
-
-            mockReviewDbSet.As<IAsyncEnumerable<Review>>()
-                .Setup(d => d.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<Review>(reviewData.GetEnumerator()));
-
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.Provider).Returns(asyncData.Provider);
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.Expression).Returns(asyncData.Expression);
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.ElementType).Returns(asyncData.ElementType);
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.GetEnumerator()).Returns(() => asyncData.GetEnumerator());
-
+            // Use MockQueryable to create a proper mock DbSet
+            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
 
             mockAppDbContext.Setup(context => context.Reviews).Returns(mockReviewDbSet.Object);
 
@@ -53,11 +45,14 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             Review removedReview = null!;
+
             mockReviewDbSet
                 .Setup(set => set.Remove(It.IsAny<Review>()))
                 .Callback<Review>(r => removedReview = r);
 
-            mockAppDbContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+            mockAppDbContext
+                .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
 
             // Act
             await reviewsRepository.RemoveReviewById(1);
@@ -72,6 +67,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             bool saveChangesCalled = false;
+
             mockReviewDbSet.Setup(set => set.Remove(It.IsAny<Review>()));
             mockAppDbContext
                 .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -89,25 +85,30 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         public async Task RemoveReviewById_WhenReviewDoesNotExist_DoesNotCallRemoveOrSaveChanges()
         {
             // Arrange
-            var asyncData = new TestAsyncEnumerable<Review>(reviewData);
-
-            mockReviewDbSet.As<IAsyncEnumerable<Review>>()
-                .Setup(d => d.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<Review>(reviewData.GetEnumerator()));
-
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.Provider).Returns(asyncData.Provider);
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.Expression).Returns(asyncData.Expression);
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.ElementType).Returns(asyncData.ElementType);
-            mockReviewDbSet.As<IQueryable<Review>>().Setup(m => m.GetEnumerator()).Returns(() => asyncData.GetEnumerator());
-
             bool removeCalled = false;
             bool saveCalled = false;
 
-            mockReviewDbSet.Setup(set => set.Remove(It.IsAny<Review>())).Callback(() => removeCalled = true);
-            mockAppDbContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).Callback(() => saveCalled = true).ReturnsAsync(0);
+            // Create a separate mock for empty data
+            var emptyData = new List<Review>();
+            var emptyMockDbSet = emptyData.AsQueryable().BuildMockDbSet();
+
+            emptyMockDbSet
+                .Setup(set => set.Remove(It.IsAny<Review>()))
+                .Callback(() => removeCalled = true);
+
+            mockAppDbContext
+                .Setup(context => context.Reviews)
+                .Returns(emptyMockDbSet.Object);
+
+            mockAppDbContext
+                .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .Callback(() => saveCalled = true)
+                .ReturnsAsync(0);
+
+            var repository = new ReviewsRepository(mockAppDbContext.Object);
 
             // Act
-            await reviewsRepository.RemoveReviewById(999); // Non-existing review
+            await repository.RemoveReviewById(999); // Non-existing review
 
             // Assert
             Assert.False(removeCalled);
