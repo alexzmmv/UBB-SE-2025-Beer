@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="DrinkDb_Auth.View.MainPage"
+    x:Name="RootPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DrinkDb_Auth.View"
@@ -8,9 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    xmlns:models="using:WinUiApp.Data.Data" 
+    xmlns:models="using:WinUiApp.Data.Data"
     xmlns:converters="using:DrinkDb_Auth.Converters"
     xmlns:viewmodels="using:DrinkDb_Auth.ViewModel.AdminDashboard"
+    xmlns:dto="using:DataAccess.DTOModels"
+    xmlns:admin="using:DataAccess.Model.AdminDashboard"
 >
 
     <Page.Resources>
@@ -104,7 +107,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Review">
+                    <DataTemplate x:DataType="dto:ReviewDTO">
                         <Grid>
                             <Border Padding="16" Background="{ThemeResource CardBackgroundFillColorDefault}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefault}"
@@ -134,9 +137,9 @@
                                 </Border.ContextFlyout>
                                 <StackPanel>
                                     <TextBlock FontWeight="SemiBold" Margin="0,0,0,4">
-                                        <Run Text="{x:Bind UserId, Converter={StaticResource UserIdToNameConverter}}"/>
+                                        <Run Text="{x:Bind UserId}" />
                                     </TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Content}"/>
+                                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Content}" />
                                 </StackPanel>
                                 <ToolTipService.ToolTip>
                                     <TextBlock Text="Right click for options"/>
@@ -225,7 +228,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="admin:UpgradeRequest">
                         <Border Padding="16" 
                                 Background="{ThemeResource CardBackgroundFillColorDefault}"
                                 BorderBrush="{ThemeResource CardStrokeColorDefault}"
@@ -242,17 +245,11 @@
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding}" 
-                                           FontSize="16" 
-                                           FontWeight="SemiBold" 
-                                           VerticalAlignment="Center" 
-                                           Grid.Column="0"
-                                           TextWrapping="Wrap"
-                                           Margin="0,0,8,0"/>
+                                <TextBlock Text="{x:Bind RequestingUserIdentifier}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Grid.Column="0" TextWrapping="Wrap" Margin="0,0,8,0"/>
 
                                 <Button x:Name="AcceptUpgradeRequestButton"
                                         Content="Accept"
-                                        Tag="{Binding UpgradeRequestId}"
+                                        Tag="{x:Bind UpgradeRequestId}"
                                         Background="{StaticResource AcceptButtonColor}"
                                         Foreground="White"
                                         HorizontalAlignment="Stretch"
@@ -263,7 +260,7 @@
 
                                 <Button x:Name="DeclineUpgradeRequestButton"
                                         Content="Decline"
-                                        Tag="{Binding UpgradeRequestId}"
+                                        Tag="{x:Bind UpgradeRequestId}"
                                         Background="{StaticResource DeclineButtonColor}"
                                         Foreground="White"
                                         HorizontalAlignment="Stretch"
@@ -313,7 +310,7 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:User">
                         <Border Padding="16" 
                                 Background="{ThemeResource CardBackgroundFillColorDefault}"
                                 BorderBrush="{ThemeResource CardStrokeColorDefault}"
@@ -322,7 +319,7 @@
                             <Border.Shadow>
                                 <ThemeShadow />
                             </Border.Shadow>
-                            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Bind Username}" TextWrapping="Wrap"/>
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -333,14 +330,7 @@
                 Users with Hidden Reviews
             </TextBlock>
 
-            <ListView Grid.Row="4" 
-                      ItemsSource="{x:Bind ViewModel.UsersWithHiddenReviews, Mode=OneWay}"
-                      SelectionMode="None"
-                      Background="{ThemeResource CardBackgroundFillColorDefault}"
-                      BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                      BorderThickness="{StaticResource CardBorderThickness}"
-                      CornerRadius="{StaticResource CardCornerRadius}"
-                      Padding="12">
+            <ListView x:Name="UsersWithHiddenReviewsList" Grid.Row="4" Grid.Column="2" ItemsSource="{x:Bind ViewModel.UsersWithHiddenReviews, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:User">
                         <Grid Margin="0,4">
