@@ -47,4 +47,4 @@ namespace DataAccess.DTOModels
         /// </summary>
         public bool IsHidden { get; set; }
     }
-} 
+}

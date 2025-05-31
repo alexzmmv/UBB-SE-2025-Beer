@@ -10,12 +10,12 @@
 
     public class ReviewModelTrainer
     {
-        private const int NumberOfTrees = 100;
-        private const int NumberOfLeaves = 50;
-        private const int MinimumExampleCountPerLeaf = 10;
-        private const float LearningRate = 0.1f;
-        private const float TestFraction = 0.2f;
-        private const char CsvSeparator = '}';
+        private const int NUMBER_OF_TREES = 100;
+        private const int NUMBER_OF_LEAVES = 50;
+        private const int MINIMUM_EXAMPLE_COUNT_PER_LEAF = 10;
+        private const float LEARNING_RATE = 0.1f;
+        private const float TEST_FRACTION = 0.2f;
+        private const char CSV_SEPARATOR = '}';
 
         private static readonly string ProjectRoot = GetProjectRoot();
         private static readonly string DefaultDataPath = Path.Combine(ProjectRoot, "AiCheck", "review_data.csv");
@@ -55,7 +55,7 @@
 
                 IEstimator<ITransformer> modelPipeline = CreateModelPipeline(machineLearningContext);
 
-                TrainTestData trainTestSplit = machineLearningContext.Data.TrainTestSplit(trainingData, testFraction: ReviewModelTrainer.TestFraction);
+                TrainTestData trainTestSplit = machineLearningContext.Data.TrainTestSplit(trainingData, testFraction: ReviewModelTrainer.TEST_FRACTION);
 
                 ITransformer trainedModel = modelPipeline.Fit(trainTestSplit.TrainSet);
 
@@ -104,12 +104,12 @@
         {
             if (!ValidateDataFormat(dataPath))
             {
-                throw new InvalidOperationException("Invalid data format. Expected separator character is '" + ReviewModelTrainer.CsvSeparator + "'.");
+                throw new InvalidOperationException("Invalid data format. Expected separator character is '" + ReviewModelTrainer.CSV_SEPARATOR + "'.");
             }
 
             return machineLearningContext.Data.LoadFromTextFile<ReviewData>(
                 path: dataPath,
-                separatorChar: ReviewModelTrainer.CsvSeparator,
+                separatorChar: ReviewModelTrainer.CSV_SEPARATOR,
                 hasHeader: true);
         }
 
@@ -123,12 +123,12 @@
                     return false;
                 }
 
-                if (!firstLine.Contains(ReviewModelTrainer.CsvSeparator))
+                if (!firstLine.Contains(ReviewModelTrainer.CSV_SEPARATOR))
                 {
                     return false;
                 }
 
-                string[] headerColumns = firstLine.Split(CsvSeparator);
+                string[] headerColumns = firstLine.Split(CSV_SEPARATOR);
                 if (headerColumns.Length < 2 ||
                     !headerColumns[0].Trim().Equals("ReviewContent", StringComparison.OrdinalIgnoreCase) ||
                     !headerColumns[1].Trim().Equals("IsOffensiveContent", StringComparison.OrdinalIgnoreCase))
@@ -144,12 +144,12 @@
                         continue;
                     }
 
-                    if (!line.Contains(ReviewModelTrainer.CsvSeparator))
+                    if (!line.Contains(ReviewModelTrainer.CSV_SEPARATOR))
                     {
                         return false;
                     }
 
-                    string[] columns = line.Split(ReviewModelTrainer.CsvSeparator);
+                    string[] columns = line.Split(ReviewModelTrainer.CSV_SEPARATOR);
                     if (columns.Length < 2)
                     {
                         return false;
@@ -183,10 +183,10 @@
             .Append(machineLearningContext.BinaryClassification.Trainers.FastTree(
                 labelColumnName: nameof(ReviewData.IsOffensiveContent),
                 featureColumnName: "Features",
-                numberOfTrees: ReviewModelTrainer.NumberOfTrees,
-                numberOfLeaves: ReviewModelTrainer.NumberOfLeaves,
-                minimumExampleCountPerLeaf: MinimumExampleCountPerLeaf,
-                learningRate: ReviewModelTrainer.LearningRate));
+                numberOfTrees: ReviewModelTrainer.NUMBER_OF_TREES,
+                numberOfLeaves: ReviewModelTrainer.NUMBER_OF_LEAVES,
+                minimumExampleCountPerLeaf: MINIMUM_EXAMPLE_COUNT_PER_LEAF,
+                learningRate: ReviewModelTrainer.LEARNING_RATE));
         }
 
         private static void EvaluateModel(MLContext machineLearningContext, ITransformer trainedModel, IDataView testData, string logPath)

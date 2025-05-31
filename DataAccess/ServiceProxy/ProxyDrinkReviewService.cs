@@ -17,9 +17,9 @@ namespace WinUIApp.ProxyServices
     /// </summary>
     public class ProxyDrinkReviewService : IDrinkReviewService
     {
-        private const int DefaultPersonalDrinkCount = 1;
-        private const float MinimumAlcoholPercentageConstant = 0f;
-        private const float MaximumAlcoholPercentageConstant = 100f;
+        private const int DEFAULT_PERSONAL_DRINK_COUNT = 1;
+        private const float MINIMUM_ALCOHOOL_PERCENTAGE = 0f;
+        private const float MAXIMUM_ALCOHOOL_PERCENTAGE = 100f;
         private readonly HttpClient httpClient;
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace WinUIApp.ProxyServices
         {
             try
             {
-                var response = this.httpClient.GetAsync($"api/reviews/get-average-rating-by-drink?drinkId={drinkID}").Result;
+                HttpResponseMessage response = this.httpClient.GetAsync($"api/reviews/get-average-rating-by-drink?drinkId={drinkID}").Result;
                 response.EnsureSuccessStatusCode();
                 return response.Content.ReadFromJsonAsync<float>().Result;
             }
@@ -51,7 +51,7 @@ namespace WinUIApp.ProxyServices
         {
             try
             {
-                var response = this.httpClient.GetAsync($"api/reviews/get-reviews-by-drink?drinkId={drinkID}").Result;
+                HttpResponseMessage response = this.httpClient.GetAsync($"api/reviews/get-reviews-by-drink?drinkId={drinkID}").Result;
                 response.EnsureSuccessStatusCode();
                 return response.Content.ReadFromJsonAsync<List<ReviewDTO>>().Result ?? new List<ReviewDTO>();
             }

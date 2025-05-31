@@ -12,11 +12,11 @@ namespace WinUIApp.WebAPI.Constants.ErrorMessages
         /// <summary>
         /// Error message for when a rating value is invalid.
         /// </summary>
-        public const string InvalidRatingValue = "The rating value is invalid.";
+        public const string INVALID_RATING_VALUE = "The rating value is invalid.";
 
         /// <summary>
         /// Error message for when a review is invalid.
         /// </summary>
-        public const string InvalidReview = "The review is invalid.";
+        public const string INVALID_REVIEW = "The review is invalid.";
     }
 } 

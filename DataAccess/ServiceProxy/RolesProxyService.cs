@@ -11,18 +11,18 @@ namespace DataAccess.ServiceProxy
 {
     public class RolesProxyService : IRolesService
     {
-        private const string ApiRoute = "api/roles";
+        private const string API_ROUTE = "api/roles";
         private readonly HttpClient httpClient;
 
         public RolesProxyService(string baseApiUrl)
         {
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(baseApiUrl);
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new Uri(baseApiUrl);
         }
 
         public async Task<List<Role>> GetAllRolesAsync()
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<Role> roles = await response.Content.ReadFromJsonAsync<List<Role>>() ?? new List<Role>();
             return roles;
@@ -30,7 +30,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<Role?> GetNextRoleInHierarchyAsync(RoleType currentRoleType)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(ApiRoute);
+            HttpResponseMessage response = await this.httpClient.GetAsync(API_ROUTE);
             response.EnsureSuccessStatusCode();
             List<Role> roles = await response.Content.ReadFromJsonAsync<List<Role>>() ?? new List<Role>();
 
