@@ -20,6 +20,7 @@ namespace WinUIApp.WebAPI.Models
         private string drinkImageUrl = string.Empty;
         private List<Category> categoryList;
         private float alcoholContent;
+        private bool isRequestingApproval = false;
 
         public DrinkDTO() { }
 
@@ -33,7 +34,7 @@ namespace WinUIApp.WebAPI.Models
         /// <param name="brandDto">Brand of the drink.</param>
         /// <param name="alcoholContent">Alcohol content percentage.</param>
         /// <exception cref="ArgumentNullException">Thrown when brand is null.</exception>
-        public DrinkDTO(int id, string? drinkName, string imageUrl, List<Category> categories, Brand brandDto, float alcoholContent)
+        public DrinkDTO(int id, string? drinkName, string imageUrl, List<Category> categories, Brand brandDto, float alcoholContent, bool isRequestingApproval)
         {
             this.DrinkId = id;
             this.DrinkName = drinkName;
@@ -41,6 +42,7 @@ namespace WinUIApp.WebAPI.Models
             this.CategoryList = categories;
             this.DrinkBrand = brandDto ?? throw new ArgumentNullException(nameof(brandDto), "Brand cannot be null");
             this.AlcoholContent = alcoholContent;
+            this.isRequestingApproval = isRequestingApproval;
         }
 
         /// <summary>
@@ -101,5 +103,7 @@ namespace WinUIApp.WebAPI.Models
                 this.alcoholContent = value;
             }
         }
+
+        public bool IsRequestingApproval { get; set; } = false;
     }
 }

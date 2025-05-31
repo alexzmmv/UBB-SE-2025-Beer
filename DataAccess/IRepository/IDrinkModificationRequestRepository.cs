@@ -5,13 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccess.Data;
+using DataAccess.DTOModels;
 
 namespace DataAccess.IRepository
 {
     public interface IDrinkModificationRequestRepository
     {
-        Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests();
-        Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId);
+        DrinkModificationRequestDTO AddRequest(DrinkModificationRequestDTO request);
+
+        Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests();
+
+        Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId);
+
         Task DeleteRequest(int modificationRequestId);
     }
 }

@@ -12,7 +12,7 @@
 
     <Grid Height="60" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button x:Name="Logo"
-                Content="DrinkMDb"
+                Content="Home"
                 Click="Logo_Click"
                 Background="Transparent"
                 BorderThickness="0"
@@ -41,10 +41,17 @@
             </Button>
             <TextBox x:Name="DrinkSearchBox" 
                      PlaceholderText="Search drinks..."
-                     Width="300"/>
+                     Width="300"
+                     Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}"/>
             <Button x:Name="SearchDrinksButton"
-                    Click="SearchDrinksButton_Click">
+                    Click="SearchDrinksButton_Click"
+                    Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}">
                 <SymbolIcon Symbol="Find"/>
+            </Button>
+            <Button x:Name="GoBackButton"
+                    Visibility="{x:Bind GoBackButtonVisibility, Mode=OneWay}"
+                    Content="Go Back"
+                Click="GoBackButton_Click">
             </Button>
         </StackPanel>
         <components:AddDrinkButton x:Name="AddDrinkButtonControl" 

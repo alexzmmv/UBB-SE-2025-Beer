@@ -5,6 +5,7 @@
 namespace DataAccess.Service.Interfaces
 {
     using System.Collections.Generic;
+    using DataAccess.Data;
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices.Models;
     using WinUIApp.WebAPI.Models;
@@ -23,7 +24,7 @@ namespace DataAccess.Service.Interfaces
         /// <param name="inputtedDrinkBrandName"> Brand. </param>
         /// <param name="inputtedAlcoholPercentage"> Alcohol. </param>
         /// <exception cref="Exception"> Any issues. </exception>
-        void AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage);
+        DrinkDTO AddDrink(string inputtedDrinkName, string inputtedDrinkPath, List<Category> inputtedDrinkCategories, string inputtedDrinkBrandName, float inputtedAlcoholPercentage, bool isDrinkRequestingApproval = false);
 
         /// <summary>
         /// Adds a drink to the user's personal drink list.

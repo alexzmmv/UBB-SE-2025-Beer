@@ -2,6 +2,7 @@
 using DataAccess.Constants;
 using DataAccess.Data;
 using DataAccess.Service;
+using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,13 +22,13 @@ namespace ServerAPI.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAll()
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAll()
         {
             return await this.drinkModificationService.GetAllModificationRequests();
         }
 
         [HttpGet]
-        public async Task<DrinkModificationRequest> Get(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> Get(int modificationRequestId)
         {
             return await this.drinkModificationService.GetModificationRequest(modificationRequestId);
         }

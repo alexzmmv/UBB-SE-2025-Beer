@@ -4,13 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccess.Constants;
+using DataAccess.Data;
+using WinUiApp.Data.Data;
+using DataAccess.DTOModels;
+using WinUIApp.WebAPI.Models;
 
 namespace DataAccess.Service.Interfaces
 {
     public interface IDrinkModificationRequestService
     {
-        Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests();
-        Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId);
+        DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId);
+        Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests();
+        Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId);
         Task DenyRequest(int modificationRequestId);
     }
 }

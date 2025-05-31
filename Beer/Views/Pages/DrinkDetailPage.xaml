@@ -53,19 +53,23 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 5 0 0">
                         <components:AddRemoveFromDrinkListButton DrinkId="{Binding Drink}" />
 
-                            <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
-                            <Button>
-                            <Button.Flyout>
-                                <Flyout Placement="Bottom">
-                                    <StackPanel>
-                                        <TextBlock Text="Are you sure?" HorizontalAlignment="Center" />
-                                        <Button x:Name="ConfirmRemoveButton" Click="ConfirmRemoveButton_Click" HorizontalAlignment="Center" Margin="0 5 0 0">Confirm</Button>
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                            <TextBlock x:Name="RemoveButtonText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                        </Button>
-                        <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click"  DrinkId="{Binding DrinkDTO.DrinkId}" />
+                    <components:UpdateDrinkButton x:Name="UpdateButton" Drink="{Binding Drink}" />
+                    <Button Content="Add Review"
+                            x:Name="ReviewButton"
+                            Command="{x:Bind ViewModel.ShowPopupCommand, Mode=OneWay}"
+                            Margin="5,0" />
+                    <Button x:Name="RemoveButton">
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <StackPanel>
+                                    <TextBlock Text="Are you sure?" HorizontalAlignment="Center" />
+                                    <Button x:Name="ConfirmRemoveButton" Click="ConfirmRemoveButton_Click" HorizontalAlignment="Center" Margin="0 5 0 0">Confirm</Button>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                        <TextBlock x:Name="RemoveButtonText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                    </Button>
+                    <votebutton:VoteDrinkOfTheDayButton Tapped="VoteButton_Click" x:Name="VoteButton"  DrinkId="{Binding DrinkDTO.DrinkId}" />
 
                     </StackPanel>
                     </StackPanel>

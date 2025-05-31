@@ -15,11 +15,13 @@ namespace WinUIApp.WebAPI.Controllers
     {
         private readonly IDrinkService drinkService;
         private readonly IUserService userService;
+        private readonly IDrinkModificationRequestService drinkModificationRequestService;
 
-        public DrinkController(IDrinkService drinkService, IUserService userService)
+        public DrinkController(IDrinkService drinkService, IUserService userService, IDrinkModificationRequestService drinkModificationRequestService)
         {
             this.drinkService = drinkService;
             this.userService = userService;
+            this.drinkModificationRequestService = drinkModificationRequestService;
         }
 
         [HttpPost("get-all")]
@@ -34,7 +36,7 @@ namespace WinUIApp.WebAPI.Controllers
                     request.maximumAlcoholPercentage,
                     request.orderingCriteria));
         }
-        
+
         [HttpGet("get-one")]
         public IActionResult GetDrinkById([FromQuery] int drinkId)
         {
@@ -63,27 +65,35 @@ namespace WinUIApp.WebAPI.Controllers
         {
             return Ok(drinkService.GetUserPersonalDrinkList(request.userId));
         }
-        
+
         [HttpPost("add")]
         public async Task<IActionResult> AddDrink([FromBody] AddDrinkRequest request)
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            var userRole = await userService.GetHighestRoleTypeForUser(request.requestingUserId);
-            if (userRole == RoleType.Admin)
+            var user = await userService.GetUserById(request.requestingUserId) ?? throw new Exception("No user with given ID");
+            if (user.AssignedRole == RoleType.Admin)
+            {
                 drinkService.AddDrink(
                     request.inputtedDrinkName,
                     request.inputtedDrinkPath,
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
-                    request.inputtedAlcoholPercentage);
+                    request.inputtedAlcoholPercentage,
+                    false);
+            }
             else
-                drinkService.AddDrink(
+            {
+                var drinkRequestingAddition = drinkService.AddDrink(
                     request.inputtedDrinkName,
                     request.inputtedDrinkPath,
                     request.inputtedDrinkCategories,
                     request.inputtedDrinkBrandName,
-                    request.inputtedAlcoholPercentage); // make logic for add temporary drink and add request
+                    request.inputtedAlcoholPercentage,
+                    true);
+
+                drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Add, null, drinkRequestingAddition.DrinkId, user.UserId);
+            }
             return Ok();
         }
 
@@ -100,16 +110,56 @@ namespace WinUIApp.WebAPI.Controllers
         }
 
         [HttpPut("update")]
-        public IActionResult UpdateDrink([FromBody] UpdateDrinkRequest request)
+        public async Task<IActionResult> UpdateDrink([FromBody] UpdateDrinkRequest request)
         {
-            drinkService.UpdateDrink(request.Drink);
+            var user = await userService.GetUserById(request.requestingUserId) ?? throw new Exception("No user with given ID");
+            if (user.AssignedRole == RoleType.Admin)
+            {
+                drinkService.UpdateDrink(request.Drink);
+            }
+            else
+            {
+                var newDrink = drinkService.AddDrink(
+                    request.Drink.DrinkName,
+                    request.Drink.DrinkImageUrl,
+                    request.Drink.CategoryList,
+                    request.Drink.DrinkBrand.BrandName,
+                    request.Drink.AlcoholContent,
+                    true);
+                var oldDrink = drinkService.GetDrinkById(request.Drink.DrinkId);
+                if (oldDrink == null)
+                {
+                    drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Add, null, newDrink.DrinkId, user.UserId);
+                }
+                else
+                {
+                    if (oldDrink.IsRequestingApproval)
+                    {
+                        throw new Exception("Cant update unapproved drink");
+                    }
+                    drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Edit, request.Drink.DrinkId, newDrink.DrinkId, user.UserId);
+                }
+            }
             return Ok();
         }
 
         [HttpDelete("delete")]
-        public IActionResult DeleteDrink([FromBody] DeleteDrinkRequest request)
+        public async Task<IActionResult> DeleteDrink([FromBody] DeleteDrinkRequest request)
         {
-            drinkService.DeleteDrink(request.drinkId);
+            var requestingUser = await this.userService.GetUserById(request.RequestingUserId);
+            if (requestingUser.AssignedRole == RoleType.Admin)
+            {
+                drinkService.DeleteDrink(request.drinkId);
+            }
+            else
+            {
+                var drink = this.drinkService.GetDrinkById(request.drinkId) ?? throw new Exception("Drink requested for removal does not exist.");
+                if (drink.IsRequestingApproval)
+                {
+                    throw new Exception("Can't delete unapproved drink");
+                }
+                this.drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Remove, request.drinkId, null, request.RequestingUserId);
+            }
             return Ok();
         }
 

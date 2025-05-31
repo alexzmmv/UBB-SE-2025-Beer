@@ -1,4 +1,6 @@
-﻿using DataAccess.Data;
+﻿using DataAccess.Constants;
+using DataAccess.Data;
+using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using Newtonsoft.Json;
 using System;
@@ -21,20 +23,20 @@ namespace DataAccess.ServiceProxy
             this.baseUrl = baseUrl.TrimEnd('/');
         }
 
-        public async Task<IEnumerable<DrinkModificationRequest>> GetAllModificationRequests()
+        public async Task<IEnumerable<DrinkModificationRequestDTO>> GetAllModificationRequests()
         {
             var response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}/get-all");
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IEnumerable<DrinkModificationRequest>>(json);
+            return JsonConvert.DeserializeObject<IEnumerable<DrinkModificationRequestDTO>>(json);
         }
 
-        public async Task<DrinkModificationRequest> GetModificationRequest(int modificationRequestId)
+        public async Task<DrinkModificationRequestDTO> GetModificationRequest(int modificationRequestId)
         {
             var response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}?modificationRequestId={modificationRequestId}");
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<DrinkModificationRequest>(json);
+            return JsonConvert.DeserializeObject<DrinkModificationRequestDTO>(json);
         }
 
         public async Task DenyRequest(int modificationRequestId, Guid userId)
@@ -51,6 +53,11 @@ namespace DataAccess.ServiceProxy
         }
 
         public Task DenyRequest(int modificationRequestId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DrinkModificationRequestDTO AddRequest(DrinkModificationRequestType type, int? oldDrinkId, int? newDrinkId, Guid requestingUserId)
         {
             throw new NotImplementedException();
         }
