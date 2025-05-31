@@ -107,23 +107,6 @@ namespace WinUIApp.Views.Pages
             this.ViewModel.VoteForDrink();
         }
 
-        private void AddRatingButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.ViewModel?.Drink == null)
-            {
-                return;
-            }
-
-            int productId = this.ViewModel.Drink.DrinkId;
-
-            IConfiguration configuration = App.Host.Services.GetRequiredService<IConfiguration>();
-            IReviewService reviewService = App.Host.Services.GetRequiredService<IReviewService>();
-            IUserService userService = App.Host.Services.GetRequiredService<IUserService>();
-
-            ReviewViewModel reviewViewModel = new ReviewViewModel(reviewService, userService);
-
-        }
-
         private void OpenAddReviewModal(object sender, EventArgs e)
         {
             AddReviewModalOverlay.Visibility = Visibility.Visible;
@@ -133,6 +116,10 @@ namespace WinUIApp.Views.Pages
         {
 
             AddReviewModalOverlay.Visibility = Visibility.Collapsed;
+        }
+        private void RefreshReviews(object sender, EventArgs e)
+        {
+            this.ViewModel.RefreshReviews();
         }
 }
 }

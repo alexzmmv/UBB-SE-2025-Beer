@@ -11,6 +11,7 @@
             Margin="5,0">
         <TextBlock x:Name="ButtonText"
                    Text="{x:Bind ViewModel.ButtonText, Mode=OneWay}"
+                   Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                    FontSize="14" />
     </Button>
 
