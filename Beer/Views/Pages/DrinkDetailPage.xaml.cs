@@ -1,5 +1,6 @@
 ﻿using DataAccess.Constants;
 using DataAccess.Service.Interfaces;
+using DrinkDb_Auth;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using MailKit.Net.Imap;
 using Microsoft.Extensions.Configuration;
@@ -92,14 +93,14 @@ namespace WinUIApp.Views.Pages
                 this.ViewModel.LoadDrink(drinkId);
             }
 
-            MainWindow.PreviousPage = MainWindow.CurrentPage;
-            MainWindow.CurrentPage = typeof(DrinkDetailPage);
+            AuthenticationWindow.PreviousPage = AuthenticationWindow.CurrentPage;
+            AuthenticationWindow.CurrentPage = typeof(DrinkDetailPage);
         }
 
         private void ConfirmRemoveButton_Click(object sender, RoutedEventArgs eventArguments)
         {
             this.ViewModel.RemoveDrinkAsync();
-            MainWindow.AppMainFrame.Navigate(MainWindow.PreviousPage);
+            AuthenticationWindow.NavigationFrame.Navigate(AuthenticationWindow.PreviousPage);
         }
 
         private void VoteButton_Click(object sender, RoutedEventArgs eventArguments)

@@ -91,7 +91,7 @@
     <None Update="Views\Pages\SuccessPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
-    <None Update="Views\Pages\UserPage.xaml">
+    <None Update="Views\Pages\ProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="Views\Components\Templates\TwoFactorAuthCheckView.xaml">

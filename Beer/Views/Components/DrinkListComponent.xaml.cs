@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DrinkDb_Auth;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinUiApp.Data.Data;
@@ -32,7 +33,7 @@ namespace WinUIApp.Views.Components
         {
             if (sender is Button button && button.Tag is int drinkId)
             {
-                MainWindow.AppMainFrame.Navigate(typeof(DrinkDetailPage), drinkId);
+                AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), drinkId);
             }
         }
     }

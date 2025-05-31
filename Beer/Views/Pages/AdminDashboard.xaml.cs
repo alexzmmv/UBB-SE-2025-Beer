@@ -20,10 +20,10 @@ namespace DrinkDb_Auth.View
     using System.Threading.Tasks;
     using DataAccess.DTOModels;
 
-    public sealed partial class MainPage : Page
+    public sealed partial class AdminPage : Page
     {
         public MainPageViewModel ViewModel { get; }
-        public MainPage()
+        public AdminPage()
         {
             this.InitializeComponent();
 
@@ -224,7 +224,7 @@ namespace DrinkDb_Auth.View
         {
             if (this.Frame != null)
             {
-                this.Frame.Navigate(typeof(UserPage));
+                this.Frame.Navigate(typeof(ProfilePage));
             }
         }
 

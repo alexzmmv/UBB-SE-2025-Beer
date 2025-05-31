@@ -17,7 +17,7 @@ using WinUIApp;
 
 namespace DrinkDb_Auth
 {
-    public sealed partial class UserPage : Page
+    public sealed partial class ProfilePage : Page
     {
         private readonly IUserService userService;
         private readonly IAuthenticationService authenticationService;
@@ -25,7 +25,7 @@ namespace DrinkDb_Auth
         private readonly IUpgradeRequestsService upgradeRequestsService;
         private User? currentUser;
 
-        public UserPage()
+        public ProfilePage()
         {
             this.InitializeComponent();
             this.Loaded += UserPage_Loaded;
@@ -84,8 +84,8 @@ namespace DrinkDb_Auth
         {
             if (this.Frame != null)
             {
-                MainPage mainPage = App.Host.Services.GetRequiredService<MainPage>();
-                this.Frame.Navigate(typeof(MainPage), mainPage);
+                AdminPage mainPage = App.Host.Services.GetRequiredService<AdminPage>();
+                this.Frame.Navigate(typeof(AdminPage), mainPage);
             }
         }
 

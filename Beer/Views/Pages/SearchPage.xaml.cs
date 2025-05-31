@@ -2,6 +2,7 @@ namespace WinUIApp.Views.Pages
 {
     using System.Collections.Generic;
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -45,8 +46,8 @@ namespace WinUIApp.Views.Pages
                 }
             }
 
-            MainWindow.PreviousPage = typeof(MainPage);
-            MainWindow.CurrentPage = typeof(SearchPage);
+            AuthenticationWindow.PreviousPage = typeof(MainPage);
+            AuthenticationWindow.CurrentPage = typeof(SearchPage);
 
             this.LoadDrinks();
             this.LoadCategoriesFilter();

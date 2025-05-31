@@ -3,6 +3,7 @@ namespace WinUIApp.Views.Components.HeaderComponents
     using System;
     using System.Linq;
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -27,19 +28,19 @@ namespace WinUIApp.Views.Components.HeaderComponents
 
         private void GoBackButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            if (MainWindow.PreviousPage != null)
+            if (AuthenticationWindow.PreviousPage != null)
             {
-                MainWindow.AppMainFrame.Navigate(MainWindow.PreviousPage);
+                AuthenticationWindow.NavigationFrame.Navigate(AuthenticationWindow.PreviousPage);
             }
             else
             {
-                MainWindow.AppMainFrame.Navigate(typeof(MainPage));
+                AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
             }
         }
 
         private void Logo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            MainWindow.AppMainFrame.Navigate(typeof(MainPage));
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
         }
 
         private void SearchDrinksButton_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -49,8 +50,8 @@ namespace WinUIApp.Views.Components.HeaderComponents
                 SelectedCategoryFilters = this.CategoryMenu.SelectedCategories.ToList(),
                 InputSearchKeyword = this.DrinkSearchBox.Text,
             };
-            MainWindow.PreviousPage = MainWindow.CurrentPage;
-            MainWindow.AppMainFrame.Navigate(typeof(SearchPage), navigationParameters);
+            AuthenticationWindow.PreviousPage = AuthenticationWindow.CurrentPage;
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(SearchPage), navigationParameters);
         }
 
         public Visibility SearchBarVisibility { get; set; } = Visibility.Collapsed;
