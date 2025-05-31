@@ -3,15 +3,13 @@ using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
-using MailKit.Net.Imap;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using Windows.UI.Notifications;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using WinUIApp.ProxyServices;
 using WinUIApp.ViewModels;
 using WinUIApp.Views.Components.Modals;
@@ -20,7 +18,7 @@ using WinUIApp.Views.Windows;
 
 namespace WinUIApp.Views.Pages
 {
-    public sealed partial class DrinkDetailPage : Page
+    public sealed partial class DrinkDetailPage : Page, INotifyPropertyChanged
     {
         private IDrinkService drinkService;
         private IDrinkReviewService drinkReviewService;
@@ -28,9 +26,26 @@ namespace WinUIApp.Views.Pages
         private IReviewService reviewService;
         private ICheckersService checkersService;
         private bool isAdmin;
-        private MenuFlyoutItem flagReviewMenuItem;
-        private MenuFlyoutItem hideReviewMenuItem;
-        private MenuFlyoutItem aiCheckMenuItem;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsAdmin
+        {
+            get => isAdmin;
+            private set
+            {
+                if (isAdmin != value)
+                {
+                    isAdmin = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public DrinkDetailPage()
         {
@@ -41,28 +56,6 @@ namespace WinUIApp.Views.Pages
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
             this.checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
-
-            // Initialize menu items
-            this.flagReviewMenuItem = new MenuFlyoutItem
-            {
-                Text = "Flag Review",
-                Icon = new FontIcon { Glyph = "\uE7E7" }
-            };
-            this.flagReviewMenuItem.Click += FlagReviewMenuItem_Click;
-
-            this.hideReviewMenuItem = new MenuFlyoutItem
-            {
-                Text = "Hide Review",
-                Icon = new FontIcon { Glyph = "\uE711" }
-            };
-            this.hideReviewMenuItem.Click += HideReviewMenuItem_Click;
-
-            this.aiCheckMenuItem = new MenuFlyoutItem
-            {
-                Text = "AI Check",
-                Icon = new FontIcon { Glyph = "\uE721" }
-            };
-            this.aiCheckMenuItem.Click += AICheckMenuItem_Click;
 
             this.ViewModel = new DrinkDetailPageViewModel(
                 this.drinkService,
@@ -87,8 +80,8 @@ namespace WinUIApp.Views.Pages
 
         private async void InitializeAdminStatus()
         {
-            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
-            ViewModel.IsAdmin = isAdmin;
+            IsAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+            ViewModel.IsAdmin = IsAdmin;
         }
 
         private void FlagReviewMenuItem_Click(object sender, RoutedEventArgs e)
@@ -229,9 +222,9 @@ namespace WinUIApp.Views.Pages
 
         private void CloseAddReviewModal(object sender,EventArgs e)
         {
-
             AddReviewModalOverlay.Visibility = Visibility.Collapsed;
         }
+
         private void RefreshReviews(object sender, EventArgs e)
         {
             this.ViewModel.RefreshReviews();
