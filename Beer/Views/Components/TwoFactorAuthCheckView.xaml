@@ -11,14 +11,14 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" x:Name="RootPannel">
             <TextBlock Text="Enter the 6-digit code from your authenticator app:"  
-                    TextWrapping="Wrap" Margin="0,0,0,20" TextAlignment="Center"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBox Text="{Binding FirstDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding SecondDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding ThirdDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding FourthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding FifthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding SixthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                    TextWrapping="Wrap" Margin="0,0,0,20" TextAlignment="Center" Style="{x:Null}"/>
+            <StackPanel Style="{x:Null}" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBox Style="{x:Null}" Text="{Binding FirstDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding SecondDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding ThirdDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding FourthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding FifthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding SixthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
             </StackPanel>
         </StackPanel>
     </Grid>

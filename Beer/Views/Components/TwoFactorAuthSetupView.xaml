@@ -10,17 +10,17 @@
    >  
 
    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" x:Name="RootPannel">  
-           <TextBlock Text="Scan the QR code with your authenticator app and enter the 6-digit code below:"  
-                      TextWrapping="Wrap" Margin="0,0,0,20" TextAlignment="Center"/>  
-           <Image Source="{Binding QrCodeImage}" Width="200" Height="200" Margin="0,0,0,20"/>  
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" x:Name="RootPannel">
+            <TextBlock Style="{x:Null}" Text="Scan the QR code with your authenticator app and enter the 6-digit code below:"  
+                      TextWrapping="Wrap" Margin="0,0,0,20" TextAlignment="Center"/>
+            <Image Style="{x:Null}" Source="{Binding QrCodeImage}" Width="200" Height="200" Margin="0,0,0,20"/>  
            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBox Text="{Binding FirstDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding SecondDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding ThirdDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding FourthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding FifthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Text="{Binding SixthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding FirstDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding SecondDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding ThirdDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding FourthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding FifthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
+                <TextBox Style="{x:Null}" Text="{Binding SixthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
             </StackPanel>  
        </StackPanel>  
    </Grid>  

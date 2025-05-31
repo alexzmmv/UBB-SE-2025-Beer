@@ -52,7 +52,7 @@ namespace DrinkDb_Auth
             this.googleOAuth2Provider = googleOAuth2Provider;
             this.MainFrame.Navigated += FrameNavigated;
 
-            this.Title = "DrinkDb - Sign In";
+            this.Title = "Beer";
 
             this.HeaderComponent.Visibility = Visibility.Collapsed;
 

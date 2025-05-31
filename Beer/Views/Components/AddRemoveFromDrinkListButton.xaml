@@ -5,9 +5,8 @@
     xmlns:local="using:WinUIApp.Views.Components">
 
     <Button x:Name="AddRemoveButton"
-            Background="White"
             Click="{x:Bind ViewModel.AddRemoveFromListAsync}"
-            Margin="5">
+            Margin="10">
         <TextBlock x:Name="ButtonText"
                    Foreground="Black"
                    Text="{x:Bind ViewModel.ButtonText, Mode=OneWay}"
