@@ -12,11 +12,11 @@ namespace WinUIApp.WebAPI.Constants.ErrorMessages
         /// <summary>
         /// Error message for when review content is empty.
         /// </summary>
-        public const string EmptyReviewContent = "Review content cannot be null or empty.";
+        public const string EMPTY_REVIEW_CONTENT = "Review content cannot be null or empty.";
 
         /// <summary>
         /// Error message for when an entity is not found.
         /// </summary>
-        public const string EntityNotFound = "No record found with the provided Id.";
+        public const string ENTITY_NOT_FOUND = "No record found with the provided Id.";
     }
 } 

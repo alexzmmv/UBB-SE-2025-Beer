@@ -1,5 +1,4 @@
 using DataAccess.Constants;
-using System;
 
 namespace DataAccess.Requests.Drinks
 {
@@ -10,4 +9,4 @@ namespace DataAccess.Requests.Drinks
         public int? NewDrinkId { get; set; }
         public Guid RequestingUserId { get; set; }
     }
-} 
+}

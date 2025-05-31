@@ -70,7 +70,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories
 
             Exception exception = Assert.Throws<Exception>(() => repository.DeleteReview(nonexistentReviewId));
 
-            Assert.Equal(RepositoryErrorMessages.EntityNotFound, exception.Message);
+            Assert.Equal(RepositoryErrorMessages.ENTITY_NOT_FOUND, exception.Message);
         }
     }
 }

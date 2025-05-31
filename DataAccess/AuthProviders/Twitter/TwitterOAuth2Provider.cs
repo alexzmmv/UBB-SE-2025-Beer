@@ -23,11 +23,11 @@
         private string ClientId { get; }
         private string ClientSecret { get; }
 
-        private const string RedirectUri = "http://127.0.0.1:5000/x-callback";
+        private const string REDIRECT_URI = "http://127.0.0.1:5000/x-callback";
 
-        private const string AuthorizationEndpoint = "https://twitter.com/i/oauth2/authorize";
-        private const string TokenEndpoint = "https://api.twitter.com/2/oauth2/token";
-        private const string UserInfoEndpoint = "https://api.twitter.com/2/users/me";
+        private const string AUTHORIZATION_ENDPOINT = "https://twitter.com/i/oauth2/authorize";
+        private const string TOKEN_ENDPOINT = "https://api.twitter.com/2/oauth2/token";
+        private const string USER_INFO_ENDPOINT = "https://api.twitter.com/2/users/me";
 
         private readonly string[] scopes = { "tweet.read", "users.read" };
 
@@ -67,7 +67,7 @@
             Dictionary<string, string> authorizationParameters = new Dictionary<string, string>
             {
                 { "client_id", this.ClientId },
-                { "redirect_uri", TwitterOAuth2Provider.RedirectUri },
+                { "redirect_uri", TwitterOAuth2Provider.REDIRECT_URI },
                 { "response_type", "code" },
                 { "scope", concatenatedScopes },
                 { "state", Guid.NewGuid().ToString() },
@@ -78,7 +78,7 @@
             string encodedQueryString = string.Join("&", authorizationParameters
                 .Select(item => $"{Uri.EscapeDataString(item.Key)}={Uri.EscapeDataString(item.Value)}"));
 
-            string fullAuthorizationUrl = $"{TwitterOAuth2Provider.AuthorizationEndpoint}?{encodedQueryString}";
+            string fullAuthorizationUrl = $"{TwitterOAuth2Provider.AUTHORIZATION_ENDPOINT}?{encodedQueryString}";
             return fullAuthorizationUrl;
         }
 
@@ -88,7 +88,7 @@
             {
                 { "code", code },
                 { "client_id", this.ClientId },
-                { "redirect_uri", TwitterOAuth2Provider.RedirectUri },
+                { "redirect_uri", TwitterOAuth2Provider.REDIRECT_URI },
                 { "grant_type", "authorization_code" },
                 { "code_verifier", this.codeVerifier },
             };
@@ -96,7 +96,7 @@
             try
             {
                 using FormUrlEncodedContent requestContent = new FormUrlEncodedContent(tokenRequestParameters);
-                HttpResponseMessage tokenResponse = await httpClient.PostAsync(TwitterOAuth2Provider.TokenEndpoint, requestContent);
+                HttpResponseMessage tokenResponse = await httpClient.PostAsync(TwitterOAuth2Provider.TOKEN_ENDPOINT, requestContent);
                 string tokenResponseContent = await tokenResponse.Content.ReadAsStringAsync();
 
                 if (!tokenResponse.IsSuccessStatusCode)
@@ -138,7 +138,7 @@
                     twitterUserInfoClient.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", twitterTokenResult.AccessToken);
 
-                    HttpResponseMessage userInfoResponse = await twitterUserInfoClient.GetAsync(TwitterOAuth2Provider.UserInfoEndpoint);
+                    HttpResponseMessage userInfoResponse = await twitterUserInfoClient.GetAsync(TwitterOAuth2Provider.USER_INFO_ENDPOINT);
                     string userInfoResponseBody = await userInfoResponse.Content.ReadAsStringAsync();
 
                     if (!userInfoResponse.IsSuccessStatusCode)

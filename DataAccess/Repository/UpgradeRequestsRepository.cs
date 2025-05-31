@@ -6,6 +6,7 @@
     using IRepository;
     using Microsoft.EntityFrameworkCore;
     using WinUiApp.Data;
+    using WinUiApp.Data.Data;
     using WinUiApp.Data.Interfaces;
 
     public class UpgradeRequestsRepository : IUpgradeRequestsRepository
@@ -14,43 +15,43 @@
 
         public UpgradeRequestsRepository(IAppDbContext context)
         {
-            dataContext = context;
+            this.dataContext = context;
         }
 
         public async Task<List<UpgradeRequest>> RetrieveAllUpgradeRequests()
         {
-            return await dataContext.UpgradeRequests.ToListAsync();
+            return await this.dataContext.UpgradeRequests.ToListAsync();
         }
 
         public async Task AddUpgradeRequest(Guid userId)
         {
-            var username = dataContext.Users.Where(user => user.UserId == userId).FirstOrDefault();
+            User? username = this.dataContext.Users.Where(user => user.UserId == userId).FirstOrDefault();
 
-            await dataContext.UpgradeRequests.AddAsync(
+            await this.dataContext.UpgradeRequests.AddAsync(
                 new UpgradeRequest
                 {
                     RequestingUserIdentifier = username.UserId,
                     RequestingUserDisplayName = username.Username,
                 });
-            await dataContext.SaveChangesAsync();
+            await this.dataContext.SaveChangesAsync();
         }
 
         public async Task RemoveUpgradeRequestByIdentifier(int upgradeRequestIdentifier)
         {
-            UpgradeRequest? upgradeRequest = await dataContext.UpgradeRequests.FirstOrDefaultAsync(ur => ur.UpgradeRequestId == upgradeRequestIdentifier);
+            UpgradeRequest? upgradeRequest = await this.dataContext.UpgradeRequests.FirstOrDefaultAsync(ur => ur.UpgradeRequestId == upgradeRequestIdentifier);
 
             if (upgradeRequest == null)
             {
                 return;
             }
 
-            dataContext.UpgradeRequests.Remove(upgradeRequest);
-            await dataContext.SaveChangesAsync();
+            this.dataContext.UpgradeRequests.Remove(upgradeRequest);
+            await this.dataContext.SaveChangesAsync();
         }
 
         public async Task<UpgradeRequest?> RetrieveUpgradeRequestByIdentifier(int upgradeRequestIdentifier)
         {
-            return await dataContext.UpgradeRequests.FirstOrDefaultAsync(ur => ur.UpgradeRequestId == upgradeRequestIdentifier);
+            return await this.dataContext.UpgradeRequests.FirstOrDefaultAsync(ur => ur.UpgradeRequestId == upgradeRequestIdentifier);
         }
     }
 }
