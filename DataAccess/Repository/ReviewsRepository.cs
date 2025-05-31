@@ -28,12 +28,6 @@ namespace DataAccess.Repository
             dataContext = context;
         }
 
-        public async Task LoadReviews(IEnumerable<Review> reviewsToLoad)
-        {
-            await dataContext.Reviews.AddRangeAsync(reviewsToLoad);
-            await dataContext.SaveChangesAsync();
-        }
-
         public async Task<List<ReviewDTO>> GetAllReviews()
         {
             var reviews = await dataContext.Reviews.ToListAsync();
@@ -84,15 +78,6 @@ namespace DataAccess.Repository
         {
             var reviews = await dataContext.Reviews
                 .Where(review => review.NumberOfFlags >= minFlags && !review.IsHidden)
-                .ToListAsync();
-            return reviews.Select(ReviewMapper.ToDTO).ToList();
-        }
-
-        public async Task<List<ReviewDTO>> GetReviewsByUser(Guid userId)
-        {
-            var reviews = await dataContext.Reviews
-                .Where(review => review.UserId == userId && !review.IsHidden)
-                .OrderByDescending(review => review.CreatedDate)
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
         }

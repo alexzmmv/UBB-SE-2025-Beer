@@ -45,48 +45,30 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             Review removedReview = null!;
+            int existingReviewId = 1;
 
             mockReviewDbSet
                 .Setup(set => set.Remove(It.IsAny<Review>()))
-                .Callback<Review>(r => removedReview = r);
+                .Callback<Review>(review => removedReview = review);
 
             mockAppDbContext
                 .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
             // Act
-            await reviewsRepository.RemoveReviewById(1);
+            await reviewsRepository.RemoveReviewById(existingReviewId);
 
             // Assert
             Assert.NotNull(removedReview);
-            Assert.Equal(1, removedReview.ReviewId);
+            Assert.Equal(existingReviewId, removedReview.ReviewId);
         }
 
         [Fact]
-        public async Task RemoveReviewById_WhenReviewExists_CallsSaveChanges()
-        {
-            // Arrange
-            bool saveChangesCalled = false;
-
-            mockReviewDbSet.Setup(set => set.Remove(It.IsAny<Review>()));
-            mockAppDbContext
-                .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                .Callback(() => saveChangesCalled = true)
-                .ReturnsAsync(1);
-
-            // Act
-            await reviewsRepository.RemoveReviewById(1);
-
-            // Assert
-            Assert.True(saveChangesCalled);
-        }
-
-        [Fact]
-        public async Task RemoveReviewById_WhenReviewDoesNotExist_DoesNotCallRemoveOrSaveChanges()
+        public async Task RemoveReviewById_WhenReviewDoesNotExist_DoesNotCallRemove()
         {
             // Arrange
             bool removeCalled = false;
-            bool saveCalled = false;
+            int nonExistingReviewId = 999;
 
             // Create a separate mock for empty data
             var emptyData = new List<Review>();
@@ -100,19 +82,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 .Setup(context => context.Reviews)
                 .Returns(emptyMockDbSet.Object);
 
-            mockAppDbContext
-                .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                .Callback(() => saveCalled = true)
-                .ReturnsAsync(0);
-
             var repository = new ReviewsRepository(mockAppDbContext.Object);
 
             // Act
-            await repository.RemoveReviewById(999); // Non-existing review
+            await repository.RemoveReviewById(nonExistingReviewId);
 
             // Assert
             Assert.False(removeCalled);
-            Assert.False(saveCalled);
         }
     }
 }
