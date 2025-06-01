@@ -39,7 +39,7 @@ public class HomePageController : Controller
 
         Dictionary<string, bool> drinkOrderingCriteria = new Dictionary<string, bool>();
 
-        var drinks = drinkService.GetDrinks(searchKeyword, drinkBrandsList, drinkCategoriesList, minValue, maxValue, drinkOrderingCriteria);
+        var drinks = drinkService.GetDrinks(searchKeyword, drinkBrandsList, drinkCategoriesList, minValue, maxValue, drinkOrderingCriteria).Where(drink => !drink.IsRequestingApproval).ToList();
 
         var homeViewModel = new HomeViewModel
         {
