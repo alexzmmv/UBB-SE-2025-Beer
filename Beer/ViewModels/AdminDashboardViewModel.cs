@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -14,21 +15,30 @@ using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
 using WinUiApp.Data.Data;
-using System.Diagnostics;
+using WinUIApp;
+using System.Reflection;
 
 namespace DrinkDb_Auth.ViewModel.AdminDashboard
 {
+    public class DrinkModificationRequestWithUsername
+    {
+        public DrinkModificationRequestDTO Request { get; set; }
+        public string Username { get; set; }
+    }
+
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private readonly IReviewService reviewsService;
         private readonly IUserService userService;
         private readonly ICheckersService checkersService;
         private readonly IUpgradeRequestsService requestsService;
+        private readonly IDrinkModificationRequestService drinkModificationRequestService;
 
         private ObservableCollection<ReviewDTO> flaggedReviews;
         private ObservableCollection<User> appealsUsers;
         private ObservableCollection<UpgradeRequest> upgradeRequests;
         private ObservableCollection<string> offensiveWords;
+        private ObservableCollection<DrinkModificationRequestWithUsername> drinkModificationRequests;
         private User selectedAppealUser;
         private UpgradeRequest selectedUpgradeRequest;
         private ObservableCollection<string> userReviewsFormatted;
@@ -42,12 +52,14 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         // Constructor of warnings
         public MainPageViewModel(IReviewService reviewsService, IUserService userService,
-            IUpgradeRequestsService upgradeRequestsService, ICheckersService checkersService)
+            IUpgradeRequestsService upgradeRequestsService, ICheckersService checkersService, 
+            IDrinkModificationRequestService drinkModificationRequestService)
         {
             this.reviewsService = reviewsService;
             this.userService = userService;
             this.requestsService = upgradeRequestsService;
             this.checkersService = checkersService;
+            this.drinkModificationRequestService = drinkModificationRequestService;
 
             this.InitializeCommands();
         }
@@ -79,6 +91,10 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         public ICommand HideWordListPopupCommand { get; private set; }
 
         public ICommand BanUserCommand { get; private set; }
+
+        public ICommand ApproveDrinkModificationCommand { get; private set; }
+
+        public ICommand DenyDrinkModificationCommand { get; private set; }
 
         public ObservableCollection<ReviewDTO> FlaggedReviews
         {
@@ -116,6 +132,16 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             set
             {
                 this.offensiveWords = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<DrinkModificationRequestWithUsername> DrinkModificationRequests
+        {
+            get => this.drinkModificationRequests;
+            set
+            {
+                this.drinkModificationRequests = value;
                 this.OnPropertyChanged();
             }
         }
@@ -233,17 +259,16 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             try
             {
-                await Task.WhenAll(
-                    LoadFlaggedReviews(),
-                    LoadAppeals(),
-                    LoadRoleRequests(),
-                    LoadOffensiveWords(),
-                    LoadUsersWithHiddenReviews());
+                await LoadFlaggedReviews();
+                await LoadAppeals();
+                await LoadRoleRequests();
+                await LoadOffensiveWords();
+                await LoadDrinkModificationRequests();
+                await LoadUsersWithHiddenReviews();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in LoadAllData: {ex.Message}");
-                throw;
+                Debug.WriteLine($"Error loading data: {ex.Message}");
             }
         }
 
@@ -285,13 +310,59 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             try
             {
-                HashSet<string> words = await this.checkersService.GetOffensiveWordsList();
+                var words = await checkersService.GetOffensiveWordsList();
                 this.OffensiveWords = new ObservableCollection<string>(words);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error loading offensive words: {ex.Message}");
-                this.OffensiveWords = new ObservableCollection<string>();
+            }
+        }
+
+        public async Task LoadDrinkModificationRequests()
+        {
+            try
+            {
+                IEnumerable<DrinkModificationRequestDTO> allRequests = await this.drinkModificationRequestService.GetAllModificationRequests();
+
+                // Filter out temporary "Add" requests that are part of "Edit" operations
+                List<DrinkModificationRequestDTO> filteredRequests = allRequests
+                    .Where(request =>
+                    {
+                        // Keep all requests except "Add" requests that have a corresponding "Edit" request
+                        if (request.ModificationType == DrinkModificationRequestType.Add)
+                        {
+                            // Check if this "Add" request is part of an "Edit" operation
+                            // by looking for an "Edit" request with the same NewDrinkId as this request's NewDrinkId
+                            bool isPartOfEdit = allRequests.Any(editRequest =>
+                                editRequest.ModificationType == DrinkModificationRequestType.Edit &&
+                                editRequest.NewDrinkId == request.NewDrinkId);
+
+                            return !isPartOfEdit; // Only include "Add" requests that are NOT part of an edit
+                        }
+
+                        return true; // Include all "Edit" and "Remove" requests
+                    })
+                    .ToList();
+
+                // Create wrapper objects with usernames
+                var requestsWithUsernames = new List<DrinkModificationRequestWithUsername>();
+                foreach (var request in filteredRequests)
+                {
+                    var username = await GetUsernameById(request.RequestingUserId);
+                    requestsWithUsernames.Add(new DrinkModificationRequestWithUsername 
+                    { 
+                        Request = request, 
+                        Username = username 
+                    });
+                }
+
+                this.DrinkModificationRequests = new ObservableCollection<DrinkModificationRequestWithUsername>(requestsWithUsernames);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading drink modification requests: {ex.Message}");
+                this.DrinkModificationRequests = new ObservableCollection<DrinkModificationRequestWithUsername>();
             }
         }
 
@@ -664,6 +735,16 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             {
                 _ = this.BanUser(userId);
             });
+
+            this.ApproveDrinkModificationCommand = new RelayCommand<int>(modificationRequestId =>
+            {
+                _ = this.ApproveDrinkModification(modificationRequestId);
+            });
+
+            this.DenyDrinkModificationCommand = new RelayCommand<int>(modificationRequestId =>
+            {
+                _ = this.DenyDrinkModification(modificationRequestId);
+            });
         }
 
 
@@ -711,6 +792,67 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error banning user: {ex.Message}");
+            }
+        }
+
+        public async Task ApproveDrinkModification(int modificationRequestId)
+        {
+            try
+            {
+                await this.drinkModificationRequestService.ApproveRequest(modificationRequestId, App.CurrentUserId);
+                await LoadDrinkModificationRequests(); // Refresh the list
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error approving drink modification: {ex.Message}");
+            }
+        }
+
+        public async Task DenyDrinkModification(int modificationRequestId)
+        {
+            try
+            {
+                await this.drinkModificationRequestService.DenyRequest(modificationRequestId, App.CurrentUserId);
+                await LoadDrinkModificationRequests(); // Refresh the list
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error denying drink modification: {ex.Message}");
+            }
+        }
+
+        public string GetOperationTypeDisplayName(DrinkModificationRequestType modificationType)
+        {
+            return modificationType switch
+            {
+                DrinkModificationRequestType.Add => "Add",
+                DrinkModificationRequestType.Edit => "Update",
+                DrinkModificationRequestType.Remove => "Remove",
+                _ => "Unknown"
+            };
+        }
+
+        public string GetOperationDisplayName(DrinkModificationRequestType type)
+        {
+            return type switch
+            {
+                DrinkModificationRequestType.Add => "Add",
+                DrinkModificationRequestType.Edit => "Update", 
+                DrinkModificationRequestType.Remove => "Remove",
+                _ => type.ToString()
+            };
+        }
+
+        public async Task<string> GetUsernameById(Guid userId)
+        {
+            try
+            {
+                User user = await userService.GetUserById(userId);
+                return string.IsNullOrEmpty(user?.Username) ? $"User {userId}" : user.Username;
+            }
+            catch
+            {
+                return $"User {userId}";
             }
         }
     }

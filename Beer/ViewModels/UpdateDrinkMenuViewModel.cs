@@ -177,39 +177,15 @@
                     throw new ArgumentException($"Brand '{this.BrandName}' does not exist. Please select an existing brand.");
                 }
 
-                // Add the updated drink as a new drink
-                this.drinkService.AddDrink(
-                    inputtedDrinkName: this.DrinkName,
-                    inputtedDrinkPath: this.DrinkURL,
-                    inputtedDrinkCategories: this.GetSelectedCategories(),
-                    inputtedDrinkBrandName: brand.BrandName,
-                    inputtedAlcoholPercentage: float.Parse(this.AlcoholContent),
-                    userId: App.CurrentUserId,
-                    isDrinkRequestingApproval: true);
+                // Update the DrinkToUpdate object with the new values
+                this.DrinkToUpdate.DrinkName = this.DrinkName;
+                this.DrinkToUpdate.DrinkImageUrl = this.DrinkURL;
+                this.DrinkToUpdate.DrinkBrand = brand;
+                this.DrinkToUpdate.AlcoholContent = float.Parse(this.AlcoholContent);
+                this.DrinkToUpdate.CategoryList = this.GetSelectedCategories();
 
-                // Get the drink ID from the service
-                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
-                    searchKeyword: this.DrinkName,
-                    drinkBrandNameFilter: new List<string> { brand.BrandName },
-                    drinkCategoryFilter: null,
-                    minimumAlcoholPercentage: null,
-                    maximumAlcoholPercentage: null,
-                    orderingCriteria: null);
-                DrinkDTO? newDrink = drinks.FirstOrDefault(drink => 
-                    drink.DrinkName.Equals(this.DrinkName, StringComparison.OrdinalIgnoreCase) && 
-                    drink.DrinkBrand.BrandName.Equals(brand.BrandName, StringComparison.OrdinalIgnoreCase));
-
-                if (newDrink == null)
-                {
-                    throw new InvalidOperationException("Failed to add drink");
-                }
-
-                // Send the modification request
-                this.modificationRequestService.AddRequest(
-                    DrinkModificationRequestType.Edit,
-                    this.DrinkToUpdate.DrinkId,
-                    newDrink.DrinkId,
-                    App.CurrentUserId);
+                // Use the UpdateDrink API which handles the edit workflow properly
+                this.drinkService.UpdateDrink(this.DrinkToUpdate, App.CurrentUserId);
 
                 Debug.WriteLine("Drink update request sent to admin.");
             }

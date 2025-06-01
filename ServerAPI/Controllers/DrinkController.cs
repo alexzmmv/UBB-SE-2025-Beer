@@ -124,17 +124,17 @@ namespace WinUIApp.WebAPI.Controllers
             }
             else
             {
-                DrinkDTO newDrink = drinkService.AddDrink(
-                    request.Drink.DrinkName,
-                    request.Drink.DrinkImageUrl,
-                    request.Drink.CategoryList,
-                    request.Drink.DrinkBrand.BrandName,
-                    request.Drink.AlcoholContent,
-                    new Guid(),
-                    true);
                 DrinkDTO? oldDrink = drinkService.GetDrinkById(request.Drink.DrinkId);
                 if (oldDrink == null)
                 {
+                    DrinkDTO newDrink = drinkService.AddDrink(
+                        request.Drink.DrinkName,
+                        request.Drink.DrinkImageUrl,
+                        request.Drink.CategoryList,
+                        request.Drink.DrinkBrand.BrandName,
+                        request.Drink.AlcoholContent,
+                        new Guid(),
+                        true);
                     drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Add, null, newDrink.DrinkId, user.UserId);
                 }
                 else
@@ -143,6 +143,14 @@ namespace WinUIApp.WebAPI.Controllers
                     {
                         throw new Exception("Cant update unapproved drink");
                     }
+                    DrinkDTO newDrink = drinkService.AddDrink(
+                        request.Drink.DrinkName,
+                        request.Drink.DrinkImageUrl,
+                        request.Drink.CategoryList,
+                        request.Drink.DrinkBrand.BrandName,
+                        request.Drink.AlcoholContent,
+                        new Guid(),
+                        true);
                     drinkModificationRequestService.AddRequest(DrinkModificationRequestType.Edit, request.Drink.DrinkId, newDrink.DrinkId, user.UserId);
                 }
             }
