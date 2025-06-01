@@ -107,7 +107,83 @@
                     </li>
                 }
             </ul>
+            <section>
+            <h5 class="fw-bold mb-3">Drink Modification Requests</h5>
+            <ul class="list-group shadow-sm" style="max-height:300px;overflow-y:auto">
+                @foreach (var drinkModification in Model.DrinkModificationRequests)
+                {
+                    <li class="list-group-item @(drinkModification.ModificationType == DataAccess.Constants.DrinkModificationRequestType.Remove ? "border-danger" :
+                                                                                                            drinkModification.ModificationType == DataAccess.Constants.DrinkModificationRequestType.Edit ? "border-warning" : "border-success")"
+                    style="border-width: 2px;">
+
+                    @if (drinkModification.ModificationType == DataAccess.Constants.DrinkModificationRequestType.Remove)
+                        {
+                            <div class="mb-2">
+                                <strong>Type:</strong> Remove<br>
+                                <strong>Drink Name:</strong> @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().DrinkName <br>
+                                <strong>Brand:</strong>  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().DrinkBrand<br>
+                                <strong>Alcohol Content:</strong>  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().AlcoholContent%
+                            </div>
+                        }
+
+                        @if (drinkModification.ModificationType == DataAccess.Constants.DrinkModificationRequestType.Edit)
+                        {
+                            <div class="mb-2">
+                                <strong>Type:</strong> Edit<br>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong>Old Info:</strong><br>
+                                        Name: @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().DrinkName <br>
+                                        Brand: @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().DrinkBrand <br>
+                                        Alcohol:  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().AlcoholContent%
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>New Info:</strong><br>
+                                        Name: @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkName <br>
+                                        Brand: @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkBrand <br>
+                                        Alcohol:  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().AlcoholContent%
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (drinkModification.ModificationType == DataAccess.Constants.DrinkModificationRequestType.Add)
+                        {
+                            <div class="mb-2">
+                                <strong>Drink Name:</strong> @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkName <br>
+                                <strong>Brand:</strong>  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkBrand<br>
+                                <strong>Alcohol Content:</strong>  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().AlcoholContent%
+                            </div>
+                        }
+
+                        <div class="btn-group w-100" role="group">
+                            <form asp-controller="Admin" asp-action="AcceptDrinkModification" method="post" style="display: inline;">
+                                <input type="hidden" name="drinkModificationRequestId" value="@drinkModification.DrinkModificationRequestId" />
+                                <input type="hidden" name="userId" value="@drinkModification.RequestingUserId" />
+                                <button type="submit" class="btn btn-success btn-sm fw-semibold w-150">
+                                    Accept
+                                </button>
+                            </form>
+                            <form asp-controller="Admin" asp-action="DenyDrinkModification" method="post" style="display: inline;">
+                                <input type="hidden" name="drinkModificationRequestId" value="@drinkModification.DrinkModificationRequestId" />
+                                <input type="hidden" name="userId" value="@drinkModification.RequestingUserId" />
+                                <button type="submit" class="btn btn-danger btn-sm fw-semibold w-150">
+                                    Deny
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                }
+                @if (!Model.DrinkModificationRequests.Any())
+                {
+                    <li class="list-group-item text-center text-muted">
+                        No pending drink modification requests
+                    </li>
+                }
+            </ul>
+            </section>
         </div>
+
 
         <!-- ───────── RIGHT COL : APPEALS ───────── -->
         <div class="col-lg-4">
@@ -170,6 +246,7 @@
             </div>
         </div>
     </div>
+    
 </div>
 
 <!-- ───────── MODAL : FORBIDDEN WORDS ───────── -->

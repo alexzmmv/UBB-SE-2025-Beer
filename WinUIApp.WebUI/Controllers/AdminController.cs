@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebServer.Models;
 using WinUiApp.Data.Data;
 using DataAccess.DTOModels;
+using WinUIApp.WebAPI.Models;
 
 namespace WebServer.Controllers
 {
@@ -18,14 +19,18 @@ namespace WebServer.Controllers
         private ICheckersService checkersService;
         private IUserService userService;
         private IAutoCheck autoCheckService;
+        private IDrinkModificationRequestService drinkModificationRequestService;
+        private IDrinkService drinkService;
         public AdminController(IReviewService newReviewService, IUpgradeRequestsService newUpgradeRequestService, IRolesService newRolesService,
-            ICheckersService newCheckersService, IAutoCheck autoCheck, IUserService userService)
+            ICheckersService newCheckersService, IAutoCheck autoCheck, IUserService userService, IDrinkModificationRequestService drinkModificationRequestService, IDrinkService drinkService)
         {
             this.reviewService = newReviewService;
             this.upgradeRequestService = newUpgradeRequestService;
             this.checkersService = newCheckersService;
             this.autoCheckService = autoCheck;
             this.userService = userService;
+            this.drinkModificationRequestService = drinkModificationRequestService;
+            this.drinkService = drinkService;
         }
 
         public async Task<IActionResult> AdminDashboard()
@@ -35,13 +40,17 @@ namespace WebServer.Controllers
             IEnumerable<string> offensiveWords = await this.checkersService.GetOffensiveWordsList();
             List<User> users = await this.userService.GetAllUsers();
             IEnumerable<User> appealeadUsers = users.Where(user => user.HasSubmittedAppeal && user.AssignedRole == RoleType.Banned);
+            IEnumerable<DrinkModificationRequestDTO> drinkModificationRequests = await this.drinkModificationRequestService.GetAllModificationRequests();
+            IEnumerable<DrinkDTO> drinks = this.drinkService.GetDrinks(string.Empty, new List<string>(), new List<string>(), 0, 100, new Dictionary<string, bool>());
 
             AdminDashboardViewModel adminDashboardViewModel = new AdminDashboardViewModel()
             {
                 Reviews = reviews,
                 UpgradeRequests = upgradeRequests,
                 OffensiveWords = offensiveWords,
-                AppealsList = appealeadUsers
+                AppealsList = appealeadUsers,
+                DrinkModificationRequests = drinkModificationRequests,
+                Drinks = drinks
             };
 
             List<AppealDetailsViewModel> appealsWithDetails = new List<AppealDetailsViewModel>();
@@ -205,6 +214,17 @@ namespace WebServer.Controllers
             user.HasSubmittedAppeal = false;
             await this.userService.UpdateUser(user);
 
+            return RedirectToAction("AdminDashboard");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId, Guid userId ) { 
+            await drinkModificationRequestService.ApproveRequest(drinkModificationRequestId, userId);
+            return RedirectToAction("AdminDashboard");
+        }
+        [HttpPost]
+        public async Task<IActionResult> DenyDrinkModification(int drinkModificationRequestId, Guid userId)
+        {
+            await drinkModificationRequestService.DenyRequest(drinkModificationRequestId, userId);
             return RedirectToAction("AdminDashboard");
         }
     }

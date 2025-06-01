@@ -1,6 +1,9 @@
-﻿using DataAccess.Model.AdminDashboard;
+﻿using DataAccess.Data;
+using DataAccess.DTOModels;
+using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
 namespace WebServer.Models
 {
@@ -14,8 +17,10 @@ namespace WebServer.Models
 
         public required IEnumerable<User> AppealsList { get; set; }
 
+        public required IEnumerable<DrinkModificationRequestDTO> DrinkModificationRequests { get; set; }
         public IEnumerable<AppealDetailsViewModel> AppealsWithDetails { get; set; }
 
+        public required IEnumerable<DrinkDTO> Drinks { get; set; } = new List<DrinkDTO>();
         public string SearchBarContent { get; set; } = string.Empty;
 
         public AdminDashboardViewModel()
