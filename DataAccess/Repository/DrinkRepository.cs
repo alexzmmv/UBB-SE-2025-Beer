@@ -178,15 +178,26 @@ namespace WinUIApp.WebAPI.Repositories
                 existingDrink.AlcoholContent = (int)drinkDto.AlcoholContent;
                 existingDrink.BrandId = brand.BrandId;
 
-                existingDrink.DrinkCategories.Clear();
                 List<DrinkCategory> oldCategories = dbContext.DrinkCategories
                     .Where(dc => dc.DrinkId == existingDrink.DrinkId)
                     .ToList();
                 dbContext.DrinkCategories.RemoveRange(oldCategories);
+                //dbContext.SaveChanges(); // Potential SaveChanges call after removing old categories
 
                 // Add new DrinkCategory rows
                 foreach (Category category in drinkDto.CategoryList)
                 {
+                    // Ensure the category exists or add it
+                    var existingCategory = dbContext.Categories.Find(category.CategoryId);
+                    if (existingCategory == null)
+                    {
+                        // This case should ideally not happen if categories are managed properly elsewhere
+                        // or selected from existing categories in the UI.
+                        // For robustness, one might add it here, or throw a more specific error.
+                        // For now, let's assume CategoryId is valid and refers to an existing Category.
+                        // If not, dbContext.SaveChanges() will fail due to foreign key constraint.
+                    }
+
                     DrinkCategory drinkCategory = new DrinkCategory
                     {
                         DrinkId = existingDrink.DrinkId,
@@ -198,9 +209,23 @@ namespace WinUIApp.WebAPI.Repositories
 
                 dbContext.SaveChanges();
             }
-            catch (Exception exception)
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
-                throw new Exception("Database error occurred while updating drink." + exception.Message, exception);
+                throw new Exception("A concurrency error occurred while updating the drink. Please try again.", dbUpdateConcurrencyException);
+            }
+            catch (Exception ex)
+            {
+                // Include the inner exception message for more detailed error diagnosis
+                string errorMessage = "Error happened while updating a drink in repository";
+                if (ex.InnerException != null)
+                {
+                    errorMessage += $": {ex.InnerException.Message}";
+                }
+                else
+                {
+                    errorMessage += $": {ex.Message}";
+                }
+                throw new Exception(errorMessage, ex);
             }
         }
 
@@ -510,7 +535,7 @@ namespace WinUIApp.WebAPI.Repositories
             .Select(drinkCategory => new Category
             {
                 CategoryId = drinkCategory.Category!.CategoryId,
-               CategoryName = drinkCategory.Category.CategoryName
+                CategoryName = drinkCategory.Category.CategoryName
             })
             .ToList();
 
