@@ -193,7 +193,7 @@ namespace DrinkDb_Auth.View
 
         private void MenuFlyoutAllowReview_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Review review)
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
             {
                 ViewModel.ResetReviewFlags(review.ReviewId);
             }
@@ -201,7 +201,7 @@ namespace DrinkDb_Auth.View
 
         private void MenuFlyoutHideReview_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Review review)
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
             {
                 ViewModel.HideReview(review.ReviewId);
             }

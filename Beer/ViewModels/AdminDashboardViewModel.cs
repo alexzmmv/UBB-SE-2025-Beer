@@ -2,19 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using DataAccess.Constants;
 using DataAccess.DTOModels;
+using DataAccess.Extensions;
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
+using Microsoft.Extensions.DependencyInjection;
 using WinUiApp.Data.Data;
-using System.Diagnostics;
+using WinUIApp;
+using WinUIApp.WebAPI.Models;
 
 namespace DrinkDb_Auth.ViewModel.AdminDashboard
 {
@@ -24,6 +28,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         private readonly IUserService userService;
         private readonly ICheckersService checkersService;
         private readonly IUpgradeRequestsService requestsService;
+        private readonly IDrinkService drinkService;
 
         private ObservableCollection<ReviewDTO> flaggedReviews;
         private ObservableCollection<User> appealsUsers;
@@ -48,6 +53,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             this.userService = userService;
             this.requestsService = upgradeRequestsService;
             this.checkersService = checkersService;
+
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
 
             this.InitializeCommands();
         }
@@ -334,9 +341,14 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         public async Task RunAICheck(ReviewDTO review)
         {
+            Review regularReview = ReviewMapper.ToEntity(review);
             try
             {
-                //this.checkersService.RunAICheckForOneReviewAsync(review);
+                await this.PrepareReviewForCheck(regularReview);
+
+                // If somebody with an actual key is checking this, this might not update because the function is of type void
+                // and not task
+                this.checkersService.RunAICheckForOneReviewAsync(regularReview);
                 await this.LoadFlaggedReviews();
             }
             catch
@@ -344,14 +356,37 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             }
         }
 
+        public async Task PrepareReviewForCheck(Review review)
+        {
+            User? user = await this.userService.GetUserById(review.UserId);
+            DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
+
+            if (user == null || drink == null)
+            {
+                return;
+            }
+
+            Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+            regularDrink.UserDrinks = new List<UserDrink>();
+            regularDrink.Votes = new List<Vote>();
+            regularDrink.DrinkCategories = new List<DrinkCategory>();
+            review.User = user;
+            review.Drink = regularDrink;
+        }
+
         public async Task<List<string>> RunAutoCheck()
         {
             try
             {
                 List<ReviewDTO> reviews = await this.reviewsService.GetFlaggedReviews();
-                //List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviews));
+                List<Review> regularReviews = reviews.Select(review => ReviewMapper.ToEntity(review)).ToList();
+                foreach (Review review in regularReviews)
+                {
+                    await this.PrepareReviewForCheck(review);
+                }
+                List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(regularReviews));
                 await this.LoadFlaggedReviews();
-                return null;
+                return messages;
             }
             catch
             {
@@ -629,7 +664,6 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
             this.HideReviewCommand = new RelayCommand<int>(param =>
                 this.HideReview(param));
-            
 
             this.RunAICheckCommand = new RelayCommand<ReviewDTO>(async review =>
                 await this.RunAICheck(review));
@@ -665,7 +699,6 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 _ = this.BanUser(userId);
             });
         }
-
 
         private void UpdateUserRole(User user, RoleType roleType)
         {
