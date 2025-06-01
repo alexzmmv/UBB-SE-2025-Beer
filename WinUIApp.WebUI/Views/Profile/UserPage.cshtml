@@ -142,6 +142,26 @@
                     </ul>
                 </div>
             </div>
+            
+            @if (Model.FavoriteDrinks != null && Model.FavoriteDrinks.Any())
+            {
+                <h4 class="fw-bold">Favorite Drinks</h4>
+                <div id="FavoriteDrinksItemsControl" class="list-group">
+                    <ul>
+                        @foreach (var drink in Model.FavoriteDrinks)
+                        {
+                            <li class="list-group-item">
+                                <strong>@drink.DrinkName</strong><br />
+                                <a href="@Url.Action("DrinkDetail", "Drink", new { id = drink.DrinkId })" class="btn btn-primary btn-sm mt-2">View Details</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <p>You have no favorite drinks yet.</p>
+            }
         </div>
     </div>
 </div>

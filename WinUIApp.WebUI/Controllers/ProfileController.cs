@@ -17,9 +17,12 @@ namespace WebServer.Controllers
         private IUpgradeRequestsService upgradeRequestsService;
 
         public ProfileController(IUserService userService, IReviewService reviewService, IUpgradeRequestsService upgradeRequestsService)
+        private IDrinkService drinkService;
+        public ProfileController(IUserService userService, IReviewService reviewService, IDrinkService drinkService)
         {
             this.userService = userService;
             this.reviewService = reviewService;
+            this.drinkService = drinkService;
             this.upgradeRequestsService = upgradeRequestsService;
         }
 
@@ -43,10 +46,13 @@ namespace WebServer.Controllers
                 hasPendingUpgradeRequest = await upgradeRequestsService.HasPendingUpgradeRequest(currentUser.UserId);
             }
 
+            var favoriteDrinks = drinkService.GetUserPersonalDrinkList(userId);
             UserPageModel userPageModel = new UserPageModel()
             {
                 CurrentUser = currentUser,
                 CurrentUserReviews = reviews,
+                CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" },
+                FavoriteDrinks = favoriteDrinks.ToList()
                 CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" },
                 HasPendingUpgradeRequest = hasPendingUpgradeRequest
             };

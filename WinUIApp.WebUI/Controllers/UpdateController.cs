@@ -1,4 +1,5 @@
-﻿using DataAccess.Service.Interfaces;
+﻿using DataAccess.Service;
+using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WinUiApp.Data.Data;
@@ -67,6 +68,8 @@ namespace WinUIApp.WebUI.Controllers
                         DrinkBrand = drinkService.GetDrinkBrandNames().FirstOrDefault(brand => brand.BrandName == updateDrinkViewModel.DrinkBrandName)
                     }, currentUserId);
                     return RedirectToAction("DrinkDetail", "Drink", new { id = updateDrinkViewModel.DrinkId });
+                    }, userId);
+                    return RedirectToAction("DrinkDetail", "Drink", new {id = updateDrinkViewModel.DrinkId});
                 }
                 else
                 {

@@ -1,6 +1,7 @@
 ﻿using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
 namespace WebServer.Models
 {
@@ -9,6 +10,7 @@ namespace WebServer.Models
         public required User CurrentUser { get; set; }
         public required IEnumerable<DataAccess.DTOModels.ReviewDTO> CurrentUserReviews { get; set; }
         public required IEnumerable<string> CurrentUserDrinks { get; set; }
+        public List<DrinkDTO> FavoriteDrinks { get; set; } = new();
         public bool HasPendingUpgradeRequest { get; set; }
     }
 }
