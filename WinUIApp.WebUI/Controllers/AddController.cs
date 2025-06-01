@@ -6,6 +6,7 @@ using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebUI.Models;
+using DataAccess.Service;
 
 namespace WinUIApp.WebUI.Controllers
 {
@@ -39,6 +40,7 @@ namespace WinUIApp.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 var categories = drinkService.GetDrinkCategories();
+                Guid currentUserId = AuthenticationService.GetCurrentUserId();
                 drinkService.AddDrink(
                     addViewModel.DrinkName,
                     addViewModel.DrinkImagePath,
@@ -51,7 +53,9 @@ namespace WinUIApp.WebUI.Controllers
                         return category;
                     }).OfType<Category>()],
                     addViewModel.DrinkBrandName,
-                    addViewModel.DrinkAlcoholPercentage
+                    addViewModel.DrinkAlcoholPercentage,
+                    currentUserId,
+                    false
                     );
                 return RedirectToAction("Index", "HomePage");
             }
