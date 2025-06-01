@@ -12,5 +12,6 @@
         Task<string> GetRoleNameBasedOnIdentifier(RoleType roleType);
         Task RemoveUpgradeRequestByIdentifier(int upgradeRequestIdentifier);
         Task<UpgradeRequest?> RetrieveUpgradeRequestByIdentifier(int upgradeRequestIdentifier);
+        Task<bool> HasPendingUpgradeRequest(Guid userId);
     }
 }
