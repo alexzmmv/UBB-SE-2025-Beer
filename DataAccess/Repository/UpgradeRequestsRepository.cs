@@ -34,7 +34,11 @@
                 });
             await dataContext.SaveChangesAsync();
         }
-
+        public async Task<bool> HasPendingUpgradeRequest(Guid userId)
+        {
+            return await dataContext.UpgradeRequests
+                .AnyAsync(ur => ur.RequestingUserIdentifier == userId);
+        }
         public async Task RemoveUpgradeRequestByIdentifier(int upgradeRequestIdentifier)
         {
             UpgradeRequest? upgradeRequest = await dataContext.UpgradeRequests.FirstOrDefaultAsync(ur => ur.UpgradeRequestId == upgradeRequestIdentifier);
