@@ -17,13 +17,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetFlaggedReviewsTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
             int zeroFlags = 0;
             int oneFlag = 1;
             int twoFlags = 2;
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, NumberOfFlags = zeroFlags, IsHidden = false },
                 new Review { ReviewId = 2, NumberOfFlags = oneFlag, IsHidden = false },
@@ -31,13 +31,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 new Review { ReviewId = 4, NumberOfFlags = twoFlags, IsHidden = true }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             int expectedReviewCount = 2; // ReviewId 2 and 3 (visible and flagged)
 
             // Act
-            List<ReviewDTO> returnedReviews = await reviewsRepository.GetFlaggedReviews(minimumRequiredFlags);
+            List<ReviewDTO> returnedReviews = await this.reviewsRepository.GetFlaggedReviews(minimumRequiredFlags);
 
             // Assert
             Assert.Equal(expectedReviewCount, returnedReviews.Count);
@@ -59,16 +59,16 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             int minimumRequiredFlags = 2;
-            reviewData.ForEach(review => review.IsHidden = true);
+            this.reviewData.ForEach(review => review.IsHidden = true);
 
             // Rebuild mock to reflect new hidden states
-            var updatedMockDbSet = reviewData.AsQueryable().BuildMockDbSet();
-            mockAppDbContext.Setup(context => context.Reviews).Returns(updatedMockDbSet.Object);
+            Mock<DbSet<Review>> updatedMockDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
+            this.mockAppDbContext.Setup(context => context.Reviews).Returns(updatedMockDbSet.Object);
 
             int expectedReviewCount = 0;
 
             // Act
-            List<ReviewDTO> returnedReviews = await reviewsRepository.GetFlaggedReviews(minimumRequiredFlags);
+            List<ReviewDTO> returnedReviews = await this.reviewsRepository.GetFlaggedReviews(minimumRequiredFlags);
 
             // Assert
             Assert.Equal(expectedReviewCount, returnedReviews.Count);

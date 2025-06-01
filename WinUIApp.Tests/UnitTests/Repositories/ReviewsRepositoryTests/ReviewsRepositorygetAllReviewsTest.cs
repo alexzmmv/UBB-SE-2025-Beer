@@ -17,31 +17,31 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetAllReviewsTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, Content = "Review One" },
                 new Review { ReviewId = 2, Content = "Review Two" }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
         public async Task GetAllReviews_WhenCalled_ReturnsMappedReviewDtos()
         {
             // Act
-            List<ReviewDTO> returnedDtos = await reviewsRepository.GetAllReviews();
+            List<ReviewDTO> returnedDtos = await this.reviewsRepository.GetAllReviews();
 
             // Assert
-            int expectedCount = reviewData.Count;
+            int expectedCount = this.reviewData.Count;
             Assert.Equal(expectedCount, returnedDtos.Count);
         }
 
@@ -49,10 +49,10 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         public async Task GetAllReviews_WhenCalled_ReturnsReviewDtosWithMatchingIds()
         {
             // Act
-            List<ReviewDTO> returnedDtos = await reviewsRepository.GetAllReviews();
+            List<ReviewDTO> returnedDtos = await this.reviewsRepository.GetAllReviews();
 
             // Assert
-            int firstExpectedId = reviewData[0].ReviewId;
+            int firstExpectedId = this.reviewData[0].ReviewId;
             int actualFirstId = returnedDtos[0].ReviewId;
 
             Assert.Equal(firstExpectedId, actualFirstId);

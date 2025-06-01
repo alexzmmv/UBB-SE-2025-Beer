@@ -17,9 +17,9 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryUpdateReviewTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review
                 {
@@ -33,19 +33,19 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
             // Setup Find method if needed (not used here since FirstOrDefault is used)
             // Setup SaveChangesAsync
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             int existingReviewId = 1;
-            var updatedReviewDto = new ReviewDTO
+            ReviewDTO updatedReviewDto = new()
             {
                 ReviewId = existingReviewId,
                 DrinkId = 15,
@@ -65,11 +65,11 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             };
 
             // Act
-            bool updateResult = await reviewsRepository.UpdateReview(updatedReviewDto);
+            bool updateResult = await this.reviewsRepository.UpdateReview(updatedReviewDto);
 
             // Assert
             Assert.True(updateResult);
-            Review updatedReview = reviewData.Single(r => r.ReviewId == existingReviewId);
+            Review updatedReview = this.reviewData.Single(r => r.ReviewId == existingReviewId);
             Assert.Equal(updatedReviewDto.DrinkId, updatedReview.DrinkId);
             Assert.Equal(updatedReviewDto.UserId, updatedReview.UserId);
             Assert.Equal(updatedReviewDto.RatingValue, updatedReview.RatingValue);
@@ -83,7 +83,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             int nonExistingReviewId = 999;
-            var nonExistingReviewDto = new ReviewDTO
+            ReviewDTO nonExistingReviewDto = new()
             {
                 ReviewId = nonExistingReviewId,
                 DrinkId = 0,
@@ -95,7 +95,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             };
 
             // Act
-            bool updateResult = await reviewsRepository.UpdateReview(nonExistingReviewDto);
+            bool updateResult = await this.reviewsRepository.UpdateReview(nonExistingReviewDto);
 
             // Assert
             Assert.False(updateResult);

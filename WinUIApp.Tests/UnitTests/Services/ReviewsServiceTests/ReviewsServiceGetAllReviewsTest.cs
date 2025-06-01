@@ -14,40 +14,40 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         public ReviewsServiceGetAllReviewsTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            allReviews = new List<ReviewDTO>
+            this.allReviews = new List<ReviewDTO>
             {
                 new ReviewDTO { ReviewId = 1, Content = "Review 1" },
                 new ReviewDTO { ReviewId = 2, Content = "Review 2" }
             };
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetAllReviews())
-                .ReturnsAsync(allReviews);
+                .ReturnsAsync(this.allReviews);
         }
 
         [Fact]
         public async Task GetAllReviews_WhenCalled_ReturnsAllReviews()
         {
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetAllReviews();
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetAllReviews();
 
             // Assert
-            Assert.Equal(allReviews, actualReviews);
+            Assert.Equal(this.allReviews, actualReviews);
         }
 
         [Fact]
         public async Task GetAllReviews_WhenRepositoryThrowsException_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetAllReviews())
                 .ThrowsAsync(new Exception("Repository failure"));
 
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetAllReviews();
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetAllReviews();
 
             // Assert
             Assert.Empty(actualReviews);

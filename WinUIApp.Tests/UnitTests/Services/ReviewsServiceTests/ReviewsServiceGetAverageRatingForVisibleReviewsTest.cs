@@ -9,42 +9,42 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const double ValidAverageRating = 4.3;
-        private const double FailureAverageRating = 0.0;
+        private const double VALID_AVERAGE_RATING = 4.3;
+        private const double FAILURE_AVERAGE_RATING = 0.0;
 
         public ReviewsServiceGetAverageRatingForVisibleReviewsTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetAverageRatingForVisibleReviews())
-                .ReturnsAsync(ValidAverageRating);
+                .ReturnsAsync(VALID_AVERAGE_RATING);
         }
 
         [Fact]
         public async Task GetAverageRatingForVisibleReviews_WhenRepositoryReturnsValue_ReturnsAverageRating()
         {
             // Act
-            double actualAverageRating = await reviewsService.GetAverageRatingForVisibleReviews();
+            double actualAverageRating = await this.reviewsService.GetAverageRatingForVisibleReviews();
 
             // Assert
-            Assert.Equal(ValidAverageRating, actualAverageRating);
+            Assert.Equal(VALID_AVERAGE_RATING, actualAverageRating);
         }
 
         [Fact]
         public async Task GetAverageRatingForVisibleReviews_WhenRepositoryThrowsException_ReturnsZero()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetAverageRatingForVisibleReviews())
                 .ThrowsAsync(new Exception("Repository failure"));
 
             // Act
-            double actualAverageRating = await reviewsService.GetAverageRatingForVisibleReviews();
+            double actualAverageRating = await this.reviewsService.GetAverageRatingForVisibleReviews();
 
             // Assert
-            Assert.Equal(FailureAverageRating, actualAverageRating);
+            Assert.Equal(FAILURE_AVERAGE_RATING, actualAverageRating);
         }
     }
 }

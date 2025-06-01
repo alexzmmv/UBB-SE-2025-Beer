@@ -16,13 +16,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetReviewCountAfterDateTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
             DateTime dateTime2023 = new DateTime(2023, 1, 1);
             DateTime dateTime2024 = new DateTime(2024, 1, 1);
             DateTime dateTime2025 = new DateTime(2025, 1, 1);
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, CreatedDate = dateTime2023, IsHidden = false },
                 new Review { ReviewId = 2, CreatedDate = dateTime2024, IsHidden = false },
@@ -30,13 +30,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 new Review { ReviewId = 4, CreatedDate = dateTime2025, IsHidden = true }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             int expectedReviewCount = 2; // ReviewId 2 and 3 (not hidden)
 
             // Act
-            int actualReviewCount = await reviewsRepository.GetReviewCountAfterDate(filterDate);
+            int actualReviewCount = await this.reviewsRepository.GetReviewCountAfterDate(filterDate);
 
             // Assert
             Assert.Equal(expectedReviewCount, actualReviewCount);
@@ -61,7 +61,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             int expectedReviewCount = 0;
 
             // Act
-            int actualReviewCount = await reviewsRepository.GetReviewCountAfterDate(filterDate);
+            int actualReviewCount = await this.reviewsRepository.GetReviewCountAfterDate(filterDate);
 
             // Assert
             Assert.Equal(expectedReviewCount, actualReviewCount);

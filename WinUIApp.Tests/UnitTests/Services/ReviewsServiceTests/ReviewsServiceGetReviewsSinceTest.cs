@@ -15,42 +15,42 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         public ReviewsServiceGetReviewsSinceTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            validDate = new DateTime(2023, 1, 1);
+            this.validDate = new DateTime(2023, 1, 1);
 
-            reviewsSinceDate = new List<ReviewDTO>
+            this.reviewsSinceDate = new List<ReviewDTO>
             {
                 new ReviewDTO { ReviewId = 10, Content = "Recent Review 1", CreatedDate = new DateTime(2023, 3, 15) },
                 new ReviewDTO { ReviewId = 11, Content = "Recent Review 2", CreatedDate = new DateTime(2023, 2, 20) }
             };
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewsSince(It.Is<DateTime>(date => date == validDate)))
-                .ReturnsAsync(reviewsSinceDate);
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewsSince(It.Is<DateTime>(date => date == this.validDate)))
+                .ReturnsAsync(this.reviewsSinceDate);
         }
 
         [Fact]
         public async Task GetReviewsSince_WithValidDate_ReturnsReviews()
         {
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsSince(validDate);
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsSince(this.validDate);
 
             // Assert
-            Assert.Equal(reviewsSinceDate, actualReviews);
+            Assert.Equal(this.reviewsSinceDate, actualReviews);
         }
 
         [Fact]
         public async Task GetReviewsSince_WhenRepositoryThrowsException_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetReviewsSince(It.IsAny<DateTime>()))
                 .ThrowsAsync(new Exception("Repository failure"));
 
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsSince(validDate);
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsSince(this.validDate);
 
             // Assert
             Assert.Empty(actualReviews);

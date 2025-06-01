@@ -19,25 +19,25 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetReviewsByUserIdTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            existingUserId = Guid.NewGuid();
-            nonExistingUserId = Guid.NewGuid();
+            this.existingUserId = Guid.NewGuid();
+            this.nonExistingUserId = Guid.NewGuid();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
-                new Review { ReviewId = 1, UserId = existingUserId, Content = "User Review 1" },
+                new Review { ReviewId = 1, UserId = this.existingUserId, Content = "User Review 1" },
                 new Review { ReviewId = 2, UserId = Guid.NewGuid(), Content = "Other User Review" },
-                new Review { ReviewId = 3, UserId = existingUserId, Content = "User Review 2" }
+                new Review { ReviewId = 3, UserId = this.existingUserId, Content = "User Review 2" }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -46,10 +46,10 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             // Arrange
 
             // Act
-            List<ReviewDTO> reviewsForUser = await reviewsRepository.GetReviewsByUserId(existingUserId);
+            List<ReviewDTO> reviewsForUser = await this.reviewsRepository.GetReviewsByUserId(this.existingUserId);
 
             // Assert
-            Assert.All(reviewsForUser, reviewDto => Assert.Equal(existingUserId, reviewDto.UserId));
+            Assert.All(reviewsForUser, reviewDto => Assert.Equal(this.existingUserId, reviewDto.UserId));
             Assert.Equal(2, reviewsForUser.Count);
         }
 
@@ -59,7 +59,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             // Arrange
 
             // Act
-            List<ReviewDTO> reviewsForUser = await reviewsRepository.GetReviewsByUserId(nonExistingUserId);
+            List<ReviewDTO> reviewsForUser = await this.reviewsRepository.GetReviewsByUserId(this.nonExistingUserId);
 
             // Assert
             Assert.Empty(reviewsForUser);

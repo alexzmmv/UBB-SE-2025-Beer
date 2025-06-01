@@ -17,11 +17,11 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetReviewsSinceTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
             DateTime now = DateTime.UtcNow;
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, Content = "Visible recent", CreatedDate = now.AddDays(-1), IsHidden = false },
                 new Review { ReviewId = 2, Content = "Visible old", CreatedDate = now.AddDays(-10), IsHidden = false },
@@ -29,13 +29,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 new Review { ReviewId = 4, Content = "Visible latest", CreatedDate = now, IsHidden = false }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             DateTime filterDate = DateTime.UtcNow.AddDays(-5);
 
             // Act
-            List<ReviewDTO> result = await reviewsRepository.GetReviewsSince(filterDate);
+            List<ReviewDTO> result = await this.reviewsRepository.GetReviewsSince(filterDate);
 
             // Assert
             int expectedCount = 2; // Only ReviewId 1 and 4 qualify
@@ -59,7 +59,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             DateTime filterDate = DateTime.UtcNow.AddDays(-2);
 
             // Act
-            List<ReviewDTO> result = await reviewsRepository.GetReviewsSince(filterDate);
+            List<ReviewDTO> result = await this.reviewsRepository.GetReviewsSince(filterDate);
 
             // Assert
             bool containsHiddenReview = result.Any(review => review.ReviewId == 3);
@@ -73,7 +73,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             DateTime filterDate = DateTime.UtcNow.AddDays(-5);
 
             // Act
-            List<ReviewDTO> result = await reviewsRepository.GetReviewsSince(filterDate);
+            List<ReviewDTO> result = await this.reviewsRepository.GetReviewsSince(filterDate);
 
             // Assert
             int expectedFirstReviewId = 4;

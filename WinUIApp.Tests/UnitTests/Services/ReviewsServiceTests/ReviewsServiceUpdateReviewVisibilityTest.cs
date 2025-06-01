@@ -10,13 +10,13 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int ValidReviewId = 1;
-        private const bool NewVisibility = true;
+        private const int VALID_REVIEW_ID = 1;
+        private const bool NEW_VISIBILITY = true;
 
         public ReviewsServiceUpdateReviewVisibilityTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
         }
 
         [Fact]
@@ -24,22 +24,22 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         {
             // Arrange
             int validRatingValue = 1;
-            var validReviewDto = new ReviewDTO { ReviewId = ValidReviewId, RatingValue = validRatingValue, Content = "Valid"};
+            var validReviewDto = new ReviewDTO { ReviewId = VALID_REVIEW_ID, RatingValue = validRatingValue, Content = "Valid" };
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewById(ValidReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewById(VALID_REVIEW_ID))
                 .ReturnsAsync(validReviewDto);
 
-            mockReviewsRepository
-                .Setup(repo => repo.UpdateReviewVisibility(ValidReviewId, NewVisibility))
+            this.mockReviewsRepository
+                .Setup(repo => repo.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY))
                 .Returns(Task.CompletedTask);
 
             // Act
-            await reviewsService.UpdateReviewVisibility(ValidReviewId, NewVisibility);
+            await this.reviewsService.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY);
 
             // Assert
-            mockReviewsRepository.Verify(
-                repo => repo.UpdateReviewVisibility(ValidReviewId, NewVisibility),
+            this.mockReviewsRepository.Verify(
+                repo => repo.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY),
                 Times.Once);
         }
 
@@ -47,15 +47,15 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task UpdateReviewVisibility_WhenReviewIsNull_DoesNotCallUpdateReviewVisibility()
         {
             // Arrange
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewById(ValidReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewById(VALID_REVIEW_ID))
                 .ReturnsAsync((ReviewDTO?)null);
 
             // Act
-            await reviewsService.UpdateReviewVisibility(ValidReviewId, NewVisibility);
+            await this.reviewsService.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY);
 
             // Assert
-            mockReviewsRepository.Verify(
+            this.mockReviewsRepository.Verify(
                 repo => repo.UpdateReviewVisibility(It.IsAny<int>(), It.IsAny<bool>()),
                 Times.Never);
         }
@@ -67,19 +67,19 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             var invalidRatingValue = 6; // greater than 5 means invalid rating
             var invalidReviewDto = new ReviewDTO
             {
-                ReviewId = ValidReviewId,
+                ReviewId = VALID_REVIEW_ID,
                 RatingValue = invalidRatingValue
             };
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewById(ValidReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewById(VALID_REVIEW_ID))
                 .ReturnsAsync(invalidReviewDto);
 
             // Act
-            await reviewsService.UpdateReviewVisibility(ValidReviewId, NewVisibility);
+            await this.reviewsService.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY);
 
             // Assert
-            mockReviewsRepository.Verify(
+            this.mockReviewsRepository.Verify(
                 repo => repo.UpdateReviewVisibility(It.IsAny<int>(), It.IsAny<bool>()),
                 Times.Never);
         }
@@ -88,18 +88,18 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task UpdateReviewVisibility_WhenRepositoryThrowsException_DoesNotThrow()
         {
             // Arrange
-            var validReviewDto = new ReviewDTO { ReviewId = ValidReviewId };
+            var validReviewDto = new ReviewDTO { ReviewId = VALID_REVIEW_ID };
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewById(ValidReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewById(VALID_REVIEW_ID))
                 .ReturnsAsync(validReviewDto);
 
-            mockReviewsRepository
-                .Setup(repo => repo.UpdateReviewVisibility(ValidReviewId, NewVisibility))
+            this.mockReviewsRepository
+                .Setup(repo => repo.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY))
                 .ThrowsAsync(new Exception("Repository exception"));
 
             // Act & Assert
-            await reviewsService.UpdateReviewVisibility(ValidReviewId, NewVisibility);
+            await this.reviewsService.UpdateReviewVisibility(VALID_REVIEW_ID, NEW_VISIBILITY);
         }
     }
 }

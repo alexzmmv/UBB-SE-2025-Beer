@@ -17,29 +17,29 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetHiddenReviewsTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, IsHidden = true },
                 new Review { ReviewId = 2, IsHidden = false },
                 new Review { ReviewId = 3, IsHidden = true }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
         public async Task GetHiddenReviews_WhenCalled_ReturnsOnlyHiddenReviews()
         {
             // Act
-            List<ReviewDTO> hiddenReviews = await reviewsRepository.GetHiddenReviews();
+            List<ReviewDTO> hiddenReviews = await this.reviewsRepository.GetHiddenReviews();
 
             // Assert
             Assert.All(hiddenReviews, reviewDto => Assert.True(reviewDto.IsHidden));

@@ -10,46 +10,46 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int DrinkIdWithRatings = 101;
-        private const int DrinkIdWithoutRatings = 202;
-        private const int DrinkIdWithNoReviews = 303;
-        private const int DrinkIdThatThrows = 404;
+        private const int DRINK_ID_WITH_RATINGS = 101;
+        private const int DRINK_ID_WITHOUT_RATINGS = 202;
+        private const int DRINK_ID_WITH_NO_REVIEWS = 303;
+        private const int DRINK_ID_THAT_THROWS = 404;
 
         private readonly List<ReviewDTO> reviewsWithRatings;
         private readonly List<ReviewDTO> reviewsWithoutRatings;
 
         public ReviewsServiceGetAverageRatingTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            reviewsWithRatings = new List<ReviewDTO>
+            this.reviewsWithRatings = new List<ReviewDTO>
             {
                 new ReviewDTO { RatingValue = 4 },
                 new ReviewDTO { RatingValue = 5 },
                 new ReviewDTO { RatingValue = 3 }
             };
 
-            reviewsWithoutRatings = new List<ReviewDTO>
+            this.reviewsWithoutRatings = new List<ReviewDTO>
             {
                 new ReviewDTO { RatingValue = null },
                 new ReviewDTO { RatingValue = null }
             };
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewsByDrinkId(DrinkIdWithRatings))
-                .ReturnsAsync(reviewsWithRatings);
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewsByDrinkId(DRINK_ID_WITH_RATINGS))
+                .ReturnsAsync(this.reviewsWithRatings);
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewsByDrinkId(DrinkIdWithoutRatings))
-                .ReturnsAsync(reviewsWithoutRatings);
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewsByDrinkId(DRINK_ID_WITHOUT_RATINGS))
+                .ReturnsAsync(this.reviewsWithoutRatings);
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewsByDrinkId(DrinkIdWithNoReviews))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewsByDrinkId(DRINK_ID_WITH_NO_REVIEWS))
                 .ReturnsAsync(new List<ReviewDTO>());
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewsByDrinkId(DrinkIdThatThrows))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewsByDrinkId(DRINK_ID_THAT_THROWS))
                 .ThrowsAsync(new Exception("Simulated error"));
         }
 
@@ -60,7 +60,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             double expectedAverage = 4.0;
 
             // Act
-            double result = await reviewsService.GetAverageRating(DrinkIdWithRatings);
+            double result = await this.reviewsService.GetAverageRating(DRINK_ID_WITH_RATINGS);
 
             // Assert
             Assert.Equal(expectedAverage, result);
@@ -70,7 +70,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task GetAverageRating_WithNoValidRatings_ReturnsZero()
         {
             // Act
-            double result = await reviewsService.GetAverageRating(DrinkIdWithoutRatings);
+            double result = await this.reviewsService.GetAverageRating(DRINK_ID_WITHOUT_RATINGS);
 
             // Assert
             Assert.Equal(0.0, result);
@@ -80,7 +80,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task GetAverageRating_WithNoReviews_ReturnsZero()
         {
             // Act
-            double result = await reviewsService.GetAverageRating(DrinkIdWithNoReviews);
+            double result = await this.reviewsService.GetAverageRating(DRINK_ID_WITH_NO_REVIEWS);
 
             // Assert
             Assert.Equal(0.0, result);
@@ -90,7 +90,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task GetAverageRating_WhenRepositoryThrowsException_ReturnsZero()
         {
             // Act
-            double result = await reviewsService.GetAverageRating(DrinkIdThatThrows);
+            double result = await this.reviewsService.GetAverageRating(DRINK_ID_THAT_THROWS);
 
             // Assert
             Assert.Equal(0.0, result);

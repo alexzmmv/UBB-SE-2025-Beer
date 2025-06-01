@@ -10,30 +10,30 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int ExistingReviewId = 1;
-        private const int NonExistingReviewId = 999;
+        private const int EXISTING_REVIEW_ID = 1;
+        private const int NON_EXISTING_REVIEW_ID = 999;
 
-        private readonly ReviewDTO ExpectedReviewDto = new ReviewDTO
+        private readonly ReviewDTO expectedReviewDto = new()
         {
-            ReviewId = ExistingReviewId,
+            ReviewId = EXISTING_REVIEW_ID,
             Content = "Sample review",
             RatingValue = 5,
         };
 
         public ReviewsServiceGetReviewByIdTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewById(ExistingReviewId))
-                .ReturnsAsync(ExpectedReviewDto);
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewById(EXISTING_REVIEW_ID))
+                .ReturnsAsync(this.expectedReviewDto);
 
-            mockReviewsRepository
-                .Setup(repo => repo.GetReviewById(NonExistingReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.GetReviewById(NON_EXISTING_REVIEW_ID))
                 .ReturnsAsync((ReviewDTO?)null);
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repo => repo.GetReviewById(It.Is<int>(id => id < 0)))
                 .ThrowsAsync(new Exception("Invalid review ID"));
         }
@@ -42,18 +42,18 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task GetReviewById_WhenReviewExists_ReturnsReviewDto()
         {
             // Act
-            var actualReviewDto = await reviewsService.GetReviewById(ExistingReviewId);
+            ReviewDTO? actualReviewDto = await this.reviewsService.GetReviewById(EXISTING_REVIEW_ID);
 
             // Assert
             Assert.NotNull(actualReviewDto);
-            Assert.Equal(ExpectedReviewDto.ReviewId, actualReviewDto!.ReviewId);
+            Assert.Equal(this.expectedReviewDto.ReviewId, actualReviewDto!.ReviewId);
         }
 
         [Fact]
         public async Task GetReviewById_WhenReviewDoesNotExist_ReturnsNull()
         {
             // Act
-            var actualReviewDto = await reviewsService.GetReviewById(NonExistingReviewId);
+            ReviewDTO? actualReviewDto = await this.reviewsService.GetReviewById(NON_EXISTING_REVIEW_ID);
 
             // Assert
             Assert.Null(actualReviewDto);
@@ -66,7 +66,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             int invalidReviewId = -1;
 
             // Act
-            var actualReviewDto = await reviewsService.GetReviewById(invalidReviewId);
+            ReviewDTO? actualReviewDto = await this.reviewsService.GetReviewById(invalidReviewId);
 
             // Assert
             Assert.Null(actualReviewDto);

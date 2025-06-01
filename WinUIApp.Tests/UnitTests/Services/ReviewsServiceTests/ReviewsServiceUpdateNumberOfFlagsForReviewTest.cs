@@ -9,16 +9,16 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int ValidReviewId = 1;
-        private const int ValidNumberOfFlags = 3;
+        private const int VALID_REVIEW_ID = 1;
+        private const int VALID_NUMBER_OF_FLAGS = 3;
 
         public ReviewsServiceUpdateNumberOfFlagsForReviewTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            mockReviewsRepository
-                .Setup(repo => repo.UpdateNumberOfFlagsForReview(ValidReviewId, ValidNumberOfFlags))
+            this.mockReviewsRepository
+                .Setup(repo => repo.UpdateNumberOfFlagsForReview(VALID_REVIEW_ID, VALID_NUMBER_OF_FLAGS))
                 .Returns(Task.CompletedTask);
         }
 
@@ -26,11 +26,11 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task UpdateNumberOfFlagsForReview_WhenCalled_InvokesRepositoryMethod()
         {
             // Act
-            await reviewsService.UpdateNumberOfFlagsForReview(ValidReviewId, ValidNumberOfFlags);
+            await this.reviewsService.UpdateNumberOfFlagsForReview(VALID_REVIEW_ID, VALID_NUMBER_OF_FLAGS);
 
             // Assert
-            mockReviewsRepository.Verify(
-                repo => repo.UpdateNumberOfFlagsForReview(ValidReviewId, ValidNumberOfFlags),
+            this.mockReviewsRepository.Verify(
+                repo => repo.UpdateNumberOfFlagsForReview(VALID_REVIEW_ID, VALID_NUMBER_OF_FLAGS),
                 Times.Once);
         }
 
@@ -38,12 +38,12 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task UpdateNumberOfFlagsForReview_WhenRepositoryThrowsException_DoesNotThrow()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repo => repo.UpdateNumberOfFlagsForReview(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Repository exception"));
 
             // Act & Assert
-            await reviewsService.UpdateNumberOfFlagsForReview(ValidReviewId, ValidNumberOfFlags);
+            await this.reviewsService.UpdateNumberOfFlagsForReview(VALID_REVIEW_ID, VALID_NUMBER_OF_FLAGS);
         }
     }
 }

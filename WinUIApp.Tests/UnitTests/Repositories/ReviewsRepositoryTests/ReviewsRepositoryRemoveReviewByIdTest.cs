@@ -23,21 +23,21 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryRemoveReviewByIdTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
             // Test data
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, Content = "Test Review 1" },
                 new Review { ReviewId = 2, Content = "Test Review 2" }
             };
 
             // Use MockQueryable to create a proper mock DbSet
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext.Setup(context => context.Reviews).Returns(mockReviewDbSet.Object);
+            this.mockAppDbContext.Setup(context => context.Reviews).Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -47,16 +47,16 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             Review removedReview = null!;
             int existingReviewId = 1;
 
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Remove(It.IsAny<Review>()))
                 .Callback<Review>(review => removedReview = review);
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
             // Act
-            await reviewsRepository.RemoveReviewById(existingReviewId);
+            await this.reviewsRepository.RemoveReviewById(existingReviewId);
 
             // Assert
             Assert.NotNull(removedReview);
@@ -70,19 +70,18 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             bool removeCalled = false;
             int nonExistingReviewId = 999;
 
-            // Create a separate mock for empty data
-            var emptyData = new List<Review>();
-            var emptyMockDbSet = emptyData.AsQueryable().BuildMockDbSet();
+            List<Review> emptyData = [];
+            Mock<DbSet<Review>> emptyMockDbSet = emptyData.AsQueryable().BuildMockDbSet();
 
             emptyMockDbSet
                 .Setup(set => set.Remove(It.IsAny<Review>()))
                 .Callback(() => removeCalled = true);
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
                 .Returns(emptyMockDbSet.Object);
 
-            var repository = new ReviewsRepository(mockAppDbContext.Object);
+            ReviewsRepository repository = new(this.mockAppDbContext.Object);
 
             // Act
             await repository.RemoveReviewById(nonExistingReviewId);

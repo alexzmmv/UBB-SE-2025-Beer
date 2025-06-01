@@ -10,40 +10,40 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly ReviewsService reviewsService;
 
         private readonly DateTime targetDate;
-        private const int ExpectedReviewCount = 4;
+        private const int EXPECTED_REVIEW_COUNT = 4;
 
         public ReviewsServiceGetReviewCountAfterDateTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            targetDate = new DateTime(2023, 1, 1);
+            this.targetDate = new DateTime(2023, 1, 1);
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewCountAfterDate(targetDate))
-                .ReturnsAsync(ExpectedReviewCount);
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewCountAfterDate(this.targetDate))
+                .ReturnsAsync(EXPECTED_REVIEW_COUNT);
         }
 
         [Fact]
         public async Task GetReviewCountAfterDate_WhenRepositoryReturnsCount_ReturnsExpectedCount()
         {
             // Act
-            int actualCount = await reviewsService.GetReviewCountAfterDate(targetDate);
+            int actualCount = await this.reviewsService.GetReviewCountAfterDate(this.targetDate);
 
             // Assert
-            Assert.Equal(ExpectedReviewCount, actualCount);
+            Assert.Equal(EXPECTED_REVIEW_COUNT, actualCount);
         }
 
         [Fact]
         public async Task GetReviewCountAfterDate_WhenRepositoryThrowsException_ReturnsZero()
         {
             // Arrange
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewCountAfterDate(targetDate))
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewCountAfterDate(this.targetDate))
                 .ThrowsAsync(new Exception("Simulated repository failure"));
 
             // Act
-            int actualCount = await reviewsService.GetReviewCountAfterDate(targetDate);
+            int actualCount = await this.reviewsService.GetReviewCountAfterDate(this.targetDate);
 
             // Assert
             Assert.Equal(0, actualCount);

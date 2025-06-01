@@ -22,29 +22,29 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetReviewsByDrinkIdAndUserIdTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            existingDrinkId = 10;
-            nonExistingDrinkId = 999;
+            this.existingDrinkId = 10;
+            this.nonExistingDrinkId = 999;
 
-            existingUserId = Guid.NewGuid();
-            nonExistingUserId = Guid.NewGuid();
+            this.existingUserId = Guid.NewGuid();
+            this.nonExistingUserId = Guid.NewGuid();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
-                new Review { ReviewId = 1, DrinkId = existingDrinkId, UserId = existingUserId, Content = "Review 1" },
-                new Review { ReviewId = 2, DrinkId = existingDrinkId, UserId = Guid.NewGuid(), Content = "Other User Review" },
-                new Review { ReviewId = 3, DrinkId = 20, UserId = existingUserId, Content = "Other Drink Review" },
-                new Review { ReviewId = 4, DrinkId = existingDrinkId, UserId = existingUserId, Content = "Review 2" }
+                new Review { ReviewId = 1, DrinkId = this.existingDrinkId, UserId = this.existingUserId, Content = "Review 1" },
+                new Review { ReviewId = 2, DrinkId = this.existingDrinkId, UserId = Guid.NewGuid(), Content = "Other User Review" },
+                new Review { ReviewId = 3, DrinkId = 20, UserId = this.existingUserId, Content = "Other Drink Review" },
+                new Review { ReviewId = 4, DrinkId = this.existingDrinkId, UserId = this.existingUserId, Content = "Review 2" }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -53,13 +53,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             // Arrange
 
             // Act
-            List<ReviewDTO> reviews = await reviewsRepository.GetReviewsByDrinkIdAndUserId(existingDrinkId, existingUserId);
+            List<ReviewDTO> reviews = await this.reviewsRepository.GetReviewsByDrinkIdAndUserId(this.existingDrinkId, this.existingUserId);
 
             // Assert
             Assert.All(reviews, reviewDto =>
             {
-                Assert.Equal(existingDrinkId, reviewDto.DrinkId);
-                Assert.Equal(existingUserId, reviewDto.UserId);
+                Assert.Equal(this.existingDrinkId, reviewDto.DrinkId);
+                Assert.Equal(this.existingUserId, reviewDto.UserId);
             });
             Assert.Equal(2, reviews.Count);
         }
@@ -70,7 +70,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             // Arrange
 
             // Act
-            List<ReviewDTO> reviews = await reviewsRepository.GetReviewsByDrinkIdAndUserId(nonExistingDrinkId, nonExistingUserId);
+            List<ReviewDTO> reviews = await this.reviewsRepository.GetReviewsByDrinkIdAndUserId(this.nonExistingDrinkId, this.nonExistingUserId);
 
             // Assert
             Assert.Empty(reviews);

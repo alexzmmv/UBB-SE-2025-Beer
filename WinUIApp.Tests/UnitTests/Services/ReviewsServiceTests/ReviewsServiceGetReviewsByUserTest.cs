@@ -15,12 +15,12 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         public ReviewsServiceGetReviewsByUserTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            userId = Guid.NewGuid();
+            this.userId = Guid.NewGuid();
 
-            expectedReviews = new List<ReviewDTO>
+            this.expectedReviews = new List<ReviewDTO>
             {
                 new ReviewDTO
                 {
@@ -29,7 +29,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                     RatingValue = 4,
                     CreatedDate = DateTime.UtcNow,
                     DrinkId = 10,
-                    UserId = userId,
+                    UserId = this.userId,
                     IsHidden = false
                 },
                 new ReviewDTO
@@ -39,36 +39,36 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                     RatingValue = 5,
                     CreatedDate = DateTime.UtcNow,
                     DrinkId = 11,
-                    UserId = userId,
+                    UserId = this.userId,
                     IsHidden = true
                 }
             };
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewsByUserId(userId))
-                .ReturnsAsync(expectedReviews);
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewsByUserId(this.userId))
+                .ReturnsAsync(this.expectedReviews);
         }
 
         [Fact]
         public async Task GetReviewsByUser_WhenRepositoryReturnsReviews_ReturnsExpectedReviews()
         {
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsByUser(userId);
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsByUser(this.userId);
 
             // Assert
-            Assert.Equal(expectedReviews, actualReviews);
+            Assert.Equal(this.expectedReviews, actualReviews);
         }
 
         [Fact]
         public async Task GetReviewsByUser_WhenRepositoryThrowsException_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewsByUserId(userId))
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewsByUserId(this.userId))
                 .ThrowsAsync(new Exception("Simulated exception"));
 
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsByUser(userId);
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsByUser(this.userId);
 
             // Assert
             Assert.Empty(actualReviews);

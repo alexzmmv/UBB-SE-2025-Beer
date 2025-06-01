@@ -10,17 +10,17 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int ExistingDrinkId = 42;
-        private const int NonExistentDrinkId = 999;
+        private const int EXISTING_DRINK_ID = 42;
+        private const int NON_EXISTENT_DRINK_ID = 999;
 
         private readonly List<ReviewDTO> reviewsForExistingDrink;
 
         public ReviewsServiceGetReviewsByDrinkTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            reviewsForExistingDrink = new List<ReviewDTO>
+            this.reviewsForExistingDrink = new List<ReviewDTO>
             {
                 new ReviewDTO
                 {
@@ -28,7 +28,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                     Content = "Great taste!",
                     RatingValue = 5,
                     CreatedDate = DateTime.UtcNow,
-                    DrinkId = ExistingDrinkId,
+                    DrinkId = EXISTING_DRINK_ID,
                     UserId = Guid.NewGuid(),
                     IsHidden = false
                 },
@@ -38,18 +38,18 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                     Content = "Not bad at all.",
                     RatingValue = 4,
                     CreatedDate = DateTime.UtcNow,
-                    DrinkId = ExistingDrinkId,
+                    DrinkId = EXISTING_DRINK_ID,
                     UserId = Guid.NewGuid(),
                     IsHidden = false
                 }
             };
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewsByDrinkId(ExistingDrinkId))
-                .ReturnsAsync(reviewsForExistingDrink);
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewsByDrinkId(EXISTING_DRINK_ID))
+                .ReturnsAsync(this.reviewsForExistingDrink);
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetReviewsByDrinkId(NonExistentDrinkId))
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetReviewsByDrinkId(NON_EXISTENT_DRINK_ID))
                 .ReturnsAsync(new List<ReviewDTO>());
         }
 
@@ -57,17 +57,17 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task GetReviewsByDrink_WhenDrinkExists_ReturnsReviews()
         {
             // Act
-            List<ReviewDTO> result = await reviewsService.GetReviewsByDrink(ExistingDrinkId);
+            List<ReviewDTO> result = await this.reviewsService.GetReviewsByDrink(EXISTING_DRINK_ID);
 
             // Assert
-            Assert.Equal(reviewsForExistingDrink, result);
+            Assert.Equal(this.reviewsForExistingDrink, result);
         }
 
         [Fact]
         public async Task GetReviewsByDrink_WhenDrinkDoesNotExist_ReturnsEmptyList()
         {
             // Act
-            List<ReviewDTO> result = await reviewsService.GetReviewsByDrink(NonExistentDrinkId);
+            List<ReviewDTO> result = await this.reviewsService.GetReviewsByDrink(NON_EXISTENT_DRINK_ID);
 
             // Assert
             Assert.Empty(result);
@@ -79,12 +79,12 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             // Arrange
             const int drinkIdThatCausesException = 500;
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetReviewsByDrinkId(drinkIdThatCausesException))
                 .ThrowsAsync(new Exception("Simulated database failure"));
 
             // Act
-            List<ReviewDTO> result = await reviewsService.GetReviewsByDrink(drinkIdThatCausesException);
+            List<ReviewDTO> result = await this.reviewsService.GetReviewsByDrink(drinkIdThatCausesException);
 
             // Assert
             Assert.Empty(result);

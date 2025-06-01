@@ -15,43 +15,43 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         public ReviewsServiceGetHiddenReviewsTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            allReviews = new List<ReviewDTO>
+            this.allReviews = new List<ReviewDTO>
             {
                 new ReviewDTO { ReviewId = 1, IsHidden = true },
                 new ReviewDTO { ReviewId = 2, IsHidden = false },
                 new ReviewDTO { ReviewId = 3, IsHidden = true }
             };
 
-            expectedHiddenReviews = allReviews.Where(review => review.IsHidden).ToList();
+            this.expectedHiddenReviews = this.allReviews.Where(review => review.IsHidden).ToList();
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetAllReviews())
-                .ReturnsAsync(allReviews);
+                .ReturnsAsync(this.allReviews);
         }
 
         [Fact]
         public async Task GetHiddenReviews_WhenCalled_ReturnsOnlyHiddenReviews()
         {
             // Act
-            List<ReviewDTO> actualHiddenReviews = await reviewsService.GetHiddenReviews();
+            List<ReviewDTO> actualHiddenReviews = await this.reviewsService.GetHiddenReviews();
 
             // Assert
-            Assert.Equal(expectedHiddenReviews, actualHiddenReviews);
+            Assert.Equal(this.expectedHiddenReviews, actualHiddenReviews);
         }
 
         [Fact]
         public async Task GetHiddenReviews_WhenRepositoryThrowsException_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetAllReviews())
                 .ThrowsAsync(new Exception("Repository failure"));
 
             // Act
-            List<ReviewDTO> actualHiddenReviews = await reviewsService.GetHiddenReviews();
+            List<ReviewDTO> actualHiddenReviews = await this.reviewsService.GetHiddenReviews();
 
             // Assert
             Assert.Empty(actualHiddenReviews);

@@ -9,40 +9,40 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int ExistingReviewId = 1;
-        private const int NonExistingReviewId = 999;
+        private const int EXISTING_REVIEW_ID = 1;
+        private const int NON_EXISTING_REVIEW_ID = 999;
 
         public ReviewsServiceRemoveReviewByIdTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
             // Setup mock for RemoveReviewById to just complete successfully
-            mockReviewsRepository
-                .Setup(repo => repo.RemoveReviewById(ExistingReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.RemoveReviewById(EXISTING_REVIEW_ID))
                 .Returns(Task.CompletedTask);
 
             // Setup mock for RemoveReviewById to throw exception for non-existing review id
-            mockReviewsRepository
-                .Setup(repo => repo.RemoveReviewById(NonExistingReviewId))
+            this.mockReviewsRepository
+                .Setup(repo => repo.RemoveReviewById(NON_EXISTING_REVIEW_ID))
                 .ThrowsAsync(new Exception("Review not found"));
         }
 
         [Fact]
-        public async Task RemoveReviewById_WhenCalledWithExistingReviewId_CallsRepositoryRemove()
+        public async Task RemoveReviewById_WhenCalledWithEXISTING_REVIEW_ID_CallsRepositoryRemove()
         {
             // Act
-            await reviewsService.RemoveReviewById(ExistingReviewId);
+            await this.reviewsService.RemoveReviewById(EXISTING_REVIEW_ID);
 
             // Assert
-            mockReviewsRepository.Verify(repo => repo.RemoveReviewById(ExistingReviewId), Times.Once);
+            this.mockReviewsRepository.Verify(repo => repo.RemoveReviewById(EXISTING_REVIEW_ID), Times.Once);
         }
 
         [Fact]
         public async Task RemoveReviewById_WhenRepositoryThrowsException_DoesNotThrow()
         {
             // Act & Assert
-            var exception = await Record.ExceptionAsync(() => reviewsService.RemoveReviewById(NonExistingReviewId));
+            Exception? exception = await Record.ExceptionAsync(() => this.reviewsService.RemoveReviewById(NON_EXISTING_REVIEW_ID));
             Assert.Null(exception);
         }
     }

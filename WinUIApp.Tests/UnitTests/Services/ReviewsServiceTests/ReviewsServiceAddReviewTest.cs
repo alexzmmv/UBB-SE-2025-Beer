@@ -13,15 +13,15 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         private readonly ReviewDTO validReviewDto;
         private readonly ReviewDTO invalidReviewDto;
-        private const int SuccessReviewId = 123;
-        private const int FailureReviewId = -1;
+        private const int SUCCES_REVIEW_ID = 123;
+        private const int FAILURE_REVIEW_ID = -1;
 
         public ReviewsServiceAddReviewTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            validReviewDto = new ReviewDTO
+            this.validReviewDto = new ReviewDTO
             {
                 ReviewId = 0,
                 Content = "Valid review",
@@ -32,52 +32,52 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                 UserId = Guid.NewGuid()
             };
 
-            invalidReviewDto = new ReviewDTO(); // empty or invalid
+            this.invalidReviewDto = new ReviewDTO(); // empty or invalid
 
             // Setup mock for valid DTO
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repo => repo.AddReview(It.Is<ReviewDTO>(dto => ReviewValidator.IsValid(dto))))
-                .ReturnsAsync(SuccessReviewId);
+                .ReturnsAsync(SUCCES_REVIEW_ID);
 
             // Setup mock for invalid DTO (should not be called, but in case)
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repo => repo.AddReview(It.Is<ReviewDTO>(dto => !ReviewValidator.IsValid(dto))))
-                .ReturnsAsync(FailureReviewId);
+                .ReturnsAsync(FAILURE_REVIEW_ID);
         }
 
         [Fact]
         public async Task AddReview_WithValidReview_ReturnsReviewId()
         {
             // Act
-            int result = await reviewsService.AddReview(validReviewDto);
+            int result = await this.reviewsService.AddReview(this.validReviewDto);
 
             // Assert
-            Assert.Equal(SuccessReviewId, result);
+            Assert.Equal(SUCCES_REVIEW_ID, result);
         }
 
         [Fact]
-        public async Task AddReview_WithInvalidReview_ReturnsFailureReviewId()
+        public async Task AddReview_WithInvalidReview_ReturnsFAILURE_REVIEW_ID()
         {
             // Act
-            int result = await reviewsService.AddReview(invalidReviewDto);
+            int result = await this.reviewsService.AddReview(this.invalidReviewDto);
 
             // Assert
-            Assert.Equal(FailureReviewId, result);
+            Assert.Equal(FAILURE_REVIEW_ID, result);
         }
 
         [Fact]
-        public async Task AddReview_WhenRepositoryThrowsException_ReturnsFailureReviewId()
+        public async Task AddReview_WhenRepositoryThrowsException_ReturnsFAILURE_REVIEW_ID()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repo => repo.AddReview(It.IsAny<ReviewDTO>()))
                 .ThrowsAsync(new Exception("Database error"));
 
             // Act
-            int result = await reviewsService.AddReview(validReviewDto);
+            int result = await this.reviewsService.AddReview(this.validReviewDto);
 
             // Assert
-            Assert.Equal(FailureReviewId, result);
+            Assert.Equal(FAILURE_REVIEW_ID, result);
         }
     }
 }

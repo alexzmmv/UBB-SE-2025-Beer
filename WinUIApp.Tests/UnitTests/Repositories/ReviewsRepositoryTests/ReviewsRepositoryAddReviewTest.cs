@@ -22,16 +22,16 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryAddReviewTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
-            mockReviewDbSet = new Mock<DbSet<Review>>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockReviewDbSet = new Mock<DbSet<Review>>();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
 
-            testReviewDto = new ReviewDTO
+            this.testReviewDto = new ReviewDTO
             {
                 ReviewId = 1,
                 UserId = Guid.NewGuid(),
@@ -49,17 +49,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             bool wasAddCalled = false;
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.AddAsync(It.IsAny<Review>(), It.IsAny<CancellationToken>()))
                 .Callback(() => wasAddCalled = true)
                 .Returns((Review review, CancellationToken _) => ValueTask.FromResult((EntityEntry<Review>)null));
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync())
                 .ReturnsAsync(1);
 
             // Act
-            await reviewsRepository.AddReview(testReviewDto);
+            await this.reviewsRepository.AddReview(this.testReviewDto);
 
             // Assert
             Assert.True(wasAddCalled);
@@ -70,17 +70,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             bool wasSaveChangesCalled = false;
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.AddAsync(It.IsAny<Review>(), It.IsAny<CancellationToken>()))
                 .Returns((Review review, CancellationToken _) => ValueTask.FromResult((EntityEntry<Review>)null));
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync())
                 .Callback(() => wasSaveChangesCalled = true)
                 .ReturnsAsync(1);
 
             // Act
-            await reviewsRepository.AddReview(testReviewDto);
+            await this.reviewsRepository.AddReview(this.testReviewDto);
 
             // Assert
             Assert.True(wasSaveChangesCalled);
@@ -91,17 +91,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         {
             // Arrange
             int expectedReviewId = 123;
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.AddAsync(It.IsAny<Review>(), It.IsAny<CancellationToken>()))
                 .Callback<Review, CancellationToken>((review, _) => review.ReviewId = expectedReviewId)
                 .Returns((Review review, CancellationToken _) => ValueTask.FromResult((EntityEntry<Review>)null));
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync())
                 .ReturnsAsync(1);
 
             // Act
-            int actualReviewId = await reviewsRepository.AddReview(testReviewDto);
+            int actualReviewId = await this.reviewsRepository.AddReview(this.testReviewDto);
 
             // Assert
             Assert.Equal(expectedReviewId, actualReviewId);

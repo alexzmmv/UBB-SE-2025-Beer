@@ -17,13 +17,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetMostRecentReviewsTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
             DateTime dateTime2023 = new DateTime(2023, 1, 1);
             DateTime dateTime2024 = new DateTime(2024, 1, 1);
             DateTime dateTime2025 = new DateTime(2025, 1, 1);
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, CreatedDate = dateTime2023, IsHidden = false, Content = "Review A" },
                 new Review { ReviewId = 2, CreatedDate = dateTime2025, IsHidden = false, Content = "Review B" },
@@ -31,13 +31,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 new Review { ReviewId = 4, CreatedDate = dateTime2025, IsHidden = true, Content = "Hidden Review" }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             List<int> expectedReviewIds = new List<int> { 2, 3 }; // ReviewId 2 (2025), ReviewId 3 (2024)
 
             // Act
-            List<ReviewDTO> actualReviewDtos = await reviewsRepository.GetMostRecentReviews(numberOfReviewsToReturn);
+            List<ReviewDTO> actualReviewDtos = await this.reviewsRepository.GetMostRecentReviews(numberOfReviewsToReturn);
             List<int> actualReviewIds = actualReviewDtos.Select(dto => dto.ReviewId).ToList();
 
             // Assert
@@ -59,19 +59,19 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         public async Task GetMostRecentReviews_WhenThereAreNoVisibleReviews_ReturnsEmptyList()
         {
             // Arrange
-            var onlyHiddenReviews = new List<Review>
+            List<Review> onlyHiddenReviews = new()
             {
                 new Review { ReviewId = 10, CreatedDate = new DateTime(2025, 1, 1), IsHidden = true },
                 new Review { ReviewId = 11, CreatedDate = new DateTime(2024, 1, 1), IsHidden = true }
             };
 
-            var hiddenMockDbSet = onlyHiddenReviews.AsQueryable().BuildMockDbSet();
+            Mock<DbSet<Review>> hiddenMockDbSet = onlyHiddenReviews.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
                 .Returns(hiddenMockDbSet.Object);
 
-            var repositoryWithOnlyHiddenReviews = new ReviewsRepository(mockAppDbContext.Object);
+            DataAccess.Repository.ReviewsRepository repositoryWithOnlyHiddenReviews = new ReviewsRepository(this.mockAppDbContext.Object);
 
             int numberOfReviewsToReturn = 3;
 

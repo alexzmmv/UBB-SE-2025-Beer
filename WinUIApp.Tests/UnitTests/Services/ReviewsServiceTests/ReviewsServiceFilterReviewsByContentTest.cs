@@ -14,10 +14,10 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         public ReviewsServiceFilterReviewsByContentTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            flaggedReviews = new List<ReviewDTO>
+            this.flaggedReviews = new List<ReviewDTO>
             {
                 new ReviewDTO
                 {
@@ -51,9 +51,9 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                 }
             };
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetFlaggedReviews(It.IsAny<int>()))
-                .ReturnsAsync(flaggedReviews);
+                .ReturnsAsync(this.flaggedReviews);
         }
 
         [Fact]
@@ -63,10 +63,10 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             string emptyContentFilter = string.Empty;
 
             // Act
-            List<ReviewDTO> result = await reviewsService.FilterReviewsByContent(emptyContentFilter);
+            List<ReviewDTO> result = await this.reviewsService.FilterReviewsByContent(emptyContentFilter);
 
             // Assert
-            Assert.Equal(flaggedReviews, result);
+            Assert.Equal(this.flaggedReviews, result);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             string contentFilter = "fantastic";
 
             // Act
-            List<ReviewDTO> result = await reviewsService.FilterReviewsByContent(contentFilter);
+            List<ReviewDTO> result = await this.reviewsService.FilterReviewsByContent(contentFilter);
 
             // Assert
             Assert.Single(result);
@@ -89,7 +89,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
             string contentFilter = "unrelatedtext";
 
             // Act
-            List<ReviewDTO> result = await reviewsService.FilterReviewsByContent(contentFilter);
+            List<ReviewDTO> result = await this.reviewsService.FilterReviewsByContent(contentFilter);
 
             // Assert
             Assert.Empty(result);
@@ -99,7 +99,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task FilterReviewsByContent_WhenGetFlaggedReviewsThrowsException_ReturnsEmptyList()
         {
             // Arrange  
-            var partialMockService = new Mock<ReviewsService>(mockReviewsRepository.Object);
+            Mock<ReviewsService> partialMockService = new(this.mockReviewsRepository.Object);
             string anyContent = "anything";
 
             partialMockService

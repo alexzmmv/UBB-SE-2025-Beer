@@ -16,26 +16,26 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryUpdateReviewVisibilityTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, IsHidden = false },
                 new Review { ReviewId = 2, IsHidden = true }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
             // Setup Find for synchronous call
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Find(It.IsAny<object[]>()))
-                .Returns<object[]>(ids => reviewData.FirstOrDefault(r => r.ReviewId == (int)ids[0]));
+                .Returns<object[]>(ids => this.reviewData.FirstOrDefault(r => r.ReviewId == (int)ids[0]));
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -46,16 +46,16 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             bool newIsHiddenValue = true;
             Review? updatedReview = null;
 
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Update(It.IsAny<Review>()))
                 .Callback<Review>(review => updatedReview = review);
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
             // Act
-            await reviewsRepository.UpdateReviewVisibility(existingReviewId, newIsHiddenValue);
+            await this.reviewsRepository.UpdateReviewVisibility(existingReviewId, newIsHiddenValue);
 
             // Assert
             Assert.NotNull(updatedReview);
@@ -71,17 +71,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             bool updateCalled = false;
             bool saveChangesCalled = false;
 
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Update(It.IsAny<Review>()))
                 .Callback(() => updateCalled = true);
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .Callback(() => saveChangesCalled = true)
                 .ReturnsAsync(0);
 
             // Act
-            await reviewsRepository.UpdateReviewVisibility(nonExistingReviewId, true);
+            await this.reviewsRepository.UpdateReviewVisibility(nonExistingReviewId, true);
 
             // Assert
             Assert.False(updateCalled);

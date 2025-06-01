@@ -16,25 +16,25 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryUpdateNumberOfFlagsForReviewTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, NumberOfFlags = 0 },
                 new Review { ReviewId = 2, NumberOfFlags = 5 }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Find(It.IsAny<object[]>()))
-                .Returns<object[]>(ids => reviewData.FirstOrDefault(r => r.ReviewId == (int)ids[0]));
+                .Returns<object[]>(ids => this.reviewData.FirstOrDefault(r => r.ReviewId == (int)ids[0]));
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -45,16 +45,16 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             int newNumberOfFlags = 3;
             Review? updatedReview = null;
 
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Update(It.IsAny<Review>()))
                 .Callback<Review>(review => updatedReview = review);
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(1);
 
             // Act
-            await reviewsRepository.UpdateNumberOfFlagsForReview(existingReviewId, newNumberOfFlags);
+            await this.reviewsRepository.UpdateNumberOfFlagsForReview(existingReviewId, newNumberOfFlags);
 
             // Assert
             Assert.NotNull(updatedReview);
@@ -70,17 +70,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             bool updateCalled = false;
             bool saveChangesCalled = false;
 
-            mockReviewDbSet
+            this.mockReviewDbSet
                 .Setup(set => set.Update(It.IsAny<Review>()))
                 .Callback(() => updateCalled = true);
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .Callback(() => saveChangesCalled = true)
                 .ReturnsAsync(0);
 
             // Act
-            await reviewsRepository.UpdateNumberOfFlagsForReview(nonExistingReviewId, 10);
+            await this.reviewsRepository.UpdateNumberOfFlagsForReview(nonExistingReviewId, 10);
 
             // Assert
             Assert.False(updateCalled);

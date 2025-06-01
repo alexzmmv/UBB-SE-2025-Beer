@@ -10,45 +10,45 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         private readonly Mock<IReviewsRepository> mockReviewsRepository;
         private readonly ReviewsService reviewsService;
 
-        private const int MinimumFlags = 2;
+        private const int MINIMUM_FLAGS = 2;
         private readonly List<ReviewDTO> expectedFlaggedReviews;
 
         public ReviewsServiceGetFlaggedReviewsTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            expectedFlaggedReviews = new List<ReviewDTO>
+            this.expectedFlaggedReviews = new List<ReviewDTO>
             {
-                new ReviewDTO { ReviewId = 1, NumberOfFlags = MinimumFlags },
-                new ReviewDTO { ReviewId = 2, NumberOfFlags = MinimumFlags + 1 }
+                new ReviewDTO { ReviewId = 1, NumberOfFlags = MINIMUM_FLAGS },
+                new ReviewDTO { ReviewId = 2, NumberOfFlags = MINIMUM_FLAGS + 1 }
             };
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetFlaggedReviews(MinimumFlags))
-                .ReturnsAsync(expectedFlaggedReviews);
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetFlaggedReviews(MINIMUM_FLAGS))
+                .ReturnsAsync(this.expectedFlaggedReviews);
         }
 
         [Fact]
         public async Task GetFlaggedReviews_WithValidMinFlags_ReturnsFlaggedReviews()
         {
             // Act
-            List<ReviewDTO> actualFlaggedReviews = await reviewsService.GetFlaggedReviews(MinimumFlags);
+            List<ReviewDTO> actualFlaggedReviews = await this.reviewsService.GetFlaggedReviews(MINIMUM_FLAGS);
 
             // Assert
-            Assert.Equal(expectedFlaggedReviews, actualFlaggedReviews);
+            Assert.Equal(this.expectedFlaggedReviews, actualFlaggedReviews);
         }
 
         [Fact]
         public async Task GetFlaggedReviews_WhenRepositoryThrowsException_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetFlaggedReviews(It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Repository failure"));
 
             // Act
-            List<ReviewDTO> actualFlaggedReviews = await reviewsService.GetFlaggedReviews(MinimumFlags);
+            List<ReviewDTO> actualFlaggedReviews = await this.reviewsService.GetFlaggedReviews(MINIMUM_FLAGS);
 
             // Assert
             Assert.Empty(actualFlaggedReviews);

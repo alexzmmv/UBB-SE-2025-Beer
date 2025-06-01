@@ -16,9 +16,9 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
 
         public ReviewsRepositoryGetAverageRatingForVisibleReviewsTest()
         {
-            mockAppDbContext = new Mock<IAppDbContext>();
+            this.mockAppDbContext = new Mock<IAppDbContext>();
 
-            reviewData = new List<Review>
+            this.reviewData = new List<Review>
             {
                 new Review { ReviewId = 1, RatingValue = 4, IsHidden = false },
                 new Review { ReviewId = 2, RatingValue = 5, IsHidden = false },
@@ -26,13 +26,13 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
                 new Review { ReviewId = 4, RatingValue = 2, IsHidden = true }
             };
 
-            mockReviewDbSet = reviewData.AsQueryable().BuildMockDbSet();
+            this.mockReviewDbSet = this.reviewData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
-                .Returns(mockReviewDbSet.Object);
+                .Returns(this.mockReviewDbSet.Object);
 
-            reviewsRepository = new ReviewsRepository(mockAppDbContext.Object);
+            this.reviewsRepository = new ReviewsRepository(this.mockAppDbContext.Object);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
             double expectedAverage = 3.0; // (4 + 5 + 0) / 3 = 3.0
 
             // Act
-            double actualAverage = await reviewsRepository.GetAverageRatingForVisibleReviews();
+            double actualAverage = await this.reviewsRepository.GetAverageRatingForVisibleReviews();
 
             // Assert
             Assert.Equal(expectedAverage, actualAverage);
@@ -52,19 +52,19 @@ namespace WinUIApp.Tests.UnitTests.Repositories.ReviewsRepositoryTests
         public async Task GetAverageRatingForVisibleReviews_WhenThereAreNoVisibleReviews_ReturnsZero()
         {
             // Arrange
-            var onlyHiddenData = new List<Review>
+            List<Review> onlyHiddenData = new()
             {
                 new Review { ReviewId = 1, RatingValue = 5, IsHidden = true },
                 new Review { ReviewId = 2, RatingValue = 3, IsHidden = true }
             };
 
-            var hiddenMockDbSet = onlyHiddenData.AsQueryable().BuildMockDbSet();
+            Mock<DbSet<Review>> hiddenMockDbSet = onlyHiddenData.AsQueryable().BuildMockDbSet();
 
-            mockAppDbContext
+            this.mockAppDbContext
                 .Setup(context => context.Reviews)
                 .Returns(hiddenMockDbSet.Object);
 
-            var repositoryWithOnlyHiddenReviews = new ReviewsRepository(mockAppDbContext.Object);
+            ReviewsRepository repositoryWithOnlyHiddenReviews = new(this.mockAppDbContext.Object);
 
             double expectedAverage = 0.0;
 

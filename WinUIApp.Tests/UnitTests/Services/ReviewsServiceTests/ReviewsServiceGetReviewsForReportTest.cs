@@ -15,12 +15,12 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
 
         public ReviewsServiceGetReviewsForReportTest()
         {
-            mockReviewsRepository = new Mock<IReviewsRepository>();
-            reviewsService = new ReviewsService(mockReviewsRepository.Object);
+            this.mockReviewsRepository = new Mock<IReviewsRepository>();
+            this.reviewsService = new ReviewsService(this.mockReviewsRepository.Object);
 
-            reviewCountAfterDate = 3;
+            this.reviewCountAfterDate = 3;
 
-            expectedRecentReviews = new List<ReviewDTO>
+            this.expectedRecentReviews = new List<ReviewDTO>
             {
                 new ReviewDTO
                 {
@@ -54,35 +54,35 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
                 }
             };
 
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetReviewCountAfterDate(It.IsAny<DateTime>()))
-                .ReturnsAsync(reviewCountAfterDate);
+                .ReturnsAsync(this.reviewCountAfterDate);
 
-            mockReviewsRepository
-                .Setup(repository => repository.GetMostRecentReviews(reviewCountAfterDate))
-                .ReturnsAsync(expectedRecentReviews);
+            this.mockReviewsRepository
+                .Setup(repository => repository.GetMostRecentReviews(this.reviewCountAfterDate))
+                .ReturnsAsync(this.expectedRecentReviews);
         }
 
         [Fact]
         public async Task GetReviewsForReport_WhenRepositoryReturnsReviews_ReturnsExpectedReviews()
         {
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsForReport();
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsForReport();
 
             // Assert
-            Assert.Equal(expectedRecentReviews, actualReviews);
+            Assert.Equal(this.expectedRecentReviews, actualReviews);
         }
 
         [Fact]
         public async Task GetReviewsForReport_WhenRepositoryThrowsException_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetReviewCountAfterDate(It.IsAny<DateTime>()))
                 .ThrowsAsync(new Exception("Simulated failure"));
 
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsForReport();
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsForReport();
 
             // Assert
             Assert.Empty(actualReviews);
@@ -92,12 +92,12 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         public async Task GetReviewsForReport_WhenMostRecentReviewsReturnsNull_ReturnsEmptyList()
         {
             // Arrange
-            mockReviewsRepository
+            this.mockReviewsRepository
                 .Setup(repository => repository.GetMostRecentReviews(It.IsAny<int>()))
-                .ReturnsAsync((List<ReviewDTO>?)null);
+                .ReturnsAsync((List<ReviewDTO>?)null!);
 
             // Act
-            List<ReviewDTO> actualReviews = await reviewsService.GetReviewsForReport();
+            List<ReviewDTO> actualReviews = await this.reviewsService.GetReviewsForReport();
 
             // Assert
             Assert.Empty(actualReviews);
