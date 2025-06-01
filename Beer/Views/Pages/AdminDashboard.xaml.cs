@@ -169,7 +169,9 @@ namespace DrinkDb_Auth.View
         {
             if (sender is Button button && button.Tag is int requestId)
             {
+                button.IsEnabled = false;
                 await ViewModel.HandleUpgradeRequest(true, requestId);
+                button.IsEnabled = true;
             }
         }
 
