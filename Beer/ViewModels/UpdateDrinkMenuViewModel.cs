@@ -169,8 +169,8 @@
                 }
 
                 // Check if brand exists
-                var existingBrands = this.drinkService.GetDrinkBrandNames();
-                var brand = existingBrands.FirstOrDefault(b => b.BrandName.Equals(this.BrandName, StringComparison.OrdinalIgnoreCase));
+                List<Brand> existingBrands = this.drinkService.GetDrinkBrandNames();
+                Brand? brand = existingBrands.FirstOrDefault(b => b.BrandName.Equals(this.BrandName, StringComparison.OrdinalIgnoreCase));
                 
                 if (brand == null)
                 {
@@ -188,16 +188,16 @@
                     isDrinkRequestingApproval: true);
 
                 // Get the drink ID from the service
-                var drinks = this.drinkService.GetDrinks(
+                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
                     searchKeyword: this.DrinkName,
                     drinkBrandNameFilter: new List<string> { brand.BrandName },
                     drinkCategoryFilter: null,
                     minimumAlcoholPercentage: null,
                     maximumAlcoholPercentage: null,
                     orderingCriteria: null);
-                var newDrink = drinks.FirstOrDefault(d => 
-                    d.DrinkName.Equals(this.DrinkName, StringComparison.OrdinalIgnoreCase) && 
-                    d.DrinkBrand.BrandName.Equals(brand.BrandName, StringComparison.OrdinalIgnoreCase));
+                DrinkDTO? newDrink = drinks.FirstOrDefault(drink => 
+                    drink.DrinkName.Equals(this.DrinkName, StringComparison.OrdinalIgnoreCase) && 
+                    drink.DrinkBrand.BrandName.Equals(brand.BrandName, StringComparison.OrdinalIgnoreCase));
 
                 if (newDrink == null)
                 {

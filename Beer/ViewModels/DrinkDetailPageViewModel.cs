@@ -172,7 +172,7 @@
 
         private void LoadCategories()
         {
-            var categories = this.drinkService.GetDrinkCategories();
+            List<Category> categories = this.drinkService.GetDrinkCategories();
             this.AllCategories = categories.Select(c => c.CategoryName).ToList();
         }
 
