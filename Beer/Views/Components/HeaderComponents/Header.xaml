@@ -23,35 +23,9 @@
         <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
-            <Button x:Name="OpenCategorySelectionMenuButton">
-                <Button.Flyout >
-                    <Flyout Placement="Bottom">
-                        <headerComponents:CategorySelectionMenu x:Name="CategoryMenu"/>
-                    </Flyout>
-                </Button.Flyout>
-                <Grid Width="120">
-                    <TextBlock Text="Categories"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"/>
-                    <FontIcon VerticalAlignment="Center"
-                              HorizontalAlignment="Right"
-                              Glyph="&#xE70D;" 
-                              FontFamily="Segoe MDL2 Assets"/>
-                </Grid>
-            </Button>
-            <TextBox x:Name="DrinkSearchBox" 
-                     PlaceholderText="Search drinks..."
-                     Width="300"
-                     Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}"/>
-            <Button x:Name="SearchDrinksButton"
-                    Click="SearchDrinksButton_Click"
-                    Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}">
-                <SymbolIcon Symbol="Find"/>
-            </Button>
             <Button x:Name="GoBackButton"
                     Visibility="{x:Bind GoBackButtonVisibility, Mode=OneWay}"
-                    Content="Go Back"
-                Click="GoBackButton_Click">
+                    Content="Go Back">
             </Button>
         </StackPanel>
         <components:AddDrinkButton x:Name="AddDrinkButtonControl" 

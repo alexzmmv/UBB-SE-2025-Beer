@@ -1,6 +1,7 @@
 namespace WinUIApp.Views.Pages
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DataAccess.Service;
     using DataAccess.Service.Interfaces;
     using DrinkDb_Auth;
@@ -65,6 +66,13 @@ namespace WinUIApp.Views.Pages
 
         private void SearchDrinksButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
+            List<Category> categories = new List<Category>();
+            SearchPageNavigationParameters navigationParameters = new SearchPageNavigationParameters
+            {
+                SelectedCategoryFilters = categories,
+                InputSearchKeyword = this.DrinkSearchBox.Text,
+            };
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage), navigationParameters);
         }
 
         private void DrinkOfTheDayComponent_Tapped(object sender, TappedRoutedEventArgs eventArguments)
@@ -95,6 +103,16 @@ namespace WinUIApp.Views.Pages
         private void LoadDrinks()
         {
             IEnumerable<DrinkDisplayItem> drinks = this.searchPageViewModel.GetDrinks();
+
+            if (drinks.Count() == 0)
+            {
+                this.SecondColumnLine.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.SecondColumnLine.Visibility = Visibility.Visible;
+            }
+
             this.VerticalDrinkListControl.SetDrinks(drinks);
         }
 

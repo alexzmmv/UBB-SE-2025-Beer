@@ -29,7 +29,7 @@
 
             <!-- Vertical separator between columns - using accent color from circles -->
             <Rectangle Grid.Column="0" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
-            <Rectangle Grid.Column="1" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
+            <Rectangle x:Name="SecondColumnLine" Grid.Column="1" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
 
             <!-- Left column - Filters -->
             <ScrollViewer Grid.Column="0"

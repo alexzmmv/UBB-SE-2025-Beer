@@ -23,7 +23,6 @@ namespace WinUIApp.Views.Components.HeaderComponents
 
             this.InitializeComponent();
             this.viewModel = new HeaderViewModel(drinkService);
-            this.CategoryMenu.PopulateCategories(this.viewModel.GetCategories());
         }
 
         private void GoBackButton_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -43,38 +42,16 @@ namespace WinUIApp.Views.Components.HeaderComponents
             AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
         }
 
-        private void SearchDrinksButton_Click(object sender, RoutedEventArgs routedEventArgs)
-        {
-            SearchPageNavigationParameters navigationParameters = new SearchPageNavigationParameters
-            {
-                SelectedCategoryFilters = this.CategoryMenu.SelectedCategories.ToList(),
-                InputSearchKeyword = this.DrinkSearchBox.Text,
-            };
-            AuthenticationWindow.PreviousPage = AuthenticationWindow.CurrentPage;
-            AuthenticationWindow.NavigationFrame.Navigate(typeof(SearchPage), navigationParameters);
-        }
-
-        public Visibility SearchBarVisibility { get; set; } = Visibility.Collapsed;
-
         public Visibility GoBackButtonVisibility { get; set; } = Visibility.Collapsed;
-
-        public void SetSearchBarVisibility(bool isVisible)
-        {
-            SearchBarVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            this.Bindings.Update();
-        }
 
         public void SetGoBackButtonVisibility(bool isVisible)
         {
             GoBackButtonVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            this.Bindings.Update();
+            // this.Bindings.Update();
         }
 
         public void UpdateHeaderComponentsVisibility(Type currentPageType)
         {
-            bool shouldShowSearchBar = currentPageType == typeof(MainPage) || currentPageType == typeof(SearchPage);
-            SetSearchBarVisibility(shouldShowSearchBar);
-
             bool shouldShowGoBackButton = currentPageType != typeof(MainPage);
             SetGoBackButtonVisibility(shouldShowGoBackButton);
         }
