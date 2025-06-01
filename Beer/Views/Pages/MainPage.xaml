@@ -4,41 +4,126 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:WinUIApp.Views.Components"
-    xmlns:viewModels="using:WinUIApp.ViewModels"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    xmlns:component="using:WinUIApp.Views.Components.SearchPageComponents"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 
-    <!-- Single ScrollViewer as root container -->
-    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  VerticalScrollMode="Enabled"
-                  HorizontalScrollBarVisibility="Disabled"
-                  Padding="0,0,0,20"
-                  ZoomMode="Disabled">
+    <Grid>
+        <!-- Updated Gradient Background using colors from SuccessPage -->
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0F0F1A" Offset="0"/>
+                <!-- Dark blue-purple -->
+                <GradientStop Color="#1A1A2E" Offset="0.5"/>
+                <!-- Medium purple -->
+                <GradientStop Color="#0F0F1A" Offset="1"/>
+                <!-- Dark blue-purple -->
+            </LinearGradientBrush>
+        </Grid.Background>
 
-        <!-- Main content container -->
-        <StackPanel Orientation="Vertical" Spacing="30" Margin="20,0">
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Drink of the Day Section -->
-            <Border CornerRadius="8" Padding="0,0,0,10">
+            <!-- Vertical separator between columns - using accent color from circles -->
+            <Rectangle Grid.Column="0" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
+            <Rectangle x:Name="SecondColumnLine" Grid.Column="1" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
+
+            <!-- Left column - Filters -->
+            <ScrollViewer Grid.Column="0"
+                         VerticalScrollMode="Auto"
+                         VerticalScrollBarVisibility="Hidden"
+                         HorizontalScrollBarVisibility="Disabled"
+                         Margin="0,0,20,0"
+                         Width="400">
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <!-- Search Box -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20" Spacing="5">
+                        <TextBox x:Name="DrinkSearchBox" 
+                                 PlaceholderText="Search drinks..."
+                                 Width="250"
+                                 Background="#1A1A2E"
+                                 Foreground="#DB4BCD"
+                            BorderBrush="#4BCDDB"
+                            PlaceholderForeground="#A0A0A0"
+                                 FontSize="14"/>
+                        <Button x:Name="SearchDrinksButton"
+                                Click="SearchDrinksButton_Click"
+                                Width="60"
+                                Background="#4B6CDB"
+                                Foreground="White"
+                                BorderBrush="#4BCDDB">
+                            <SymbolIcon Symbol="Find"/>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Text="Search Filters"
+                               Foreground="White"
+                               FontWeight="Bold"
+                               Margin="0,0,0,8"/>
+
+                    <component:SortSelectorComponent x:Name="SortSelectorControl" 
+                                           SortByChanged="SortByDropdownControl_SortByChanged"
+                                           SortOrderChanged="SortSelectorControl_SortOrderChanged"/>
+
+                    <component:CategoryFilterComponent 
+                        x:Name="CategoryFilterControl"
+                        CategoryChanged="CategoryFilterControl_CategoryChanged"
+                        Padding="10"
+                        Margin="0,10,0,0"/>
+                    <component:BrandFilterComponent
+                        x:Name="BrandFilterControl"
+                        BrandChanged="BrandFilterControl_BrandChanged"
+                        Padding="10"
+                        Margin="0,10,0,0"/>
+                    <component:AlcoholContentFilterComponent
+                        x:Name="AlcoholContentFilterControl"
+                        MinimumAlcoholContentChanged="AlcoholContentFilterControl_MinimumAlcoholContentChanged"
+                        MaximumAlcoholContentChanged="AlcoholContentFilterControl_MaximumAlcoholContentChanged"
+                        Padding="10"
+                        Margin="0,10,0,0"/>
+                    <component:RatingFilterComponent
+                        x:Name="RatingFilterControl"
+                        RatingChanged="RatingFilterControl_RatingChanged"
+                        Padding="10"
+                        Margin="0,10,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                        <Button
+                            Content="Clear Filters"
+                            Width="100"
+                            Margin="0,0,5,0"
+                            Click="ClearFiltersClick"
+                            Background="#4B6CDB" 
+                            Foreground="White"/>
+                        <Button 
+                            Content="Filter"
+                            Width="100"
+                            Margin="5,0,0,0"
+                            Click="FilterButtonClick"
+                            Background="#4B6CDB"
+                            Foreground="White"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Middle column - Drink list -->
+            <Grid Grid.Column="1" Margin="0,0,20,0">
+                <ScrollViewer VerticalScrollMode="Auto"
+                            VerticalScrollBarVisibility="Hidden"
+                            HorizontalScrollBarVisibility="Disabled">
+                    <component:VerticalDrinkListComponent 
+                        x:Name="VerticalDrinkListControl"
+                        HorizontalAlignment="Left"
+                        DrinkClicked="VerticalDrinkListControl_DrinkClicked"/>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Right column - Drink of the day -->
+            <Grid Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <local:DrinkOfTheDayComponent Tapped="DrinkOfTheDayComponent_Tapped"/>
-            </Border>
-
-            <!-- Favorite Drinks Header -->
-            <TextBlock Text="Your Favorite Drinks" 
-                       Style="{StaticResource HeaderTextBlockStyle}"
-                       Margin="0,10,0,15"/>
-
-            <!-- Drink List Component -->
-            <Border CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    Padding="15" BorderThickness="1"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                <local:DrinkListComponent Drinks="{Binding PersonalDrinks}"/>
-            </Border>
-
-            <!-- Optional: Add some bottom spacing -->
-            <Border Height="20"/>
-        </StackPanel>
-    </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
 </Page>

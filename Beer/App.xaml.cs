@@ -28,7 +28,6 @@ namespace WinUIApp
         public static Guid CurrentUserId { get; set; } = Guid.Empty;
         public static Guid CurrentSessionId { get; set; } = Guid.Empty;
 
-        private Window? window;
         public App()
         {
             this.InitializeComponent();
@@ -38,8 +37,6 @@ namespace WinUIApp
         public static IHost Host { get; private set; }
 
         public static Window MainWindow { get; set; }
-
-        private static IServiceProvider? serviceProvider;
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
@@ -127,9 +124,9 @@ namespace WinUIApp
                         return scheduler;
                     });
 
-                    services.AddTransient<MainPage>();
+                    services.AddTransient<AdminPage>();
                     services.AddTransient<AuthenticationWindow>();
-                    services.AddTransient<UserPage>();
+                    services.AddTransient<ProfilePage>();
                 })
                 .Build();
         }

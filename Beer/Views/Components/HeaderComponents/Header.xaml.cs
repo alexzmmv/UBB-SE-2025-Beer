@@ -3,6 +3,7 @@ namespace WinUIApp.Views.Components.HeaderComponents
     using System;
     using System.Linq;
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -13,67 +14,53 @@ namespace WinUIApp.Views.Components.HeaderComponents
 
     public sealed partial class Header : UserControl
     {
-        private readonly HeaderViewModel viewModel;
+        private HeaderViewModel viewModel;
         private IDrinkService drinkService;
+        private bool isInitialized = false;
 
         public Header()
         {
-            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
-
             this.InitializeComponent();
-            this.viewModel = new HeaderViewModel(drinkService);
-            this.CategoryMenu.PopulateCategories(this.viewModel.GetCategories());
+        }
+
+        public void Initialize()
+        {
+            if (!isInitialized)
+            {
+                drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+                this.viewModel = new HeaderViewModel(drinkService);
+                this.NavMenu.Initialize();
+                isInitialized = true;
+            }
         }
 
         private void GoBackButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            if (MainWindow.PreviousPage != null)
+            if (AuthenticationWindow.PreviousPage != null)
             {
-                MainWindow.AppMainFrame.Navigate(MainWindow.PreviousPage);
+                AuthenticationWindow.NavigationFrame.Navigate(AuthenticationWindow.PreviousPage);
             }
             else
             {
-                MainWindow.AppMainFrame.Navigate(typeof(MainPage));
+                AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
             }
         }
 
         private void Logo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            MainWindow.AppMainFrame.Navigate(typeof(MainPage));
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
         }
-
-        private void SearchDrinksButton_Click(object sender, RoutedEventArgs routedEventArgs)
-        {
-            SearchPageNavigationParameters navigationParameters = new SearchPageNavigationParameters
-            {
-                SelectedCategoryFilters = this.CategoryMenu.SelectedCategories.ToList(),
-                InputSearchKeyword = this.DrinkSearchBox.Text,
-            };
-            MainWindow.PreviousPage = MainWindow.CurrentPage;
-            MainWindow.AppMainFrame.Navigate(typeof(SearchPage), navigationParameters);
-        }
-
-        public Visibility SearchBarVisibility { get; set; } = Visibility.Collapsed;
 
         public Visibility GoBackButtonVisibility { get; set; } = Visibility.Collapsed;
-
-        public void SetSearchBarVisibility(bool isVisible)
-        {
-            SearchBarVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            this.Bindings.Update();
-        }
 
         public void SetGoBackButtonVisibility(bool isVisible)
         {
             GoBackButtonVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            this.Bindings.Update();
+            // this.Bindings.Update();
         }
 
         public void UpdateHeaderComponentsVisibility(Type currentPageType)
         {
-            bool shouldShowSearchBar = currentPageType == typeof(MainPage) || currentPageType == typeof(SearchPage);
-            SetSearchBarVisibility(shouldShowSearchBar);
-
             bool shouldShowGoBackButton = currentPageType != typeof(MainPage);
             SetGoBackButtonVisibility(shouldShowGoBackButton);
         }

@@ -148,7 +148,7 @@
             {
                 this.DrinkToUpdate.DrinkBrand = this.FindBrandByName(this.BrandName);
                 this.DrinkToUpdate.CategoryList = (List<Category>)this.GetSelectedCategories();
-                this.drinkService.UpdateDrink(this.DrinkToUpdate);
+                this.drinkService.UpdateDrink(this.DrinkToUpdate, App.CurrentUserId);
                 Debug.WriteLine("Drink updated successfully (admin).");
             }
             catch (Exception instantUpdateDrinkException)

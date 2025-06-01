@@ -15,63 +15,117 @@
             SelectionMode="None" 
             IsItemClickEnabled="True" 
             ItemClick="DrinkList_ItemClick"
-            Height="680"
-            Width="1150">
+            HorizontalContentAlignment="Stretch"
+            ScrollViewer.HorizontalScrollMode="Disabled"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            Background="Transparent"
+            Padding="0,0,10,0">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0,0,0,15"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="OuterBorder" 
+                                        Background="Transparent"
+                                        Padding="8">
+                                    <Grid>
+                                        <Border x:Name="InnerBorder"
+                                                Background="#1A1A2E" 
+                                                CornerRadius="8"
+                                                BorderBrush="#4B6CDB"
+                                                BorderThickness="1"
+                                                Padding="20">
+                                            <ContentPresenter
+                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        </Border>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal"/>
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InnerBorder" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#25253E"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InnerBorder" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#DB4BCD"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InnerBorder" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#30304A"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DrinkDisplayItem">
-                    <Grid Padding="10">
+                    <Grid MinWidth="550" MaxWidth="700">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <!-- Image -->
                             <ColumnDefinition Width="*"/>
-                            <!-- Text -->
                         </Grid.ColumnDefinitions>
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <!-- Brand -->
                             <RowDefinition Height="Auto"/>
-                            <!-- Name -->
                             <RowDefinition Height="Auto"/>
-                            <!-- Categories -->
                             <RowDefinition Height="Auto"/>
-                            <!-- Alcohol Content -->
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Image -->
-                        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="4"
-                               Width="120" Height="120" Margin="0,0,10,0"
-                               Source="{x:Bind Drink.DrinkImageUrl, Mode=OneWay, Converter={StaticResource ImageUrlConverter}}"
-                               Stretch="Uniform"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
+                        <!-- Image with border -->
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="5"
+                                Width="140" Height="140"
+                                Margin="0,0,25,0"
+                                BorderBrush="#4BCDDB"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                            <Image Source="{x:Bind Drink.DrinkImageUrl, Mode=OneWay, Converter={StaticResource ImageUrlConverter}}"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="5"/>
+                        </Border>
 
-                        <!-- Brand -->
-                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,0,5">
+                        <!-- TextBlocks with new colors -->
+                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,5,0,12" TextWrapping="Wrap" Foreground="#673AB7">
                             <Run Text="Brand: " FontWeight="Bold" FontSize="16"/>
                             <Run Text="{x:Bind Drink.DrinkBrand.BrandName, Mode=OneWay}" FontSize="16"/>
                         </TextBlock>
 
-                        <!-- Name -->
-                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,0,5">
+                        <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" TextWrapping="Wrap" Foreground="#673AB7">
                             <Run Text="Name: " FontWeight="Bold" FontSize="16"/>
                             <Run Text="{x:Bind Drink.DrinkName, Mode=OneWay}" FontSize="16"/>
                         </TextBlock>
 
-                        <!-- Categories -->
-                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,0,5">
+                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" TextWrapping="Wrap" Foreground="#673AB7">
                             <Run Text="Categories: " FontWeight="Bold" FontSize="16"/>
                             <Run Text="{x:Bind Drink.CategoryList, Mode=OneWay, Converter={StaticResource CategoriesConverter}}" FontSize="16"/>
                         </TextBlock>
 
-                        <!-- Alcohol Content -->
-                        <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,0,0,5">
+                        <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,0,0,12" TextWrapping="Wrap" Foreground="#673AB7">
                             <Run Text="Alcohol Content: " FontWeight="Bold" FontSize="16"/>
                             <Run Text="{x:Bind Drink.AlcoholContent, Mode=OneWay, Converter={StaticResource AlcoholContentConverter}}" FontSize="16"/>
                         </TextBlock>
-                        
-                        <!-- Average Review Score -->
-                        <TextBlock Grid.Row="4" Grid.Column="1" Margin="0,0,0,5">
+
+                        <TextBlock Grid.Row="4" Grid.Column="1" Margin="0,0,0,5" TextWrapping="Wrap" Foreground="#673AB7">
                             <Run Text="Average Review Score: " FontWeight="Bold" FontSize="16"/>
                             <Run Text="{x:Bind AverageReviewScore, Mode=OneWay, Converter={StaticResource ReviewContentConverter}}" FontSize="16"/>
                         </TextBlock>

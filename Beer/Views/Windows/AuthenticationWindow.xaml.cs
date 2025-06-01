@@ -24,6 +24,9 @@ namespace DrinkDb_Auth
     using Windows.Graphics;
     using WinUIApp;
     using WinUiApp.Data.Data;
+    using Microsoft.UI.Xaml.Navigation;
+    using WinUIApp.Views.Pages;
+    using DrinkDb_Auth.View;
 
     public sealed partial class AuthenticationWindow : Window
     {
@@ -32,7 +35,11 @@ namespace DrinkDb_Auth
         private IUserService userService;
         private TwitterOAuth2Provider twitterOAuth2Provider;
         private IGoogleOAuth2Provider googleOAuth2Provider;
-        public Frame NavigationFrame { get; private set; }
+        public static Frame NavigationFrame { get; private set; }
+
+        public static Type PreviousPage { get; set; }
+
+        public static Type CurrentPage { get; set; }
 
         public AuthenticationWindow(IAuthenticationService authenticationService, ITwoFactorAuthenticationService twoFactorAuthenticationService,
             IUserService userService, TwitterOAuth2Provider twitterOAuth2Provider, IGoogleOAuth2Provider googleOAuth2Provider)
@@ -40,12 +47,15 @@ namespace DrinkDb_Auth
             this.authenticationService = authenticationService;
             this.twoFactorAuthentificationService = twoFactorAuthenticationService;
             this.InitializeComponent();
-            this.NavigationFrame = this.MainFrame;
+            AuthenticationWindow.NavigationFrame = this.MainFrame;
             this.userService = userService;
             this.twitterOAuth2Provider = twitterOAuth2Provider;
             this.googleOAuth2Provider = googleOAuth2Provider;
+            this.MainFrame.Navigated += FrameNavigated;
 
-            this.Title = "DrinkDb - Sign In";
+            this.Title = "Beer";
+
+            this.HeaderComponent.Visibility = Visibility.Collapsed;
 
             this.AppWindow.Resize(new SizeInt32
             {
@@ -94,7 +104,12 @@ namespace DrinkDb_Auth
                 {
                     App.CurrentUserId = user.UserId;
                     App.CurrentSessionId = response.SessionId;
-                    this.NavigationFrame.Navigate(typeof(SuccessPage), this);
+
+                    // Initialize the header after successful 2FA
+                    this.HeaderComponent.Initialize();
+                    this.HeaderComponent.Visibility = Visibility.Visible;
+
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(SuccessPage), this);
                 }
 
                 return twoFAresponse;
@@ -110,7 +125,6 @@ namespace DrinkDb_Auth
                 };
                 await errorDialog.ShowAsync();
             }
-
             return false;
         }
 
@@ -218,6 +232,40 @@ namespace DrinkDb_Auth
                 XamlRoot = this.Content.XamlRoot,
             };
             await errorDialog.ShowAsync();
+        }
+
+        private void FrameNavigated(object sender, NavigationEventArgs e)
+        {
+            if (this.HeaderComponent != null)
+            {
+                // Hide header for Success, Profile and Admin pages
+                if (e.SourcePageType == typeof(SuccessPage) || e.SourcePageType == typeof(ProfilePage) || e.SourcePageType == typeof(AdminPage))
+                {
+                    this.HeaderComponent.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    this.HeaderComponent.Visibility = Visibility.Visible;
+                    this.HeaderComponent.UpdateHeaderComponentsVisibility(e.SourcePageType);
+                }
+            }
+        }
+
+        public void HandleLogout()
+        {
+            // Hide the header
+            this.HeaderComponent.Visibility = Visibility.Collapsed;
+            
+            // Reset the window title
+            this.Title = "DrinkDb - Sign In";
+            
+            // Clear username and password fields
+            this.UsernameTextBox.Text = string.Empty;
+            this.PasswordBox.Password = string.Empty;
+
+            // Clear the navigation stack and show the default content
+            this.MainFrame.BackStack.Clear();
+            this.MainFrame.Content = this.RootGrid;
         }
     }
 }

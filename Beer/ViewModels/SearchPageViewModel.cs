@@ -1,6 +1,7 @@
 ﻿namespace WinUIApp.ViewModels
 {
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth;
     using System.Collections.Generic;
     using System.Linq;
     using WinUiApp.Data.Data;
@@ -44,7 +45,7 @@
 
         public void OpenDrinkDetailPage(int id)
         {
-            MainWindow.AppMainFrame.Navigate(typeof(DrinkDetailPage), id);
+            AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), id);
         }
 
         public void ClearFilters()

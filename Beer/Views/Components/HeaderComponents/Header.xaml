@@ -8,55 +8,27 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:headerComponents="using:WinUIApp.Views.Components.HeaderComponents"
     xmlns:components="using:WinUIApp.Views.Components"
+    xmlns:navcomponents="using:WinUIApplication.Views.Components"
     mc:Ignorable="d">
 
     <Grid Height="60" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="Logo"
-                Content="Home"
-                Click="Logo_Click"
-                Background="Transparent"
-                BorderThickness="0"
-                Padding="0"
-                Margin="30 0 0 0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"/>
         <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
-            <Button x:Name="OpenCategorySelectionMenuButton">
-                <Button.Flyout >
-                    <Flyout Placement="Bottom">
-                        <headerComponents:CategorySelectionMenu x:Name="CategoryMenu"/>
-                    </Flyout>
-                </Button.Flyout>
-                <Grid Width="120">
-                    <TextBlock Text="Categories"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"/>
-                    <FontIcon VerticalAlignment="Center"
-                              HorizontalAlignment="Right"
-                              Glyph="&#xE70D;" 
-                              FontFamily="Segoe MDL2 Assets"/>
-                </Grid>
-            </Button>
-            <TextBox x:Name="DrinkSearchBox" 
-                     PlaceholderText="Search drinks..."
-                     Width="300"
-                     Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}"/>
-            <Button x:Name="SearchDrinksButton"
-                    Click="SearchDrinksButton_Click"
-                    Visibility="{x:Bind SearchBarVisibility, Mode=OneWay}">
-                <SymbolIcon Symbol="Find"/>
-            </Button>
             <Button x:Name="GoBackButton"
                     Visibility="{x:Bind GoBackButtonVisibility, Mode=OneWay}"
-                    Content="Go Back"
-                Click="GoBackButton_Click">
+                    Content="Go Back">
             </Button>
         </StackPanel>
-        <components:AddDrinkButton x:Name="AddDrinkButtonControl" 
-                                   Margin="0 0 30 0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Center"
+                    Margin="0 0 30 0">
+            <components:AddDrinkButton x:Name="AddDrinkButtonControl" 
+                                     VerticalAlignment="Center"/>
+            <navcomponents:NavigationMenu x:Name="NavMenu"
+                                      VerticalAlignment="Center"
+                                      Margin="20 0 0 0"/>
+        </StackPanel>
     </Grid>
 </UserControl>

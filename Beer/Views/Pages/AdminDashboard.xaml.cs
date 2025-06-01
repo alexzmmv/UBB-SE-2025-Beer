@@ -19,21 +19,29 @@ namespace DrinkDb_Auth.View
     using System.Diagnostics;
     using System.Threading.Tasks;
     using DataAccess.DTOModels;
+    using Microsoft.UI.Xaml.Navigation;
+    using WinUIApplication.Views.Components;
 
-    public sealed partial class MainPage : Page
+    public sealed partial class AdminPage : Page
     {
         public MainPageViewModel ViewModel { get; }
-        public MainPage()
+        private readonly IUserService userService;
+        private readonly IDrinkService drinkService;
+        private readonly IReviewService reviewService;
+        private readonly IUpgradeRequestsService upgradeRequestsService;
+
+        public AdminPage()
         {
             this.InitializeComponent();
+            this.userService = App.Host.Services.GetRequiredService<IUserService>();
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
+            this.upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
 
-            IReviewService reviewsService = App.Host.Services.GetRequiredService<IReviewService>();
-            IUserService userService = App.Host.Services.GetRequiredService<IUserService>();
-            IUpgradeRequestsService upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
             ICheckersService checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
             IAutoCheck autoCheck = App.Host.Services.GetRequiredService<IAutoCheck>();
 
-            this.ViewModel = new MainPageViewModel(reviewsService, userService, upgradeRequestsService, checkersService);
+            this.ViewModel = new MainPageViewModel(this.reviewService, this.userService, this.upgradeRequestsService, checkersService);
             this.DataContext = ViewModel;
 
             this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -41,6 +49,13 @@ namespace DrinkDb_Auth.View
 
             // Load data after initialization
             this.Loaded += async (s, e) => await LoadInitialData();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            AuthenticationWindow.CurrentPage = typeof(AdminPage);
+            LoadDashboardData();
         }
 
         private async Task LoadInitialData()
@@ -224,7 +239,7 @@ namespace DrinkDb_Auth.View
         {
             if (this.Frame != null)
             {
-                this.Frame.Navigate(typeof(UserPage));
+                this.Frame.Navigate(typeof(ProfilePage));
             }
         }
 
@@ -234,6 +249,11 @@ namespace DrinkDb_Auth.View
             {
                 await this.ViewModel.BanUser(userId);
             }
+        }
+
+        private void LoadDashboardData()
+        {
+            // Implementation of LoadDashboardData method
         }
     }
 }
