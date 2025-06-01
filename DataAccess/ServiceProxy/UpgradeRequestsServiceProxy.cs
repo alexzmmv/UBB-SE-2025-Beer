@@ -77,7 +77,7 @@ namespace DataAccess.ServiceProxy
         {
             try
             {
-                HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}/hasPending/{userId}");
+                HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{API_BASE_ROUTE}/hasPending/{userId}");
                 response.EnsureSuccessStatusCode();
                 string json = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<bool>(json);

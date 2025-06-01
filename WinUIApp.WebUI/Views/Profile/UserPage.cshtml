@@ -1,4 +1,5 @@
 ﻿@using DataAccess.Constants
+@using DataAccess.DTOModels
 @using DataAccess.Model.AdminDashboard
 @using WebServer.Models
 @using WinUiApp.Data.Data
@@ -116,10 +117,10 @@
                 <h4 class="fw-bold">Reviews</h4>
                 <div id="ReviewsItemsControl" class="list-group">
                     <ul>
-                        @foreach (Review review in Model.CurrentUserReviews)
+                        @foreach (ReviewDTO review in Model.CurrentUserReviews)
                         {
                             <li class="list-group-item">
-                                <strong>@review.Rating</strong><br />
+                                <strong>@review.RatingValue </strong><br />
                                 <span>@review.Content</span>
                             </li>
                         }
