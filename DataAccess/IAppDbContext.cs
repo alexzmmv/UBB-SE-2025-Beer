@@ -38,5 +38,7 @@ namespace WinUiApp.Data.Interfaces
         int SaveChanges();
 
         Task<int> SaveChangesAsync();
+
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

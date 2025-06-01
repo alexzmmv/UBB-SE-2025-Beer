@@ -112,7 +112,7 @@
             }
         }
 
-        public async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags = 1)
+        public virtual async Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags = 1)
         {
             try
             {

@@ -20,8 +20,6 @@
 
         Task<List<ReviewDTO>> GetFlaggedReviews(int minFlags);
 
-        Task<List<ReviewDTO>> GetReviewsByUser(Guid userId);
-
         Task<ReviewDTO?> GetReviewById(int reviewID);
 
         Task UpdateReviewVisibility(int reviewID, bool isHidden);
@@ -43,6 +41,5 @@
         Task<List<ReviewDTO>> GetReviewsByUserId(Guid userId);
 
         Task<List<ReviewDTO>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId);
-
     }
 }
