@@ -5,10 +5,8 @@ using DataAccess.Service;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebServer.Models;
 using WinUiApp.Data.Data;
-using WinUiApp.Data;
 
 namespace WebServer.Controllers
 {
@@ -17,14 +15,12 @@ namespace WebServer.Controllers
         private IUserService userService;
         private IReviewService reviewService;
         private IUpgradeRequestsService upgradeRequestsService;
-        private readonly AppDbContext context;
 
-        public ProfileController(IUserService userService, IReviewService reviewService, IUpgradeRequestsService upgradeRequestsService, AppDbContext context)
+        public ProfileController(IUserService userService, IReviewService reviewService, IUpgradeRequestsService upgradeRequestsService)
         {
             this.userService = userService;
             this.reviewService = reviewService;
             this.upgradeRequestsService = upgradeRequestsService;
-            this.context = context;
         }
 
         public async Task<IActionResult> UserPage()
@@ -44,7 +40,7 @@ namespace WebServer.Controllers
 
             if (currentUser.AssignedRole == RoleType.User)
             {
-                hasPendingUpgradeRequest = await HasPendingUpgradeRequest(currentUser.UserId);
+                hasPendingUpgradeRequest = await upgradeRequestsService.HasPendingUpgradeRequest(currentUser.UserId);
             }
 
             UserPageModel userPageModel = new UserPageModel()
@@ -55,13 +51,6 @@ namespace WebServer.Controllers
                 HasPendingUpgradeRequest = hasPendingUpgradeRequest
             };
             return View(userPageModel);
-        }
-
-        private async Task<bool> HasPendingUpgradeRequest(Guid userId)
-        {
-            // Check if user has any pending upgrade requests
-            return await context.UpgradeRequests
-                .AnyAsync(ur => ur.RequestingUserIdentifier == userId);
         }
 
         [HttpGet]
@@ -111,7 +100,7 @@ namespace WebServer.Controllers
                 return RedirectToAction("UserPage");
             }
 
-            bool hasPendingRequest = await HasPendingUpgradeRequest(userId);
+            bool hasPendingRequest = await upgradeRequestsService.HasPendingUpgradeRequest(userId);
             if (hasPendingRequest)
             {
                 TempData["InfoMessage"] = "You already have a pending upgrade request.";
@@ -123,10 +112,10 @@ namespace WebServer.Controllers
                 await this.upgradeRequestsService.AddUpgradeRequest(userId);
                 TempData["SuccessMessage"] = "Your role upgrade request has been submitted successfully.";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData["ErrorMessage"] = "Failed to submit upgrade request. Please try again.";
-                // Log the exception
+                
             }
 
             return RedirectToAction("UserPage");
