@@ -15,6 +15,7 @@ namespace DataAccess.Service
 {
     public enum OAuthService
     {
+        None,
         Google,
         Facebook,
         Twitter,
