@@ -11,7 +11,7 @@
     <StackPanel x:Name="LayoutPanel" Spacing="10">
         <TextBlock 
         Text="Minimum Rating:"
-        Foreground="Black"/>
+         Foreground="White"/>
         <ComboBox 
             x:Name="RatingComboBox" 
             SelectionChanged="RatingComboBox_SelectionChanged"

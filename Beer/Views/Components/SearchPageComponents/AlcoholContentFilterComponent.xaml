@@ -11,7 +11,7 @@
     <StackPanel Spacing="10">
         <TextBlock 
         Text="Minimum Alcohol Content:"
-        Foreground="Black"/>
+         Foreground="White"/>
         <Slider x:Name="MinValueSlider"
                     Minimum="0"
                     Maximum="100"
@@ -24,7 +24,7 @@
         </Slider>
         <TextBlock 
             Text="Maximum Alcohol Content:"
-            Foreground="Black"/>
+            Foreground="White"/>
         <Slider x:Name="MaxValueSlider"
             Minimum="0"
             Maximum="100"

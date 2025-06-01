@@ -11,7 +11,7 @@
     <StackPanel x:Name="LayoutPanel" Spacing="10">
         <TextBlock 
             Text="Categories:"
-            Foreground="Black"/>
+             Foreground="White"/>
         <TextBox 
             x:Name="SearchBox" 
             PlaceholderText="Search categories..."
