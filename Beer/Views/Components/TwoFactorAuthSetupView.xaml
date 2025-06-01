@@ -6,22 +6,41 @@
    xmlns:local="using:DrinkDb_Auth.View"  
    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
-   mc:Ignorable="d"  
-   >  
+   mc:Ignorable="d">
 
-   <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" x:Name="RootPannel">
-            <TextBlock Style="{x:Null}" Text="Scan the QR code with your authenticator app and enter the 6-digit code below:"  
-                      TextWrapping="Wrap" Margin="0,0,0,20" TextAlignment="Center"/>
-            <Image Style="{x:Null}" Source="{Binding QrCodeImage}" Width="200" Height="200" Margin="0,0,0,20"/>  
-           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBox Style="{x:Null}" Text="{Binding FirstDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Style="{x:Null}" Text="{Binding SecondDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Style="{x:Null}" Text="{Binding ThirdDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Style="{x:Null}" Text="{Binding FourthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Style="{x:Null}" Text="{Binding FifthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-                <TextBox Style="{x:Null}" Text="{Binding SixthDigit, Mode=TwoWay}" Width="30" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"/>
-            </StackPanel>  
-       </StackPanel>  
-   </Grid>  
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0F0F1A" Offset="0"/>
+                <GradientStop Color="#1A1A2E" Offset="0.5"/>
+                <GradientStop Color="#0F0F1A" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid Margin="40" HorizontalAlignment="Center" VerticalAlignment="Center"
+              Background="#1A1A2E" CornerRadius="8" Padding="20">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="RootPannel">
+                <TextBlock Style="{x:Null}" Text="Scan the QR code with your authenticator app and enter the 6-digit code below:"  
+                          TextWrapping="Wrap" Margin="0,0,0,20" TextAlignment="Center"
+                          Foreground="White" FontSize="16"/>
+
+                <Image Style="{x:Null}" Source="{Binding QrCodeImage}" Width="200" Height="200" Margin="0,0,0,20"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBox Style="{x:Null}" Text="{Binding FirstDigit, Mode=TwoWay}" Width="40" Height="40" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"
+                            Background="#0F0F1A" Foreground="White" BorderBrush="#4B6CDB" TextAlignment="Center" FontSize="18"/>
+                    <TextBox Style="{x:Null}" Text="{Binding SecondDigit, Mode=TwoWay}" Width="40" Height="40" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"
+                            Background="#0F0F1A" Foreground="White" BorderBrush="#4B6CDB" TextAlignment="Center" FontSize="18"/>
+                    <TextBox Style="{x:Null}" Text="{Binding ThirdDigit, Mode=TwoWay}" Width="40" Height="40" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"
+                            Background="#0F0F1A" Foreground="White" BorderBrush="#4B6CDB" TextAlignment="Center" FontSize="18"/>
+                    <TextBox Style="{x:Null}" Text="{Binding FourthDigit, Mode=TwoWay}" Width="40" Height="40" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"
+                            Background="#0F0F1A" Foreground="White" BorderBrush="#4B6CDB" TextAlignment="Center" FontSize="18"/>
+                    <TextBox Style="{x:Null}" Text="{Binding FifthDigit, Mode=TwoWay}" Width="40" Height="40" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"
+                            Background="#0F0F1A" Foreground="White" BorderBrush="#4B6CDB" TextAlignment="Center" FontSize="18"/>
+                    <TextBox Style="{x:Null}" Text="{Binding SixthDigit, Mode=TwoWay}" Width="40" Height="40" Margin="5" MaxLength="1" KeyUp="TextBox_KeyUp"
+                            Background="#0F0F1A" Foreground="White" BorderBrush="#4B6CDB" TextAlignment="Center" FontSize="18"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Page>

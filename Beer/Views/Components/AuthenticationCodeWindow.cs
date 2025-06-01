@@ -3,6 +3,7 @@ using DrinkDb_Auth.View.Authentication.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace DrinkDb_Auth.View.Authentication
 {
@@ -43,15 +44,35 @@ namespace DrinkDb_Auth.View.Authentication
                 DefaultButton = ContentDialogButton.Primary,
                 PrimaryButtonCommand = command,
                 XamlRoot = window?.Content.XamlRoot,
-                Content = view
+                Content = view,
+                // Simplified gradient matching button colors
+                Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 26, 26, 46)),
+                Foreground = new SolidColorBrush(),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 75, 108, 219)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8)
             };
+
+            // Style the buttons
+            contentDialog.Resources["ContentDialogButtonBackground"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 75, 108, 219));
+            contentDialog.Resources["ContentDialogButtonBackgroundPointerOver"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 65, 98, 209));
+            contentDialog.Resources["ContentDialogButtonBackgroundPressed"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 55, 88, 199));
+            contentDialog.Resources["ContentDialogButtonForeground"] = new SolidColorBrush();
+            contentDialog.Resources["ContentDialogButtonBorderBrush"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 75, 205, 219));
 
             return contentDialog;
         }
 
         public async void ShowAsync()
         {
-            await contentDialog?.ShowAsync();
+            if (contentDialog != null)
+            {
+                if (contentDialog.XamlRoot == null && window != null)
+                {
+                    contentDialog.XamlRoot = window.Content.XamlRoot;
+                }
+                await contentDialog.ShowAsync();
+            }
         }
 
         public void Hide()
