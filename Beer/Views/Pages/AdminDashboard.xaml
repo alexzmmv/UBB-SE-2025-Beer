@@ -29,8 +29,6 @@
         <SolidColorBrush x:Key="HeaderBackgroundColor" Color="#1f3d7a" />
         <SolidColorBrush x:Key="AcceptButtonColor" Color="#107C10" />
         <SolidColorBrush x:Key="DeclineButtonColor" Color="#D13438" />
-
-        <converters:UserIdToNameConverter x:Key="UserIdToNameConverter"/>
     </Page.Resources>
 
     <!--main grid-->
@@ -196,6 +194,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold">
@@ -256,6 +256,85 @@
                                         Grid.Column="2"
                                         Margin="4,0"
                                         Click="DeclineUpgradeRequestButton_Click"
+                                        />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!-- Drink Modification Requests Section -->
+            <TextBlock Grid.Row="2" Margin="0,24,0,12" FontSize="16" FontWeight="SemiBold">
+                Drink Modification Requests
+            </TextBlock>
+
+            <!-- Drink Modification Requests List -->
+            <ListView x:Name="DrinkModificationRequestsList" Grid.Row="3" 
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      ItemsSource="{x:Bind ViewModel.DrinkModificationRequests, Mode=OneWay}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="0,4"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:DrinkModificationRequestWithUsername">
+                        <Border Padding="16" 
+                                Background="{ThemeResource CardBackgroundFillColorDefault}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefault}"
+                                BorderThickness="{StaticResource CardBorderThickness}"
+                                CornerRadius="{StaticResource ControlCornerRadius}"
+                                Margin="0,4">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Simplified display: Operation and User name -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                        <TextBlock Text="{x:Bind Request.ModificationType}" FontSize="14" FontWeight="SemiBold" />
+                                        <TextBlock Text=" request" FontSize="14" Margin="4,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{x:Bind Username}" 
+                                               FontSize="12" 
+                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                                </StackPanel>
+
+                                <!-- Action buttons -->
+                                <Button x:Name="ApproveDrinkModificationButton"
+                                        Content="Accept"
+                                        Tag="{x:Bind Request.DrinkModificationRequestId}"
+                                        Background="{StaticResource AcceptButtonColor}"
+                                        Foreground="White"
+                                        HorizontalAlignment="Stretch"
+                                        Grid.Column="1"
+                                        Margin="8,0,4,0"
+                                        VerticalAlignment="Center"
+                                        MinWidth="80"
+                                        Click="ApproveDrinkModificationButton_Click"
+                                        />
+
+                                <Button x:Name="DenyDrinkModificationButton"
+                                        Content="Decline"
+                                        Tag="{x:Bind Request.DrinkModificationRequestId}"
+                                        Background="{StaticResource DeclineButtonColor}"
+                                        Foreground="White"
+                                        HorizontalAlignment="Stretch"
+                                        Grid.Column="2"
+                                        Margin="4,0,0,0"
+                                        VerticalAlignment="Center"
+                                        MinWidth="80"
+                                        Click="DenyDrinkModificationButton_Click"
                                         />
                             </Grid>
                         </Border>

@@ -150,7 +150,6 @@
                 float alcoholContent = float.Parse(this.AlcoholContent);
 
                 // Check if brand exists
-                // Note: should a brand be created if it doesn't exist? - this should require admin approval as well
                 List<Brand> existingBrands = this.drinkService.GetDrinkBrandNames();
                 Brand? brand = existingBrands.FirstOrDefault(brand => brand.BrandName.Equals(this.BrandName, StringComparison.OrdinalIgnoreCase));
                 
@@ -159,7 +158,7 @@
                     throw new ArgumentException($"Brand '{this.BrandName}' does not exist. Please select an existing brand.");
                 }
 
-                // Add the drink
+                // Add the drink with approval request flag
                 this.drinkService.AddDrink(
                     inputtedDrinkName: this.DrinkName,
                     inputtedDrinkPath: this.DrinkURL,
@@ -168,31 +167,6 @@
                     inputtedAlcoholPercentage: alcoholContent,
                     userId: App.CurrentUserId,
                     isDrinkRequestingApproval: true);
-
-                // Get the drink ID from the service
-                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
-                    searchKeyword: this.DrinkName,
-                    drinkBrandNameFilter: new List<string> { brand.BrandName },
-                    drinkCategoryFilter: null,
-                    minimumAlcoholPercentage: null,
-                    maximumAlcoholPercentage: null,
-                    orderingCriteria: null);
-
-                DrinkDTO? newDrink = drinks.FirstOrDefault(drink => 
-                drink.DrinkName.Equals(this.DrinkName, StringComparison.OrdinalIgnoreCase) && 
-                drink.DrinkBrand.BrandName.Equals(brand.BrandName, StringComparison.OrdinalIgnoreCase));
-
-                if (newDrink == null)
-                {
-                    throw new InvalidOperationException("Failed to add drink");
-                }
-
-                // Send the modification request
-                this.modificationRequestService.AddRequest(
-                    DrinkModificationRequestType.Add,
-                    null,
-                    newDrink.DrinkId,
-                    App.CurrentUserId);
 
                 Debug.WriteLine("Drink add request sent to admin.");
             }

@@ -29,6 +29,7 @@ namespace DrinkDb_Auth.View
         private readonly IDrinkService drinkService;
         private readonly IReviewService reviewService;
         private readonly IUpgradeRequestsService upgradeRequestsService;
+        private readonly IDrinkModificationRequestService drinkModificationRequestService;
 
         public AdminPage()
         {
@@ -37,11 +38,12 @@ namespace DrinkDb_Auth.View
             this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
             this.upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
+            this.drinkModificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
 
             ICheckersService checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
             IAutoCheck autoCheck = App.Host.Services.GetRequiredService<IAutoCheck>();
 
-            this.ViewModel = new MainPageViewModel(this.reviewService, this.userService, this.upgradeRequestsService, checkersService);
+            this.ViewModel = new MainPageViewModel(this.reviewService, this.userService, this.upgradeRequestsService, checkersService, this.drinkModificationRequestService);
             this.DataContext = ViewModel;
 
             this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -250,6 +252,22 @@ namespace DrinkDb_Auth.View
             if (sender is Button button && button.Tag is Guid userId)
             {
                 await this.ViewModel.BanUser(userId);
+            }
+        }
+
+        private async void ApproveDrinkModificationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is int modificationRequestId)
+            {
+                await ViewModel.ApproveDrinkModification(modificationRequestId);
+            }
+        }
+
+        private async void DenyDrinkModificationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is int modificationRequestId)
+            {
+                await ViewModel.DenyDrinkModification(modificationRequestId);
             }
         }
 
