@@ -90,6 +90,9 @@
     <Content Update="Assets\X_Logo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Update="Views\Pages\ConfirmLogoutPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Views\Windows\AuthenticationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
@@ -211,6 +214,7 @@
       <None Remove="Assets\x-twitter-logo-on-black.png" />
       <None Remove="Assets\X_Logo.jpg" />
       <None Remove="Views\Components\Modals\AddReviewModal.xaml" />
+      <None Remove="Views\Pages\ConfirmLogoutPage.xaml" />
     </ItemGroup>
     <ItemGroup>
       <Page Remove="AuthenticationWindow.xaml" />

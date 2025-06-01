@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="WinUIApp.Views.Components.NavigationMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -10,20 +9,79 @@
 
     <Grid>
         <Button x:Name="MenuButton" 
-                Style="{StaticResource DefaultButtonStyle}">
+                Width="40"
+                Height="40"
+                CornerRadius="20"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0">
+            <Button.Resources>
+                <Style TargetType="MenuFlyoutItem">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="MinWidth" Value="120"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="MenuFlyoutItem">
+                                <Grid>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="PointerOver">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="Background">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#1A1A2E"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#4BCDDB"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="Background">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#4B6CDB"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <Grid x:Name="Background" Background="Transparent"/>
+                                    <ContentPresenter x:Name="Content" 
+                                                    Content="{TemplateBinding Text}"
+                                                    Margin="12,8"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Resources>
+
             <Button.Flyout>
-                <MenuFlyout x:Name="NavigationMenuFlyout">
-                    <MenuFlyoutItem x:Name="HomeButton" Text="Home" Click="HomeButton_Click"/>
-                    <MenuFlyoutItem x:Name="ProfileButton" Text="Profile" Click="ProfileButton_Click"/>
-                    <MenuFlyoutItem x:Name="DashboardButton" Text="Dashboard" Click="DashboardButton_Click" Visibility="{x:Bind IsAdmin, Mode=OneWay}"/>
-                    <MenuFlyoutSeparator/>
-                    <MenuFlyoutItem x:Name="LogoutButton" Text="Logout" Click="LogoutButton_Click"/>
+                <MenuFlyout x:Name="NavigationMenuFlyout" >
+                    <MenuFlyoutItem x:Name="ProfileButton" 
+                                  Text="Profile" 
+                                  Click="ProfileButton_Click"/>
+                    <MenuFlyoutItem x:Name="DashboardButton" 
+                                  Text="Dashboard" 
+                                  Click="DashboardButton_Click" 
+                                  Visibility="{x:Bind IsAdmin, Mode=OneWay}"/>
+                    <MenuFlyoutSeparator Background="#4B6CDB" Opacity="0.3"/>
+                    <MenuFlyoutItem x:Name="LogoutButton" 
+                                  Text="Logout" 
+                                  Click="LogoutButton_Click"/>
                 </MenuFlyout>
             </Button.Flyout>
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE712;"/>
-                <TextBlock Text="Menu"/>
-            </StackPanel>
+
+            <!-- Hamburger menu icon -->
+            <Grid Width="20" Height="16">
+                <Rectangle Fill="White" Height="2" Width="20" VerticalAlignment="Top"/>
+                <Rectangle Fill="White" Height="2" Width="20" VerticalAlignment="Center"/>
+                <Rectangle Fill="White" Height="2" Width="20" VerticalAlignment="Bottom"/>
+            </Grid>
         </Button>
     </Grid>
-</UserControl> 
+</UserControl>

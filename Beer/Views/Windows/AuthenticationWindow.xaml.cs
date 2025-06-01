@@ -246,32 +246,23 @@ namespace DrinkDb_Auth
         {
             if (this.HeaderComponent != null)
             {
-                // Hide header for Success, Profile and Admin pages
-                if (e.SourcePageType == typeof(SuccessPage) || e.SourcePageType == typeof(ProfilePage) || e.SourcePageType == typeof(AdminPage))
+                if (e.SourcePageType == typeof(SuccessPage) || e.SourcePageType == typeof(ConfirmLogoutPage))
                 {
                     this.HeaderComponent.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     this.HeaderComponent.Visibility = Visibility.Visible;
-                    this.HeaderComponent.UpdateHeaderComponentsVisibility(e.SourcePageType);
                 }
             }
         }
 
         public void HandleLogout()
         {
-            // Hide the header
             this.HeaderComponent.Visibility = Visibility.Collapsed;
-            
-            // Reset the window title
             this.Title = "DrinkDb - Sign In";
-            
-            // Clear username and password fields
             this.UsernameTextBox.Text = string.Empty;
             this.PasswordBox.Password = string.Empty;
-
-            // Clear the navigation stack and show the default content
             this.MainFrame.BackStack.Clear();
             this.MainFrame.Content = this.RootGrid;
         }

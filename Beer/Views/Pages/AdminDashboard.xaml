@@ -57,12 +57,6 @@
             <Image Grid.Column="0" Margin="24,0,0,0" HorizontalAlignment="Left" Source="Assets/beers-logo.png" Width="32" Height="32"/>
             <TextBlock Grid.Column="1" Text="Admin Dashboard" Foreground="White" FontSize="18" FontWeight="SemiBold" 
                      VerticalAlignment="Center" Margin="12,0,0,0"/>
-            
-            <components:NavigationMenu x:Name="NavMenu" 
-                                     Grid.Column="2"
-                                     HorizontalAlignment="Right"
-                                     Margin="0,0,12,0"
-                                     IsAdmin="True"/>
         </Grid>
 
         <!-- Left Column - Reviews -->

@@ -361,7 +361,6 @@ namespace DrinkDb_Auth
             ToggleSection(FavoriteDrinksContent, FavoriteDrinksToggleButton, ref favoriteDrinksCollapsed);
         }
 
-
         private void ToggleSection(FrameworkElement content, Button toggleButton, ref bool isCollapsed)
         {
             Storyboard storyboard = new Storyboard();

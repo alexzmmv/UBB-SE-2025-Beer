@@ -9,15 +9,68 @@
 
     <Grid>
         <Button x:Name="AddButton"
-                Content="Add New Drink"
                 Click="AddDrinkButton_Click"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Margin="0"
-                Style="{StaticResource DefaultButton}"
-                Background="Yellow"
-                Foreground="Black"
-                FontWeight="Bold"
-                Padding="10"/>
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="40"
+                Height="40"
+                CornerRadius="20"
+                Padding="0">
+            <Button.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#4B6CDB"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="PointerOver">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundEllipse" Storyboard.TargetProperty="Fill">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#4BCDDB"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundEllipse" Storyboard.TargetProperty="Fill">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#DB4BCD"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                    <DoubleAnimation Storyboard.TargetName="BackgroundEllipse" 
+                                                                   Storyboard.TargetProperty="Opacity"
+                                                                   To="0.8" 
+                                                                   Duration="0"/>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <Ellipse x:Name="BackgroundEllipse" 
+                                             Fill="{TemplateBinding Background}" 
+                                             StrokeThickness="0"/>
+
+                                    <Viewbox Width="20" Height="20">
+                                        <TextBlock Text="+" 
+                                                   Foreground="White"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="20"
+                                                   FontWeight="Bold"
+                                                   Margin="0,-1,0,0"/>
+                                        <!-- Tiny vertical adjustment -->
+                                    </Viewbox>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Resources>
+        </Button>
     </Grid>
-</UserControl> 
+</UserControl>
