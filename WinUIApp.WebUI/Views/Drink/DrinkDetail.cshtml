@@ -1,6 +1,8 @@
 @model WinUIApp.WebUI.Models.DrinkDetailViewModel
+@using DataAccess.Constants
 @{
     ViewData["Title"] = Model.Drink.DrinkName;
+    bool isAdmin = Model.UserRole == RoleType.Admin;
 }
 
 @* @if (TempData["DebugReviewJson"] != null)
@@ -100,19 +102,19 @@
             <div class="action-buttons">
                 <form method="get" asp-controller="Update" asp-action="Drink" asp-route-id="@Model.Drink.DrinkId" >
                     <button type="submit" class="action-btn btn btn-outline-primary">
-                        <i class="bi bi-pencil-square me-2"></i>Update Details
+                        <i class="bi bi-pencil-square me-2"></i>@(isAdmin ? "Update Details" : "Request Update")
                     </button>
                 </form>
                 
                 <div class="dropdown">
                     <button class="action-btn btn btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-trash3 me-2"></i>Remove
+                        <i class="bi bi-trash3 me-2"></i>@(isAdmin ? "Remove" : "Request Removal")
                     </button>
                     <ul class="dropdown-menu p-3 shadow">
-                        <li class="text-center mb-2">Are you sure you want to remove this drink?</li>
+                        <li class="text-center mb-2">Are you sure you want to @(isAdmin ? "remove this drink" : "request removal of this drink")?</li>
                         <li>
                             <form method="post" asp-action="RemoveDrink" asp-route-id="@Model.Drink.DrinkId">
-                                <button type="submit" class="btn btn-danger w-100">Confirm Removal</button>
+                                <button type="submit" class="btn btn-danger w-100">Confirm @(isAdmin ? "Removal" : "Request")</button>
                             </form>
                         </li>
                     </ul>
