@@ -7,12 +7,15 @@ namespace WinUIApp.Views.Components
     using DataAccess.Constants;
     using DataAccess.Service;
     using DataAccess.Service.Interfaces;
+    using DrinkDb_Auth;
     using DrinkDb_Auth.ServiceProxy;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Media;
     using WinUIApp.ProxyServices;
     using WinUIApp.ViewModels;
+    using WinUIApp.Views.Pages;
 
     public sealed partial class AddDrinkFlyout : UserControl
     {
@@ -24,6 +27,7 @@ namespace WinUIApp.Views.Components
 
         public AddDrinkFlyout()
         {
+            this.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
             this.InitializeComponent();
 
             this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
@@ -144,6 +148,7 @@ namespace WinUIApp.Views.Components
                 _ = dialog.ShowAsync();
 
                 this.viewModel.ClearForm();
+                AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
             }
             catch (Exception exception)
             {

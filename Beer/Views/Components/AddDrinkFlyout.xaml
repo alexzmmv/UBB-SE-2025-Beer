@@ -8,39 +8,80 @@
     mc:Ignorable="d"
     Width="300">
 
-    <Border
-        Background="White"
-        CornerRadius="8"
-        BorderBrush="Gray"
-        BorderThickness="1"
-        Padding="16">
+    <UserControl.Background>
+        <SolidColorBrush Color="#0F0F1A"/>
+    </UserControl.Background>
 
-        <StackPanel x:Name="LayoutPanel" Spacing="10">
-            <TextBlock Text="Add New Drink" FontSize="18" FontWeight="Bold"/>
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#1A1A2E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4B6CDB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+        <Style TargetType="ListView">
+            <Setter Property="Background" Value="#1A1A2E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4B6CDB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#4B6CDB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4BCDDB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+    </UserControl.Resources>
 
-            <TextBlock Text="Drink Name:"/>
+    <Border CornerRadius="12" BorderBrush="#4B6CDB" BorderThickness="1" Padding="20">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0F0F1A" Offset="0"/>
+                <GradientStop Color="#1A1A2E" Offset="0.5"/>
+                <GradientStop Color="#0F0F1A" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <StackPanel x:Name="LayoutPanel" Spacing="12">
+            <TextBlock Text="Add New Drink" 
+                      FontSize="20" 
+                      FontWeight="Bold" 
+                      Foreground="#4BCDDB" 
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,8"/>
+
+            <TextBlock Text="Drink Name:" FontSize="14" FontWeight="SemiBold"/>
             <TextBox x:Name="NameBox"
                      PlaceholderText="Enter drink name..."
                      Text="{Binding DrinkName, Mode=TwoWay}" />
 
-            <TextBlock Text="Image URL:"/>
+            <TextBlock Text="Image URL:" FontSize="14" FontWeight="SemiBold"/>
             <TextBox x:Name="ImageUrlBox"
                      PlaceholderText="Enter image URL..."
                      Text="{Binding DrinkURL, Mode=TwoWay}" />
 
-            <TextBlock Text="Categories:"/>
-            <TextBox x:Name="SearchBox" PlaceholderText="Search categories..." />
+            <TextBlock Text="Categories:" FontSize="14" FontWeight="SemiBold"/>
+            <TextBox x:Name="SearchBox" 
+                     PlaceholderText="Search categories..." />
             <ListView x:Name="CategoryList"
                       Height="120"
                       SelectionMode="Multiple"
                       ItemsSource="{Binding AllCategories}"/>
 
-            <TextBlock Text="Brand:"/>
+            <TextBlock Text="Brand:" FontSize="14" FontWeight="SemiBold"/>
             <TextBox x:Name="BrandBox"
                      PlaceholderText="Brand"
                      Text="{Binding BrandName, Mode=TwoWay}" />
 
-            <TextBlock Text="Alcohol Content (%):"/>
+            <TextBlock Text="Alcohol Content (%):" FontSize="14" FontWeight="SemiBold"/>
             <TextBox x:Name="AlcoholBox"
                      PlaceholderText="Alcohol %"
                      Text="{Binding AlcoholContent, Mode=TwoWay}" />
@@ -48,7 +89,8 @@
             <Button x:Name="SaveButton"
                     Content="Add Drink"
                     HorizontalAlignment="Right"
-                    Click="SaveButton_Click"/>
+                    Click="SaveButton_Click"
+                    Margin="0,8,0,0"/>
         </StackPanel>
     </Border>
-</UserControl> 
+</UserControl>
