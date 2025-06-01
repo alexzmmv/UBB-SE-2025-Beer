@@ -1,5 +1,6 @@
 ﻿namespace WinUIApp.ViewModels
 {
+    using DataAccess.Constants;
     using DataAccess.Service.Interfaces;
     using System;
     using System.Collections.Generic;
@@ -11,13 +12,15 @@
     using WinUiApp.Data.Data;
     using WinUIApp.ProxyServices;
     using WinUIApp.ProxyServices.Models;
+    using WinUIApp.WebAPI.Models;
 
-    public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService) : INotifyPropertyChanged
+    public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService, IDrinkModificationRequestService modificationRequestService) : INotifyPropertyChanged
     {
         private const float MaxAlcoholContent = 100.0f;
         private const float MinAlcoholContent = 0.0f;
         private readonly IDrinkService drinkService = drinkService;
         private readonly IUserService userService = userService;
+        private readonly IDrinkModificationRequestService modificationRequestService = modificationRequestService;
         private string newDrinkName = string.Empty;
         private string newDrinkURL = string.Empty;
         private string newDrinkBrandName = string.Empty;
@@ -143,8 +146,54 @@
         {
             try
             {
-                Guid userId = App.CurrentUserId;
-                // TODO Admin service Notify
+                List<Category> categories = this.GetSelectedCategories();
+                float alcoholContent = float.Parse(this.AlcoholContent);
+
+                // Check if brand exists
+                // Note: should a brand be created if it doesn't exist? - this should require admin approval as well
+                List<Brand> existingBrands = this.drinkService.GetDrinkBrandNames();
+                Brand? brand = existingBrands.FirstOrDefault(brand => brand.BrandName.Equals(this.BrandName, StringComparison.OrdinalIgnoreCase));
+                
+                if (brand == null)
+                {
+                    throw new ArgumentException($"Brand '{this.BrandName}' does not exist. Please select an existing brand.");
+                }
+
+                // Add the drink
+                this.drinkService.AddDrink(
+                    inputtedDrinkName: this.DrinkName,
+                    inputtedDrinkPath: this.DrinkURL,
+                    inputtedDrinkCategories: categories,
+                    inputtedDrinkBrandName: brand.BrandName,
+                    inputtedAlcoholPercentage: alcoholContent,
+                    userId: App.CurrentUserId,
+                    isDrinkRequestingApproval: true);
+
+                // Get the drink ID from the service
+                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
+                    searchKeyword: this.DrinkName,
+                    drinkBrandNameFilter: new List<string> { brand.BrandName },
+                    drinkCategoryFilter: null,
+                    minimumAlcoholPercentage: null,
+                    maximumAlcoholPercentage: null,
+                    orderingCriteria: null);
+
+                DrinkDTO? newDrink = drinks.FirstOrDefault(drink => 
+                drink.DrinkName.Equals(this.DrinkName, StringComparison.OrdinalIgnoreCase) && 
+                drink.DrinkBrand.BrandName.Equals(brand.BrandName, StringComparison.OrdinalIgnoreCase));
+
+                if (newDrink == null)
+                {
+                    throw new InvalidOperationException("Failed to add drink");
+                }
+
+                // Send the modification request
+                this.modificationRequestService.AddRequest(
+                    DrinkModificationRequestType.Add,
+                    null,
+                    newDrink.DrinkId,
+                    App.CurrentUserId);
+
                 Debug.WriteLine("Drink add request sent to admin.");
             }
             catch (Exception sendAddDrinkRequestException)

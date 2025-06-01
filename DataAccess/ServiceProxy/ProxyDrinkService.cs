@@ -146,13 +146,15 @@ namespace WinUIApp.ProxyServices
         /// <exception cref="Exception"> any issues. </exception>
         public void UpdateDrink(DrinkDTO drink, Guid userId)
         {
-            DrinkDTO convertedDrink = new ()
+            DrinkDTO convertedDrink = new()
             {
                 DrinkId = drink.DrinkId,
                 DrinkName = drink.DrinkName,
                 DrinkImageUrl = drink.DrinkImageUrl,
-                CategoryList = drink.CategoryList.Select(c => new Category(c.CategoryId, c.CategoryName)).ToList(),
-
+                DrinkBrand = drink.DrinkBrand,
+                AlcoholContent = drink.AlcoholContent,
+                IsRequestingApproval = drink.IsRequestingApproval,
+                CategoryList = drink.CategoryList.Select(c => new Category(c.CategoryId, c.CategoryName)).ToList()
             };
 
             try
