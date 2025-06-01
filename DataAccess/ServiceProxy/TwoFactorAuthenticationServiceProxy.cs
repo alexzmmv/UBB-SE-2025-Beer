@@ -12,22 +12,22 @@ namespace DataAccess.ServiceProxy
     public class TwoFactorAuthenticationServiceProxy : ITwoFactorAuthenticationService
     {
         private readonly HttpClient httpClient;
-        private const string ApiBaseRoute = "api/2fa";
+        private const string API_BASE_ROUTE = "api/2fa";
 
         public Guid UserId { get; set; }
         public bool IsFirstTimeSetup { get; set; }
 
         public TwoFactorAuthenticationServiceProxy(string baseUrl)
         {
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(baseUrl);
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new Uri(baseUrl);
         }
 
         public async Task<(User? currentUser, string uniformResourceIdentifier, byte[] twoFactorSecret)> Get2FAValues()
         {
             TwoFASetupRequest request = new TwoFASetupRequest { UserId = UserId, IsFirstTimeSetup = IsFirstTimeSetup };
             StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await httpClient.PostAsync($"{ApiBaseRoute}/setup", content);
+            HttpResponseMessage response = await this.httpClient.PostAsync($"{API_BASE_ROUTE}/setup", content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -45,7 +45,7 @@ namespace DataAccess.ServiceProxy
 
         public async Task<User?> GetUserById(Guid userId)
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"api/auth/user?userId={userId}");
+            HttpResponseMessage response = await this.httpClient.GetAsync($"api/auth/user?userId={userId}");
             if (!response.IsSuccessStatusCode)
             {
                 return null;
@@ -57,7 +57,7 @@ namespace DataAccess.ServiceProxy
         public async Task<bool> UpdateUser(User user)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await httpClient.PutAsync($"api/auth/user/{user.UserId}", content);
+            HttpResponseMessage response = await this.httpClient.PutAsync($"api/auth/user/{user.UserId}", content);
             return response.IsSuccessStatusCode;
         }
 

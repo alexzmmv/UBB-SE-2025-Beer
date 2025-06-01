@@ -12,15 +12,17 @@ namespace DataAccess.Extensions
 
         private static bool IsContentValid(string content)
         {
-            return !string.IsNullOrWhiteSpace(content) && content.Length <= ReviewDomainConstants.MaxContentLength;
+            return !string.IsNullOrWhiteSpace(content) && content.Length <= ReviewDomainConstants.MAX_CONTENT_LENGTH;
         }
 
         private static bool IsRatingValid(float? rating)
         {
             if (!rating.HasValue)
+            {
                 return false;
+            }
 
-            return rating.Value >= ReviewDomainConstants.MinRatingValue && rating.Value <= ReviewDomainConstants.MaxRatingValue;
+            return rating.Value >= ReviewDomainConstants.MIN_RATING_VALUE && rating.Value <= ReviewDomainConstants.MAX_RATING_VALUE;
         }
     }
-} 
+}

@@ -10,6 +10,6 @@ namespace WinUIApp.ProxyServices.Models
 {
     public class AddReview
     {
-        public Review reviewDto { get; set; }
+        public Review ReviewDto { get; set; }
     }
 }

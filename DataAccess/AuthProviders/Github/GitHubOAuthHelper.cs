@@ -6,10 +6,10 @@ namespace DataAccess.AuthProviders.Github
 {
     public class GitHubOAuthHelper : IGitHubOAuthHelper
     {
-        private const string ClientId = "Ov23ligheYgI7JILPWGY";
-        private const string ClientSecret = "791dfaf36750b2a34a752c4fe3fb3703cef18836";
-        private const string RedirectUri = "http://localhost:8890/auth";
-        private const string Scope = "read:user user:email";
+        private const string CLIENT_ID = "Ov23ligheYgI7JILPWGY";
+        private const string CLIENT_SECRET = "791dfaf36750b2a34a752c4fe3fb3703cef18836";
+        private const string REDIRECT_URI = "http://localhost:8890/auth";
+        private const string SCOPE = "read:user user:email";
         private IGenericOAuth2Provider gitHubOAuth2Provider;
         private TaskCompletionSource<AuthenticationResponse> taskCompletionSource;
         private GitHubLocalOAuthServer localServer;
@@ -26,9 +26,9 @@ namespace DataAccess.AuthProviders.Github
         private string BuildAuthorizeUrl()
         {
             return $"https://github.com/login/oauth/authorize" +
-                   $"?client_id={GitHubOAuthHelper.ClientId}" +
-                   $"&redirect_uri={Uri.EscapeDataString(GitHubOAuthHelper.RedirectUri)}" +
-                   $"&scope={Uri.EscapeDataString(GitHubOAuthHelper.Scope)}" +
+                   $"?client_id={GitHubOAuthHelper.CLIENT_ID}" +
+                   $"&redirect_uri={Uri.EscapeDataString(GitHubOAuthHelper.REDIRECT_URI)}" +
+                   $"&scope={Uri.EscapeDataString(GitHubOAuthHelper.SCOPE)}" +
                    $"&response_type=code";
         }
 
@@ -84,10 +84,10 @@ namespace DataAccess.AuthProviders.Github
                 request.Headers.Add("Accept", "application/json"); // we want JSON response
                 FormUrlEncodedContent content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("client_id", GitHubOAuthHelper.ClientId),
-                    new KeyValuePair<string, string>("client_secret", GitHubOAuthHelper.ClientSecret),
+                    new KeyValuePair<string, string>("client_id", GitHubOAuthHelper.CLIENT_ID),
+                    new KeyValuePair<string, string>("client_secret", GitHubOAuthHelper.CLIENT_SECRET),
                     new KeyValuePair<string, string>("code", code),
-                    new KeyValuePair<string, string>("redirect_uri", GitHubOAuthHelper.RedirectUri)
+                    new KeyValuePair<string, string>("redirect_uri", GitHubOAuthHelper.REDIRECT_URI)
                 });
                 request.Content = content;
 
@@ -95,7 +95,7 @@ namespace DataAccess.AuthProviders.Github
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 using JsonDocument responseDocument = JsonDocument.Parse(responseBody);
-                if (responseDocument.RootElement.TryGetProperty("access_token", out var tokenProperty))
+                if (responseDocument.RootElement.TryGetProperty("access_token", out JsonElement tokenProperty))
                 {
                     return tokenProperty.GetString() ?? throw new Exception("Access token is null.");
                 }

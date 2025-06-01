@@ -64,7 +64,7 @@ namespace WinUIApp.Tests.UnitTests.Services
             var exception = Assert.Throws<ArgumentException>(() => service.CreateRating(invalidDto));
 
             // Assert
-            Assert.Equal(ServiceErrorMessages.InvalidRatingValue, exception.Message);
+            Assert.Equal(ServiceErrorMessages.INVALID_RATING_VALUE, exception.Message);
         }
 
         [Fact]
