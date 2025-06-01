@@ -7,6 +7,7 @@
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using WinUIApp.ProxyServices;
+    using WinUIApp.WebAPI.Models;
 
     public class DrinkPageViewModel : INotifyPropertyChanged
     {
@@ -16,8 +17,23 @@
         private int drinkId;
         private bool isInUserDrinksList;
         private string buttonText;
+        private DrinkDTO drink;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public DrinkDTO Drink
+        {
+            get => this.drink;
+            set
+            {
+                this.drink = value;
+                if (value != null)
+                {
+                    this.DrinkId = value.DrinkId;
+                }
+                this.OnPropertyChanged(nameof(this.Drink));
+            }
+        }
 
         public DrinkPageViewModel(IDrinkService drinkService, IUserService userService)
         {

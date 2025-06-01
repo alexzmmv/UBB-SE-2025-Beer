@@ -87,7 +87,7 @@
                     orderingCriteria: orderBy);
 
                 displayItems = new List<DrinkDisplayItem>();
-                foreach (DrinkDTO drink in drinks)
+                foreach (DrinkDTO drink in drinks.Where(drink => !drink.IsRequestingApproval))
                 {
                     float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
                     if (this.minRatingFilter == null)
@@ -114,7 +114,7 @@
                     orderingCriteria: null);
 
                 displayItems = new List<DrinkDisplayItem>();
-                foreach (DrinkDTO drink in drinks)
+                foreach (DrinkDTO drink in drinks.Where(drink => !drink.IsRequestingApproval))
                 {
                     float averageScore = this.reviewService.GetReviewAverageByDrinkID(drink.DrinkId);
                     if (this.minRatingFilter == null)

@@ -42,7 +42,7 @@ namespace WinUIApp.WebAPI.Models
             this.CategoryList = categories;
             this.DrinkBrand = brandDto ?? throw new ArgumentNullException(nameof(brandDto), "Brand cannot be null");
             this.AlcoholContent = alcoholContent;
-            this.isRequestingApproval = isRequestingApproval;
+            this.IsRequestingApproval = isRequestingApproval;
         }
 
         /// <summary>
