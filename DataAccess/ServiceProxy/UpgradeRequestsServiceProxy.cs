@@ -72,5 +72,26 @@ namespace DataAccess.ServiceProxy
             HttpResponseMessage response = await this.httpClient.PostAsync($"{this.baseUrl}/{API_BASE_ROUTE}/add", content);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<bool> HasPendingUpgradeRequest(Guid userId)
+        {
+            try
+            {
+                HttpResponseMessage response = await httpClient.GetAsync($"{baseUrl}/{ApiBaseRoute}/hasPending/{userId}");
+                response.EnsureSuccessStatusCode();
+                string json = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<bool>(json);
+            }
+            catch (HttpRequestException)
+            {
+                // Return false if API call fails (network issues, server down, etc.)
+                return false;
+            }
+            catch (Exception)
+            {
+                // Return false for any other errors (deserialization, etc.)
+                return false;
+            }
+        }
     }
 }

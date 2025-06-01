@@ -9,5 +9,6 @@ namespace WebServer.Models
         public required User CurrentUser { get; set; }
         public required IEnumerable<DataAccess.DTOModels.ReviewDTO> CurrentUserReviews { get; set; }
         public required IEnumerable<string> CurrentUserDrinks { get; set; }
+        public bool HasPendingUpgradeRequest { get; set; }
     }
 }
