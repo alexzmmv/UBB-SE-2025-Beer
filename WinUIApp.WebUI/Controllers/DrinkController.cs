@@ -35,7 +35,7 @@ namespace WinUIApp.WebUI.Controllers
             {
                 return NotFound();
             }
-            
+
             // Get all reviews for this drink
             var reviews = reviewService.GetReviewsByDrink(id).Result;
             double averageRating = reviews.Count > 0 ? reviews.Average(r => r.RatingValue ?? 0) : 0;
@@ -45,15 +45,15 @@ namespace WinUIApp.WebUI.Controllers
             var viewModel = new DrinkDetailViewModel
             {
                 Drink = drink,
-                CategoriesDisplay = drink.CategoryList != null 
-                    ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName)) 
+                CategoriesDisplay = drink.CategoryList != null
+                    ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName))
                     : string.Empty,
                 AverageRatingScore = averageRating,
                 Reviews = reviews,
                 IsInFavorites = isInFavorites,
                 NewReview = new RatingReviewViewModel { DrinkId = id, UserId = CurrentUserId }
             };
-            
+
             return View(viewModel);
         }
 
@@ -112,7 +112,7 @@ namespace WinUIApp.WebUI.Controllers
 
             return RedirectToAction("DrinkDetail", new { id = model.DrinkId });
         }
-        
+
         [HttpPost]
         public IActionResult ToggleFavorites(int id)
         {
@@ -120,7 +120,7 @@ namespace WinUIApp.WebUI.Controllers
             {
                 Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
                 bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
-                
+
                 if (isInFavorites)
                 {
                     drinkService.DeleteFromUserPersonalDrinkList(CurrentUserId, id);
@@ -136,16 +136,17 @@ namespace WinUIApp.WebUI.Controllers
             {
                 TempData["ErrorMessage"] = "Error updating favorites.";
             }
-            
+
             return RedirectToAction("DrinkDetail", new { id });
         }
-        
+
         [HttpPost]
         public IActionResult RemoveDrink(int id)
         {
             try
             {
-                drinkService.DeleteDrink(id);
+                Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
+                drinkService.DeleteDrink(id, CurrentUserId);
                 return RedirectToAction("Index", "HomePage");
             }
             catch (Exception ex)
