@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:headerComponents="using:WinUIApp.Views.Components.HeaderComponents"
     xmlns:components="using:WinUIApp.Views.Components"
-    xmlns:navcomponents="using:WinUIApplication.Views.Components"
+    xmlns:navcomponents="using:WinUIApp.Views.Components"
     mc:Ignorable="d">
 
     <Grid Height="60" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

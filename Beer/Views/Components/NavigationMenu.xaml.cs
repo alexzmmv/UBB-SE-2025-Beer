@@ -9,7 +9,7 @@ using System;
 using DrinkDb_Auth.View;
 using WinUIApp.Views.Pages;
 
-namespace WinUIApplication.Views.Components
+namespace WinUIApp.Views.Components
 {
     public sealed partial class NavigationMenu : UserControl
     {

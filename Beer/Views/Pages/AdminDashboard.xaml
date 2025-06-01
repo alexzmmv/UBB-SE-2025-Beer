@@ -14,7 +14,7 @@
     xmlns:viewmodels="using:DrinkDb_Auth.ViewModel.AdminDashboard"
     xmlns:dto="using:DataAccess.DTOModels"
     xmlns:admin="using:DataAccess.Model.AdminDashboard"
-    xmlns:components="using:WinUIApplication.Views.Components"
+    xmlns:components="using:WinUIApp.Views.Components"
 >
 
     <Page.Resources>

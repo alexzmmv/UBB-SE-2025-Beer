@@ -5,6 +5,14 @@
     xmlns:models="using:WinUIApp.WebAPI.Models"
     x:Name="Root">
 
+    <UserControl.Resources>
+        <!-- Style for drink card text -->
+        <Style TargetType="TextBlock" x:Key="DrinkCardTextStyle">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+    </UserControl.Resources>
+
     <ScrollViewer HorizontalScrollBarVisibility="Auto" 
                   VerticalScrollBarVisibility="Disabled" 
                   Padding="0,0,0,15">
@@ -13,10 +21,9 @@
             <ItemsRepeater.Layout>
                 <StackLayout Orientation="Horizontal" Spacing="20"/>
             </ItemsRepeater.Layout>
-
             <ItemsRepeater.ItemTemplate>
                 <DataTemplate x:DataType="models:DrinkDTO">
-                    <!-- Drink Card - Maintains original style but with better interaction -->
+                    <!-- Drink Card - Styled to match profile page theme -->
                     <Button Background="Transparent"
                             Padding="0"
                             Click="DrinkItem_Click"
@@ -24,16 +31,18 @@
                             Margin="0,0,0,5">
                         <Border Width="200"
                                 Height="300"
-                                Background="White"
-                                CornerRadius="10"
+                                Background="#0F0F1A"
+                                CornerRadius="12"
                                 Padding="15"
-                                BorderBrush="Yellow"
-                                BorderThickness="2">
-                            <StackPanel Spacing="10">
+                                BorderBrush="#4B6CDB"
+                                BorderThickness="1">
+                            <StackPanel Spacing="12">
                                 <!-- Image Container -->
-                                <Border Background="Gray"
+                                <Border Background="#1A1A2E"
                                         Height="150"
-                                        CornerRadius="5">
+                                        CornerRadius="8"
+                                        BorderBrush="#4BCDDB"
+                                        BorderThickness="1">
                                     <Image Source="{x:Bind DrinkImageUrl, Mode=OneWay}"
                                            Stretch="UniformToFill"
                                            HorizontalAlignment="Center"
@@ -41,24 +50,28 @@
                                 </Border>
 
                                 <!-- Drink Info -->
-                                <StackPanel Spacing="4">
+                                <StackPanel Spacing="6">
                                     <TextBlock Text="{x:Bind DrinkName, Mode=OneWay}"
-                                               FontSize="18"
+                                               Style="{StaticResource DrinkCardTextStyle}"
+                                               FontSize="16"
                                                FontWeight="Bold"
-                                               Foreground="Black"
                                                TextWrapping="Wrap"
                                                MaxLines="2"
-                                               TextTrimming="CharacterEllipsis"/>
-
+                                               TextTrimming="CharacterEllipsis"
+                                               HorizontalAlignment="Center"/>
                                     <TextBlock Text="{x:Bind DrinkBrand.BrandName, Mode=OneWay}"
-                                               FontSize="14"
-                                               Foreground="Black"
-                                               TextWrapping="Wrap"/>
-
+                                               Style="{StaticResource DrinkCardTextStyle}"
+                                               FontSize="13"
+                                               Foreground="#A0A0A0"
+                                               TextWrapping="Wrap"
+                                               HorizontalAlignment="Center"/>
                                     <TextBlock Text="{x:Bind AlcoholContent, Mode=OneWay}"
-                                               FontSize="12"
-                                               Foreground="Black"
-                                               TextWrapping="Wrap"/>
+                                               Style="{StaticResource DrinkCardTextStyle}"
+                                               FontSize="11"
+                                               Foreground="#4BCDDB"
+                                               TextWrapping="Wrap"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="SemiBold"/>
                                 </StackPanel>
                             </StackPanel>
                         </Border>

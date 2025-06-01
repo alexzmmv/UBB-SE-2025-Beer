@@ -41,6 +41,8 @@ namespace DrinkDb_Auth
 
         public static Type CurrentPage { get; set; }
 
+        public static OAuthService OAuthService { get; set; }
+
         public AuthenticationWindow(IAuthenticationService authenticationService, ITwoFactorAuthenticationService twoFactorAuthenticationService,
             IUserService userService, TwitterOAuth2Provider twitterOAuth2Provider, IGoogleOAuth2Provider googleOAuth2Provider)
         {
@@ -137,6 +139,7 @@ namespace DrinkDb_Auth
 
                 AuthenticationResponse response = await this.authenticationService.AuthWithUserPass(username, password);
                 await this.AuthenticationComplete(response);
+                AuthenticationWindow.OAuthService = OAuthService.None;
             }
             catch (Exception ex)
             {
@@ -151,6 +154,7 @@ namespace DrinkDb_Auth
                 GoogleGuiHelper googleGuiHelper = new GoogleGuiHelper(this, this.googleOAuth2Provider);
                 AuthenticationResponse authenticationResponse = await googleGuiHelper.SignInWithGoogleAsync();
                 await this.AuthenticationComplete(authenticationResponse);
+                AuthenticationWindow.OAuthService = OAuthService.Google;
             }
             catch (Exception ex)
             {
@@ -174,6 +178,7 @@ namespace DrinkDb_Auth
                     throw;
                 }
                 _ = this.AuthenticationComplete(authResponse);
+                AuthenticationWindow.OAuthService = OAuthService.GitHub;
             }
             catch (Exception ex)
             {
@@ -187,6 +192,7 @@ namespace DrinkDb_Auth
                 var facebookHelper = App.Host.Services.GetRequiredService<IFacebookOAuthHelper>();
                 AuthenticationResponse authResponse = await this.authenticationService.AuthWithOAuth(OAuthService.Facebook, facebookHelper);
                 await this.AuthenticationComplete(authResponse);
+                AuthenticationWindow.OAuthService = OAuthService.Facebook;
             }
             catch (Exception ex)
             {
@@ -201,6 +207,7 @@ namespace DrinkDb_Auth
                 TwitterGuiHelper twitterGuiHelper = new TwitterGuiHelper(this, this.twitterOAuth2Provider);
                 AuthenticationResponse authResponse = await twitterGuiHelper.SignInWithTwitterAsync();
                 await this.AuthenticationComplete(authResponse);
+                AuthenticationWindow.OAuthService = OAuthService.Twitter;
             }
             catch (Exception ex)
             {
@@ -215,6 +222,7 @@ namespace DrinkDb_Auth
                 var linkedInHelper = App.Host.Services.GetRequiredService<ILinkedInOAuthHelper>();
                 AuthenticationResponse authResponse = await this.authenticationService.AuthWithOAuth(OAuthService.LinkedIn, linkedInHelper);
                 await this.AuthenticationComplete(authResponse);
+                AuthenticationWindow.OAuthService = OAuthService.LinkedIn;
             }
             catch (Exception ex)
             {

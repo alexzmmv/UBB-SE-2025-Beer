@@ -3,32 +3,79 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DrinkDb_Auth"
-    xmlns:components="using:WinUIApplication.Views.Components"
+    xmlns:components="using:WinUIApp.Views.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local1="using:WinUIApp.Views.Components"
     mc:Ignorable="d">
 
     <!-- Page-wide resource styles -->
     <Page.Resources>
-        <!-- Default style for TextBlocks: black text, Segoe UI font -->
+        <!-- Default style for TextBlocks: white text, Segoe UI font -->
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontFamily" Value="Segoe UI"/>
         </Style>
 
-        <!-- Style for Buttons: black text on white background -->
+        <!-- Style for Buttons: white text with accent color background -->
         <Style TargetType="Button">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Background" Value="#4B6CDB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4BCDDB"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="8,4"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <!-- Drawer button style -->
+        <Style x:Key="DrawerToggleButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2E4C6D"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4B6CDB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="80"/>
+            <Setter Property="CornerRadius" Value="8,0,0,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!-- Collapsible section toggle button style -->
+        <Style x:Key="SectionToggleButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#4BCDDB"/>
+            <Setter Property="BorderBrush" Value="#4B6CDB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Section header style -->
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#4BCDDB"/>
         </Style>
     </Page.Resources>
 
-    <!-- Main layout grid with a white background -->
-    <Grid Background="White">
+    <!-- Main layout grid with gradient background -->
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0F0F1A" Offset="0"/>
+                <!-- Dark blue-purple -->
+                <GradientStop Color="#1A1A2E" Offset="0.5"/>
+                <!-- Medium purple -->
+                <GradientStop Color="#0F0F1A" Offset="1"/>
+                <!-- Dark blue-purple -->
+            </LinearGradientBrush>
+        </Grid.Background>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -40,74 +87,188 @@
                                  Margin="0,10,20,0"
                                  IsAdmin="{x:Bind IsAdmin, Mode=OneWay}"/>
 
+        <!-- Main content area -->
         <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
+            <!-- User Profile Section - Fixed position -->
+            <Grid Margin="20" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <StackPanel 
+                    Padding="20"
+                    Spacing="16"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
 
-            <!-- LEFT COLUMN: User Info Card -->
-            <StackPanel 
-                Grid.Column="0"
-                Padding="20"
-                Spacing="16"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center">
+                    <Border 
+                        BorderBrush="#4B6CDB"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="30"
+                        Background="#1A1A2E"
+                        MinWidth="350">
 
-                <Border 
-                    BorderBrush="Black"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="20">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <!-- Profile picture -->
+                            <Ellipse Width="150" Height="150">
+                                <Ellipse.Fill>
+                                    <ImageBrush x:Name="ProfileImageBrush" 
+                                       ImageSource="{Binding ProfileImageUrl}" 
+                                       Stretch="UniformToFill"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
 
-                    <StackPanel Spacing="12" HorizontalAlignment="Center">
-                        <!-- Profile picture placeholder -->
-                        <Ellipse Width="100" Height="100" Fill="Gray" />
+                            <!-- Name & Username -->
+                            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                <TextBlock 
+                                    x:Name="NameTextBlock"
+                                    FontSize="28"
+                                    FontWeight="Bold"
+                                    Text="{Binding UserName}"/>
+                                <TextBlock 
+                                    x:Name="UsernameTextBlock"
+                                    FontSize="18"
+                                    Foreground="#A0A0A0"
+                                    Text="{Binding UserHandle}"/>
+                            </StackPanel>
 
-                        <!-- Name & Username -->
-                        <StackPanel Spacing="4" HorizontalAlignment="Center">
-                            <TextBlock 
-                                x:Name="NameTextBlock"
-                                FontSize="24"
-                                FontWeight="Bold" />
-                            <TextBlock 
-                                x:Name="UsernameTextBlock"
-                                FontSize="16"
-                                Foreground="DarkGray" />
+                            <!-- Button container -->
+                            <StackPanel Spacing="12" HorizontalAlignment="Stretch">
+                                <Button 
+                                    x:Name="AppealButton"
+                                    Content="Submit Appeal"
+                                    Click="AppealButton_Click"
+                                    Visibility="Collapsed"
+                                    Background="#DB4BCD"
+                                    Foreground="White"
+                                    Height="40"/>
+
+                                <Button 
+                                    x:Name="RequestAdminButton"
+                                    Content="Request Admin"
+                                    Click="RequestAdminButton_Click"
+                                    Height="40"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- Drawer Toggle Button - Fixed at right edge -->
+            <Button x:Name="DrawerToggleButton"
+                    Style="{StaticResource DrawerToggleButtonStyle}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="&lt;"
+                    Click="DrawerToggleButton_Click"
+                    Canvas.ZIndex="100"/>
+
+            <!-- Drawer Panel -->
+            <Border x:Name="DrawerPanel"
+                    Background="#1A1A2E"
+                    BorderBrush="#4B6CDB"
+                    BorderThickness="2,0,0,0"
+                    HorizontalAlignment="Right"
+                    Width="1100"
+                    Canvas.ZIndex="50">
+
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="DrawerTransform" X="1100"/>
+                </Border.RenderTransform>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                              HorizontalScrollBarVisibility="Disabled"
+                              Padding="30">
+                    <StackPanel Spacing="30">
+
+                        <!-- Reviews Section -->
+                        <StackPanel Spacing="20">
+                            <!-- Reviews Header with Toggle Button -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="Reviews" 
+                                           Style="{StaticResource SectionHeaderStyle}"
+                                           VerticalAlignment="Center"/>
+
+                                <Button Grid.Column="1"
+                                        x:Name="ReviewsToggleButton"
+                                        Style="{StaticResource SectionToggleButtonStyle}"
+                                        Content="-"
+                                        Click="ReviewsToggleButton_Click"
+                                        ToolTipService.ToolTip="Toggle Reviews Section"/>
+                            </Grid>
+
+                            <!-- Reviews Content -->
+                            <StackPanel x:Name="ReviewsContent" Spacing="12">
+                                <ItemsControl x:Name="ReviewsItemsControl">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#0F0F1A"
+                                                    BorderBrush="#4B6CDB"
+                                                    BorderThickness="1"
+                                                    CornerRadius="8"
+                                                    Padding="16"
+                                                    Margin="0,0,0,12">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding AuthorName}" 
+                                                               FontWeight="Bold"
+                                                               FontSize="16"/>
+                                                    <TextBlock Text="{Binding Content}"
+                                                               Margin="0,8,0,0"
+                                                               TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding PostedDate}"
+                                                               Foreground="#A0A0A0"
+                                                               FontSize="12"
+                                                               Margin="0,8,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
                         </StackPanel>
 
-                        <!-- Appeal button - only visible for banned users who haven't appealed -->
-                        <Button 
-                            x:Name="AppealButton"
-                            Content="Submit Appeal"
-                            Click="AppealButton_Click"
-                            Visibility="Collapsed"
-                            Background="Red"
-                            Foreground="White"/>
+                        <!-- Separator -->
+                        <Rectangle Height="1" Fill="#4B6CDB" Opacity="0.5" Margin="0,10"/>
 
-                        <Button 
-                            x:Name="RequestAdminButton"
-                            Content="Request Admin"
-                            Click="RequestAdminButton_Click"
-                            Background="White"
-                            Foreground="Black"/>
+                        <!-- Favorite Drinks Section -->
+                        <StackPanel Spacing="20">
+                            <!-- Favorite Drinks Header with Toggle Button -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
+                                <TextBlock Grid.Column="0"
+                                           Text="Your Favorite Drinks" 
+                                           Style="{StaticResource SectionHeaderStyle}"
+                                           VerticalAlignment="Center"/>
+
+                                <Button Grid.Column="1"
+                                        x:Name="FavoriteDrinksToggleButton"
+                                        Style="{StaticResource SectionToggleButtonStyle}"
+                                        Content="-"
+                                        Click="FavoriteDrinksToggleButton_Click"
+                                        ToolTipService.ToolTip="Toggle Favorite Drinks Section"/>
+                            </Grid>
+
+                            <!-- Favorite Drinks Content -->
+                            <StackPanel x:Name="FavoriteDrinksContent" Spacing="12">
+                                <Border CornerRadius="8" 
+                                        Background="#0F0F1A"
+                                        Padding="15" 
+                                        BorderThickness="1"
+                                        BorderBrush="#4B6CDB">
+                                    <components:DrinkListComponent Drinks="{Binding PersonalDrinks, Mode=TwoWay}"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <!-- RIGHT COLUMN: Reviews & Drinklist -->
-            <StackPanel 
-                Grid.Column="1"
-                Padding="20"
-                Spacing="20"
-                VerticalAlignment="Top">
-
-                <!-- Reviews Section -->
-                <TextBlock Text="Reviews" FontSize="20" FontWeight="Bold"/>
-                <!-- We will add each review in code-behind -->
-                <ItemsControl x:Name="ReviewsItemsControl" />
-            </StackPanel>
+                </ScrollViewer>
+            </Border>
         </Grid>
     </Grid>
 </Page>
