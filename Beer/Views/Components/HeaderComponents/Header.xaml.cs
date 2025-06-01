@@ -14,15 +14,24 @@ namespace WinUIApp.Views.Components.HeaderComponents
 
     public sealed partial class Header : UserControl
     {
-        private readonly HeaderViewModel viewModel;
+        private HeaderViewModel viewModel;
         private IDrinkService drinkService;
+        private bool isInitialized = false;
 
         public Header()
         {
-            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
-
             this.InitializeComponent();
-            this.viewModel = new HeaderViewModel(drinkService);
+        }
+
+        public void Initialize()
+        {
+            if (!isInitialized)
+            {
+                drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+                this.viewModel = new HeaderViewModel(drinkService);
+                this.NavMenu.Initialize();
+                isInitialized = true;
+            }
         }
 
         private void GoBackButton_Click(object sender, RoutedEventArgs routedEventArgs)

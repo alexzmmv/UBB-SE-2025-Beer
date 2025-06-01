@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="WinUIApplication.Views.Components.NavigationMenu"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinUIApplication.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Button x:Name="MenuButton" 
+                Style="{StaticResource DefaultButtonStyle}">
+            <Button.Flyout>
+                <MenuFlyout x:Name="NavigationMenuFlyout">
+                    <MenuFlyoutItem x:Name="HomeButton" Text="Home" Click="HomeButton_Click"/>
+                    <MenuFlyoutItem x:Name="ProfileButton" Text="Profile" Click="ProfileButton_Click"/>
+                    <MenuFlyoutItem x:Name="DashboardButton" Text="Dashboard" Click="DashboardButton_Click" Visibility="{x:Bind IsAdmin, Mode=OneWay}"/>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem x:Name="LogoutButton" Text="Logout" Click="LogoutButton_Click"/>
+                </MenuFlyout>
+            </Button.Flyout>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE712;"/>
+                <TextBlock Text="Menu"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl> 

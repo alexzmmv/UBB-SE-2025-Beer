@@ -56,7 +56,7 @@
                                 Foreground="White"
                                 BorderBrush="#4BCDDB">
                             <SymbolIcon Symbol="Find"/>
-                            </Button>
+                        </Button>
                     </StackPanel>
 
                     <TextBlock Text="Search Filters"

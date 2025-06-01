@@ -8,18 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:headerComponents="using:WinUIApp.Views.Components.HeaderComponents"
     xmlns:components="using:WinUIApp.Views.Components"
+    xmlns:navcomponents="using:WinUIApplication.Views.Components"
     mc:Ignorable="d">
 
     <Grid Height="60" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="Logo"
-                Content="Home"
-                Click="Logo_Click"
-                Background="Transparent"
-                BorderThickness="0"
-                Padding="0"
-                Margin="30 0 0 0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"/>
         <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
@@ -28,9 +20,15 @@
                     Content="Go Back">
             </Button>
         </StackPanel>
-        <components:AddDrinkButton x:Name="AddDrinkButtonControl" 
-                                   Margin="0 0 30 0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Center"
+                    Margin="0 0 30 0">
+            <components:AddDrinkButton x:Name="AddDrinkButtonControl" 
+                                     VerticalAlignment="Center"/>
+            <navcomponents:NavigationMenu x:Name="NavMenu"
+                                      VerticalAlignment="Center"
+                                      Margin="20 0 0 0"/>
+        </StackPanel>
     </Grid>
 </UserControl>
