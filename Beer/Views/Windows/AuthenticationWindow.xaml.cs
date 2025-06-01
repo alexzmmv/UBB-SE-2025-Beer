@@ -266,8 +266,6 @@ namespace DrinkDb_Auth
             // Clear the navigation stack and show the default content
             this.MainFrame.BackStack.Clear();
             this.MainFrame.Content = this.RootGrid;
-
-
         }
     }
 }
