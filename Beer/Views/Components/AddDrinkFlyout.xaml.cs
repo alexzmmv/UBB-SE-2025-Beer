@@ -19,6 +19,7 @@ namespace WinUIApp.Views.Components
         private AddDrinkMenuViewModel viewModel;
         IDrinkService drinkService;
         IUserService userService;
+        IDrinkModificationRequestService modificationRequestService;
         bool isAdmin;
 
         public AddDrinkFlyout()
@@ -27,6 +28,7 @@ namespace WinUIApp.Views.Components
 
             this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
+            this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
 
             this.Loaded += this.AddDrinkFlyout_LoadedAsync;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
@@ -68,7 +70,8 @@ namespace WinUIApp.Views.Components
 
             this.viewModel = new AddDrinkMenuViewModel(
                 this.drinkService,
-                this.userService)
+                this.userService,
+                this.modificationRequestService)
             {
                 AllBrands = allBrands,
                 AllCategoryObjects = allCategories,

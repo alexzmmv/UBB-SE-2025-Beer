@@ -25,6 +25,7 @@ namespace WinUIApp.Views.Pages
         private IUserService userService;
         private IReviewService reviewService;
         private ICheckersService checkersService;
+        private IDrinkModificationRequestService modificationRequestService;
         private RoleType userRole;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,11 +57,13 @@ namespace WinUIApp.Views.Pages
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
             this.checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
+            this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
 
             this.ViewModel = new DrinkDetailPageViewModel(
                 this.drinkService,
                 this.drinkReviewService,
-                this.userService);
+                this.userService,
+                this.modificationRequestService);
 
             this.DataContext = this.ViewModel;
 
