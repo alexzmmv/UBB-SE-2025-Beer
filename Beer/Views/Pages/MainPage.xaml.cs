@@ -16,7 +16,7 @@ namespace WinUIApp.Views.Pages
     using WinUIApp.Utils.NavigationParameters;
     using WinUIApp.ViewModels;
     using WinUIApp.Views.Components.SearchPageComponents;
-    using WinUIApplication.Views.Components;
+    using WinUIApp.Views.Components;
 
     public sealed partial class MainPage : Page
     {
@@ -37,7 +37,7 @@ namespace WinUIApp.Views.Pages
             drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
             userService = App.Host.Services.GetRequiredService<IUserService>();
 
-            this.viewModel = new MainPageViewModel(drinkService, userService);
+            this.viewModel = new MainPageViewModel(this.drinkService);
             this.DataContext = this.viewModel;
             InitializeAdminStatus();
         }

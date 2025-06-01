@@ -13,21 +13,17 @@
 
     internal class MainPageViewModel
     {
-        private const int HardCodedNumberOfDrinks = 5;
         private IDrinkService drinkService;
-        private IUserService userService;
         private string imageSource;
         private string drinkName;
         private string drinkBrand;
         private List<Category> drinkCategories;
         private decimal alcoholContent;
 
-        public MainPageViewModel(IDrinkService drinkService, IUserService userService)
+        public MainPageViewModel(IDrinkService drinkService)
         {
             this.drinkService = drinkService;
-            this.userService = userService;
             this.LoadDrinkOfTheDayData();
-            this.LoadPersonalDrinkListData();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -98,12 +94,6 @@
             {
                 this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private void LoadPersonalDrinkListData()
-        {
-            Guid userId = App.CurrentUserId;
-            this.PersonalDrinks = this.drinkService.GetUserPersonalDrinkList(userId, HardCodedNumberOfDrinks);
         }
     }
 }

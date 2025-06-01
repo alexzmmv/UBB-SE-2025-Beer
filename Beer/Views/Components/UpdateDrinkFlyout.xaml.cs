@@ -9,6 +9,7 @@ using DrinkDb_Auth.ServiceProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
@@ -32,6 +33,7 @@ namespace WinUIApp.Views.Components
 
         public UpdateDrinkFlyout()
         {
+            this.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
             this.InitializeComponent();
             drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
             userService = App.Host.Services.GetRequiredService<IUserService>();
