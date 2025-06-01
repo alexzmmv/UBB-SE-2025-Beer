@@ -105,10 +105,7 @@
                         }
                     }
 
-                    @* Logout Button *@
-                    <a asp-controller="Profile" asp-action="LogOut" class="btn btn-outline-dark">
-                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </a>
+                    
                 </div>
             </div>
         </div>
@@ -129,19 +126,6 @@
                 </div>
             </div>
 
-            <div>
-                <h4 class="fw-bold">Drinklist</h4>
-                <div id="DrinklistItemsControl" class="list-group">
-                    <ul>
-                        @foreach (string drink in Model.CurrentUserDrinks)
-                        {
-                            <li class="list-group-item">
-                                <strong>@drink</strong><br />
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
             
             @if (Model.FavoriteDrinks != null && Model.FavoriteDrinks.Any())
             {

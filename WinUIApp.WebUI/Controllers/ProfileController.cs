@@ -15,10 +15,8 @@ namespace WebServer.Controllers
         private IUserService userService;
         private IReviewService reviewService;
         private IUpgradeRequestsService upgradeRequestsService;
-
-        public ProfileController(IUserService userService, IReviewService reviewService, IUpgradeRequestsService upgradeRequestsService)
         private IDrinkService drinkService;
-        public ProfileController(IUserService userService, IReviewService reviewService, IDrinkService drinkService)
+        public ProfileController(IUserService userService, IReviewService reviewService, IDrinkService drinkService, IUpgradeRequestsService upgradeRequestsService)
         {
             this.userService = userService;
             this.reviewService = reviewService;
@@ -51,9 +49,7 @@ namespace WebServer.Controllers
             {
                 CurrentUser = currentUser,
                 CurrentUserReviews = reviews,
-                CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" },
-                FavoriteDrinks = favoriteDrinks.ToList()
-                CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" },
+                FavoriteDrinks = favoriteDrinks.ToList(),
                 HasPendingUpgradeRequest = hasPendingUpgradeRequest
             };
             return View(userPageModel);
