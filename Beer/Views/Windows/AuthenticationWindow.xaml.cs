@@ -27,6 +27,7 @@ namespace DrinkDb_Auth
     using Microsoft.UI.Xaml.Navigation;
     using WinUIApp.Views.Pages;
     using DrinkDb_Auth.View;
+    using DataAccess.Constants;
 
     public sealed partial class AuthenticationWindow : Window
     {
@@ -242,7 +243,7 @@ namespace DrinkDb_Auth
             await errorDialog.ShowAsync();
         }
 
-        private void FrameNavigated(object sender, NavigationEventArgs e)
+        private async void FrameNavigated(object sender, NavigationEventArgs e)
         {
             if (this.HeaderComponent != null)
             {
@@ -253,6 +254,20 @@ namespace DrinkDb_Auth
                 else
                 {
                     this.HeaderComponent.Visibility = Visibility.Visible;
+
+                    User? user = await this.userService.GetUserById(App.CurrentUserId);
+
+                    if (user == null)
+                    {
+                        return;
+                    }
+
+                    RoleType roletype = user.AssignedRole;
+
+                    if (roletype == RoleType.Banned)
+                    {
+                        this.HeaderComponent.HideAddButton();
+                    }
                 }
             }
         }
@@ -265,6 +280,8 @@ namespace DrinkDb_Auth
             this.PasswordBox.Password = string.Empty;
             this.MainFrame.BackStack.Clear();
             this.MainFrame.Content = this.RootGrid;
+            this.HeaderComponent.ShowAddButton();
+            this.HeaderComponent.isInitialized = false;
         }
     }
 }

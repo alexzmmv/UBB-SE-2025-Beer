@@ -185,7 +185,7 @@ namespace DrinkDb_Auth
                     this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/facebook_logo.png"));
                     break;
                 case DataAccess.Service.OAuthService.Twitter:
-                    this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/x-twitter-logo-on-black"));
+                    this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/x-twitter-logo-on-black.png"));
                     break;
                 case DataAccess.Service.OAuthService.GitHub:
                     this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/github_logo.png"));

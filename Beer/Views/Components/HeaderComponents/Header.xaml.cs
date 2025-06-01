@@ -14,9 +14,7 @@ namespace WinUIApp.Views.Components.HeaderComponents
 
     public sealed partial class Header : UserControl
     {
-        private HeaderViewModel viewModel;
-        private IDrinkService drinkService;
-        private bool isInitialized = false;
+        public bool isInitialized = false;
 
         public Header()
         {
@@ -27,8 +25,6 @@ namespace WinUIApp.Views.Components.HeaderComponents
         {
             if (!isInitialized)
             {
-                drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
-                this.viewModel = new HeaderViewModel(drinkService);
                 this.NavMenu.Initialize();
                 isInitialized = true;
             }
@@ -37,6 +33,16 @@ namespace WinUIApp.Views.Components.HeaderComponents
         private void GoHomeButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             AuthenticationWindow.NavigationFrame.Navigate(typeof(MainPage));
+        }
+
+        public void HideAddButton()
+        {
+            this.AddDrinkButtonControl.Visibility = Visibility.Collapsed;
+        }
+
+        public void ShowAddButton()
+        {
+            this.AddDrinkButtonControl.Visibility = Visibility.Visible;
         }
     }
 }
