@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DataAccess.Service;
 using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -39,6 +40,7 @@ namespace WinUIApp.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 var categories = drinkService.GetDrinkCategories();
+                Guid userId = AuthenticationService.GetCurrentUserId();
                 drinkService.AddDrink(
                     addViewModel.DrinkName,
                     addViewModel.DrinkImagePath,
@@ -51,7 +53,9 @@ namespace WinUIApp.WebUI.Controllers
                         return category;
                     }).OfType<Category>()],
                     addViewModel.DrinkBrandName,
-                    addViewModel.DrinkAlcoholPercentage
+                    addViewModel.DrinkAlcoholPercentage,
+                    userId,
+                    false
                     );
                 return RedirectToAction("Index", "HomePage");
             }

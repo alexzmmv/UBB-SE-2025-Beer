@@ -13,10 +13,12 @@ namespace WebServer.Controllers
     {
         private IUserService userService;
         private IReviewService reviewService;
-        public ProfileController(IUserService userService, IReviewService reviewService)
+        private IDrinkService drinkService;
+        public ProfileController(IUserService userService, IReviewService reviewService, IDrinkService drinkService)
         {
             this.userService = userService;
             this.reviewService = reviewService;
+            this.drinkService = drinkService;
         }
 
         public async Task<IActionResult> UserPage()
@@ -32,11 +34,13 @@ namespace WebServer.Controllers
             }
 
             IEnumerable<DataAccess.DTOModels.ReviewDTO> reviews = await reviewService.GetReviewsByUser(currentUser.UserId);
+            var favoriteDrinks = drinkService.GetUserPersonalDrinkList(userId);
             UserPageModel userPageModel = new UserPageModel()
             {
                 CurrentUser = currentUser,
                 CurrentUserReviews = reviews,
-                CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" }
+                CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" },
+                FavoriteDrinks = favoriteDrinks.ToList()
             };
             return View(userPageModel);
         }

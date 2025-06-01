@@ -145,7 +145,9 @@ namespace WinUIApp.WebUI.Controllers
         {
             try
             {
-                drinkService.DeleteDrink(id);
+                
+                Guid userId = AuthenticationService.GetCurrentUserId();
+                drinkService.DeleteDrink(id, userId);
                 return RedirectToAction("Index", "HomePage");
             }
             catch (Exception ex)
