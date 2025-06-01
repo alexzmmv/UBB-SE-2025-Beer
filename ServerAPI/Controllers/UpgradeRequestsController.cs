@@ -44,5 +44,11 @@ namespace ServerAPI.Controllers
         {
             await this.upgradeRequestsService.ProcessUpgradeRequest(isAccepted, id);
         }
+
+       [HttpGet("user/{userId:guid}/hasPending")]
+        public async Task<bool> HasPending(Guid userId)
+        {
+            return await this.upgradeRequestsService.HasPendingUpgradeRequest(userId);
+        }
     }
 }
