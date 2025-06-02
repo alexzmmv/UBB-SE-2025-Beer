@@ -34,11 +34,13 @@
                 <h4 class="fw-bold">Reviews</h4>
                 <div id="ReviewsItemsControl" class="list-group">
                     <ul>
-                        @foreach (DataAccess.DTOModels.ReviewDTO review in Model.CurrentUserReviews)
+                        @foreach (var review in Model.CurrentUserReviews)
                         {
-                            <li class="list-group-item">
-                                <strong>@review.RatingValue</strong><br />
-                                <span>@review.Content</span>
+                            <li class="list-group-item list-group-item-action">
+                                <a href="@Url.Action("DrinkDetail", "Drink", new { id = review.DrinkId })" class="text-decoration-none text-dark">
+                                    <strong>@review.RatingValue</strong><br />
+                                    <span>@review.Content</span>
+                                </a>
                             </li>
                         }
                     </ul>
