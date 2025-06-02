@@ -3,27 +3,23 @@ namespace WinUIApp.Views.Components
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using DataAccess.Constants;
-    using DataAccess.Service;
     using DataAccess.Service.Interfaces;
     using DrinkDb_Auth;
-    using DrinkDb_Auth.ServiceProxy;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media;
-    using WinUIApp.ProxyServices;
+    using WinUiApp.Data.Data;
     using WinUIApp.ViewModels;
     using WinUIApp.Views.Pages;
 
     public sealed partial class AddDrinkFlyout : UserControl
     {
         private AddDrinkMenuViewModel viewModel;
-        IDrinkService drinkService;
-        IUserService userService;
-        IDrinkModificationRequestService modificationRequestService;
-        bool isAdmin;
+        private IDrinkService drinkService;
+        private IUserService userService;
+        private bool isAdmin;
 
         public AddDrinkFlyout()
         {
@@ -32,7 +28,6 @@ namespace WinUIApp.Views.Components
 
             this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
-            this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
 
             this.Loaded += this.AddDrinkFlyout_LoadedAsync;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
@@ -69,13 +64,11 @@ namespace WinUIApp.Views.Components
         {
             isAdmin = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
-            var allBrands = this.drinkService.GetDrinkBrandNames();
-            var allCategories = this.drinkService.GetDrinkCategories();
+            List<Brand> allBrands = this.drinkService.GetDrinkBrandNames();
+            List<Category> allCategories = this.drinkService.GetDrinkCategories();
 
             this.viewModel = new AddDrinkMenuViewModel(
-                this.drinkService,
-                this.userService,
-                this.modificationRequestService)
+                this.drinkService)
             {
                 AllBrands = allBrands,
                 AllCategoryObjects = allCategories,
@@ -103,12 +96,12 @@ namespace WinUIApp.Views.Components
                 return;
             }
 
-            foreach (var removedCategory in eventArguments.RemovedItems.Cast<string>())
+            foreach (string removedCategory in eventArguments.RemovedItems.Cast<string>())
             {
                 this.viewModel.SelectedCategoryNames.Remove(removedCategory);
             }
 
-            foreach (var addedCategory in eventArguments.AddedItems.Cast<string>())
+            foreach (string addedCategory in eventArguments.AddedItems.Cast<string>())
             {
                 if (!this.viewModel.SelectedCategoryNames.Contains(addedCategory))
                 {
@@ -123,7 +116,7 @@ namespace WinUIApp.Views.Components
             {
                 this.viewModel.ValidateUserDrinkInput();
 
-                isAdmin = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+                this.isAdmin = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
                 string message;
 

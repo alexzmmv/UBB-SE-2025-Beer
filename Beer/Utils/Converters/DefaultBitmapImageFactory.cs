@@ -1,11 +1,8 @@
-﻿using Microsoft.UI.Xaml.Media.Imaging;
-using System;
+﻿using System;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace WinUIApp.Utils.Converters
 {
-    /// <summary>
-    /// The default implementation that creates BitmapImage instances.
-    /// </summary>
     public class DefaultBitmapImageFactory : IBitmapImageFactory
     {
         public BitmapImage Create(string uri)

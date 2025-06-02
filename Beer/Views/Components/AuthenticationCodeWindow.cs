@@ -45,7 +45,6 @@ namespace DrinkDb_Auth.View.Authentication
                 PrimaryButtonCommand = command,
                 XamlRoot = window?.Content.XamlRoot,
                 Content = view,
-                // Simplified gradient matching button colors
                 Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 26, 26, 46)),
                 Foreground = new SolidColorBrush(),
                 BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 75, 108, 219)),
@@ -53,7 +52,6 @@ namespace DrinkDb_Auth.View.Authentication
                 CornerRadius = new CornerRadius(8)
             };
 
-            // Style the buttons
             contentDialog.Resources["ContentDialogButtonBackground"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 75, 108, 219));
             contentDialog.Resources["ContentDialogButtonBackgroundPointerOver"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 65, 98, 209));
             contentDialog.Resources["ContentDialogButtonBackgroundPressed"] = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 55, 88, 199));
@@ -65,11 +63,11 @@ namespace DrinkDb_Auth.View.Authentication
 
         public async void ShowAsync()
         {
-            if (contentDialog != null)
+            if (this.contentDialog != null)
             {
-                if (contentDialog.XamlRoot == null && window != null)
+                if (this.contentDialog.XamlRoot == null && this.window != null)
                 {
-                    contentDialog.XamlRoot = window.Content.XamlRoot;
+                    this.contentDialog.XamlRoot = this.window.Content.XamlRoot;
                 }
                 await contentDialog.ShowAsync();
             }
@@ -77,7 +75,7 @@ namespace DrinkDb_Auth.View.Authentication
 
         public void Hide()
         {
-            contentDialog?.Hide();
+            this.contentDialog?.Hide();
         }
     }
 }

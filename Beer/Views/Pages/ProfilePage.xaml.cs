@@ -5,7 +5,6 @@ using DataAccess.Constants;
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
-using DrinkDb_Auth.View;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -45,9 +44,9 @@ namespace DrinkDb_Auth
             this.InitializeComponent();
 
             this.profilePageViewModel = new ProfilePageViewModel();
-            this.DataContext = profilePageViewModel;
+            this.DataContext = this.profilePageViewModel;
 
-            this.Loaded += UserPage_Loaded;
+            this.Loaded += this.UserPage_Loaded;
 
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.authenticationService = App.Host.Services.GetRequiredService<IAuthenticationService>();
@@ -61,7 +60,7 @@ namespace DrinkDb_Auth
 
         private async void InitializeAdminStatus()
         {
-            this.isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+            this.isAdmin = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -86,7 +85,7 @@ namespace DrinkDb_Auth
             {
                 this.currentUser = await this.userService.GetUserById(currentUserId);
 
-                if (currentUser != null)
+                if (this.currentUser != null)
                 {
                     this.NameTextBlock.Text = this.currentUser.Username;
                     this.UsernameTextBlock.Text = "@" + this.currentUser.Username;
@@ -185,7 +184,7 @@ namespace DrinkDb_Auth
                     this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/facebook_logo.png"));
                     break;
                 case DataAccess.Service.OAuthService.Twitter:
-                    this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/x-twitter-logo-on-black"));
+                    this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/x-twitter-logo-on-black.png"));
                     break;
                 case DataAccess.Service.OAuthService.GitHub:
                     this.ProfileImageBrush.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/github_logo.png"));
@@ -240,11 +239,19 @@ namespace DrinkDb_Auth
                     BorderThickness = new Thickness(1)
                 };
 
-                Image drinkImage = new Image
+                Image? drinkImage = null;
+                try
                 {
-                    Source = new BitmapImage(new Uri(drink.DrinkImageUrl)),
-                    Stretch = Stretch.UniformToFill
-                };
+                    drinkImage = new Image
+                    {
+                        Source = new BitmapImage(new Uri(drink.DrinkImageUrl)),
+                        Stretch = Stretch.UniformToFill
+                    };
+                }
+                catch
+                {
+                    continue;
+                }
                 imageBorder.Child = drinkImage;
                 drinkHeader.Children.Add(imageBorder);
 

@@ -6,8 +6,8 @@ namespace WinUIApp.Views.Components.SearchPageComponents
 
     public sealed partial class AlcoholContentFilterComponent : UserControl
     {
-        private const double MinimumAlcoholPercentage = 0;
-        private const double MaximumAlcoholPercentage = 100;
+        private const double MINIMUM_ALCOHOL_PERCENTAGE = 0;
+        private const double MAXIMUM_ALCOHOL_PERCENTAGE = 100;
 
         public AlcoholContentFilterComponent()
         {
@@ -37,12 +37,12 @@ namespace WinUIApp.Views.Components.SearchPageComponents
         }
         public void ResetMinSlider()
         {
-            this.MinValueSlider.Value = MinimumAlcoholPercentage;
+            this.MinValueSlider.Value = AlcoholContentFilterComponent.MINIMUM_ALCOHOL_PERCENTAGE;
             this.MinimumAlcoholContentChanged?.Invoke(this, this.MinValueSlider.Value);
         }
         public void ResetMaxSlider()
         {
-            this.MaxValueSlider.Value = MaximumAlcoholPercentage;
+            this.MaxValueSlider.Value = AlcoholContentFilterComponent.MAXIMUM_ALCOHOL_PERCENTAGE;
             this.MaximumAlcoholContentChanged?.Invoke(this, this.MaxValueSlider.Value);
         }
 
@@ -56,7 +56,7 @@ namespace WinUIApp.Views.Components.SearchPageComponents
         {
             if (this.MinValueSlider.Value > this.MaxValueSlider.Value)
             {
-                this.MinValueSlider.Value = MinimumAlcoholPercentage;
+                this.MinValueSlider.Value = MINIMUM_ALCOHOL_PERCENTAGE;
                 return;
             }
 
@@ -67,7 +67,7 @@ namespace WinUIApp.Views.Components.SearchPageComponents
         {
             if (this.MaxValueSlider.Value < this.MinValueSlider.Value)
             {
-                this.MaxValueSlider.Value = MaximumAlcoholPercentage;
+                this.MaxValueSlider.Value = MAXIMUM_ALCOHOL_PERCENTAGE;
                 return;
             }
 

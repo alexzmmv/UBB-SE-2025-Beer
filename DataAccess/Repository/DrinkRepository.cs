@@ -12,6 +12,7 @@ namespace WinUIApp.WebAPI.Repositories
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using DataAccess.Data;
     using DataAccess.Extensions;
     using DataAccess.IRepository;
     using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace WinUIApp.WebAPI.Repositories
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                 .ThenInclude(drinkCategory => drinkCategory.Category)
+                .Where(drink => !drink.IsRequestingApproval)
                 .Select(drink => DrinkExtensions.ConvertEntityToDTO(drink))
                 .ToList();
         }
@@ -177,12 +179,12 @@ namespace WinUIApp.WebAPI.Repositories
                 existingDrink.DrinkURL = drinkDto.DrinkImageUrl;
                 existingDrink.AlcoholContent = (int)drinkDto.AlcoholContent;
                 existingDrink.BrandId = brand.BrandId;
+                existingDrink.IsRequestingApproval = drinkDto.IsRequestingApproval;
 
                 List<DrinkCategory> oldCategories = dbContext.DrinkCategories
                     .Where(dc => dc.DrinkId == existingDrink.DrinkId)
                     .ToList();
                 dbContext.DrinkCategories.RemoveRange(oldCategories);
-                //dbContext.SaveChanges(); // Potential SaveChanges call after removing old categories
 
                 // Add new DrinkCategory rows
                 foreach (Category category in drinkDto.CategoryList)
@@ -239,9 +241,23 @@ namespace WinUIApp.WebAPI.Repositories
                                     .Include(drink => drink.DrinkCategories)
                                     .FirstOrDefault(drink => drink.DrinkId == drinkId);
 
+
             if (drink == null)
             {
                 throw new Exception("No drink found with the provided ID.");
+            }
+
+            List<DrinkModificationRequest> requests = dbContext.DrinkModificationRequests
+                .Where(req => drink.DrinkId == req.NewDrinkId || drink.DrinkId == req.OldDrinkId)
+                .ToList();
+
+            foreach (DrinkModificationRequest req in requests)
+            {
+                req.OldDrink = null;
+                req.NewDrink = null;
+                req.OldDrinkId = null;
+                req.NewDrinkId = null;
+                dbContext.DrinkModificationRequests.Remove(req);
             }
 
             dbContext.DrinkCategories.RemoveRange(drink.DrinkCategories);
@@ -381,7 +397,7 @@ namespace WinUIApp.WebAPI.Repositories
                 .Include(drink => drink.Brand)
                 .Include(drink => drink.DrinkCategories)
                 .ThenInclude(drinkCategory => drinkCategory.Category)
-                .Where(drink => drinkIds.Contains(drink.DrinkId))
+                .Where(drink => drinkIds.Contains(drink.DrinkId) && !drink.IsRequestingApproval) // Only approved drinks
                 .AsNoTracking()
                 .ToList(); // materialize before projection
             List<DrinkDTO> drinks = drinkEntities.Select(drink => DrinkExtensions.ConvertEntityToDTO(drink))
@@ -462,7 +478,9 @@ namespace WinUIApp.WebAPI.Repositories
 
             var topVotedDrink = dbContext.Votes
                 .Where(vote => vote.VoteTime >= voteTime)
-                .GroupBy(vote => vote.DrinkId)
+                .Join(dbContext.Drinks, vote => vote.DrinkId, drink => drink.DrinkId, (vote, drink) => new { vote, drink })
+                .Where(vd => !vd.drink.IsRequestingApproval) // Only consider approved drinks
+                .GroupBy(vd => vd.vote.DrinkId)
                 .Select(drinkVote => new { DrinkId = drinkVote.Key, VoteCount = drinkVote.Count() })
                 .OrderByDescending(drinkVote => drinkVote.VoteCount)
                 .FirstOrDefault();
@@ -482,12 +500,13 @@ namespace WinUIApp.WebAPI.Repositories
         public int GetRandomDrinkId()
         {
             Drink? randomDrink = dbContext.Drinks
+            .Where(drink => !drink.IsRequestingApproval) // Only consider approved drinks
             .OrderBy(drink => Guid.NewGuid())
             .FirstOrDefault();
 
             if (randomDrink == null)
             {
-                throw new Exception("No drink found in the database.");
+                throw new Exception("No approved drink found in the database.");
             }
 
             return randomDrink.DrinkId;

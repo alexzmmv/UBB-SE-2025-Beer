@@ -1,35 +1,17 @@
-using DataAccess.Service.Interfaces;
+using System;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows.Input;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using WinUiApp.Data.Data;
 using WinUIApp.ViewHelpers;
 using WinUIApp.ViewModels;
-using WinUIApp.Views.ViewModels;
-using WinUIApp.WebAPI.Models;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace WinUIApp.Views.Components.Modals
 {
     public sealed partial class AddReviewModal : UserControl
     {
-        private const int BottleRatingToIndexOffset = 1;
+        private const int BOTTLE_RATING_TO_INDEX_OFFSET = 1;
         private const int INVALID_REVIEW_ID = 0;
         public event EventHandler CloseRequested;
         public event EventHandler RefreshReviewsRequested;
@@ -44,8 +26,8 @@ namespace WinUIApp.Views.Components.Modals
 
         public int DrinkId
         {
-            get => (int)GetValue(DrinkIdProperty);
-            set => SetValue(DrinkIdProperty, value);
+            get => (int)GetValue(AddReviewModal.DrinkIdProperty);
+            set => SetValue(AddReviewModal.DrinkIdProperty, value);
         }
 
         public static readonly DependencyProperty DrinkIdProperty =
@@ -58,9 +40,8 @@ namespace WinUIApp.Views.Components.Modals
         private async void SaveReviewButton_Click(object sender, RoutedEventArgs e)
         {
             int newReviewId = await this.ViewModel.AddReview(DrinkId);
-            if (newReviewId <= INVALID_REVIEW_ID)
+            if (newReviewId <= AddReviewModal.INVALID_REVIEW_ID)
             {
-                // Handle validation error
                 return;
             }
             else
@@ -86,7 +67,7 @@ namespace WinUIApp.Views.Components.Modals
                 return;
             }
 
-            int clickedBottleNumber = this.ViewModel.Bottles.IndexOf(clickedBottle) + BottleRatingToIndexOffset;
+            int clickedBottleNumber = this.ViewModel.Bottles.IndexOf(clickedBottle) + AddReviewModal.BOTTLE_RATING_TO_INDEX_OFFSET;
             this.ViewModel.UpdateBottleRating(clickedBottleNumber);
         }
     }

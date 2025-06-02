@@ -1,11 +1,9 @@
 namespace WinUIApp.Views.Components
 {
-    using DataAccess.Service;
     using DataAccess.Service.Interfaces;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using WinUIApp.ProxyServices;
     using WinUIApp.ViewModels;
 
     public sealed partial class AddRemoveFromDrinkListButton : UserControl
@@ -15,7 +13,7 @@ namespace WinUIApp.Views.Components
                 "DrinkId",
                 typeof(int),
                 typeof(AddRemoveFromDrinkListButton),
-                new PropertyMetadata(DefaultIntValue, new PropertyChangedCallback(OnDrinkIdChanged)));
+                new PropertyMetadata(DEFAULT_INT_VALUE, new PropertyChangedCallback(OnDrinkIdChanged)));
 
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(
@@ -24,7 +22,7 @@ namespace WinUIApp.Views.Components
                 typeof(AddRemoveFromDrinkListButton),
                 new PropertyMetadata(null, OnViewModelPropertyChanged));
 
-        private const int DefaultIntValue = 0;
+        private const int DEFAULT_INT_VALUE = 0;
         private IDrinkService drinkService;
         private IUserService userService;
 
@@ -32,8 +30,8 @@ namespace WinUIApp.Views.Components
         {
             this.InitializeComponent();
 
-            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
-            userService = App.Host.Services.GetRequiredService<IUserService>();
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.userService = App.Host.Services.GetRequiredService<IUserService>();
 
             this.Loaded += this.AddRemoveFromDrinkListButton_Loaded;
         }
@@ -52,11 +50,11 @@ namespace WinUIApp.Views.Components
 
         private static void OnDrinkIdChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArguments)
         {
-            if (dependencyObject is AddRemoveFromDrinkListButton button && (int)eventArguments.NewValue > DefaultIntValue)
+            if (dependencyObject is AddRemoveFromDrinkListButton button && (int)eventArguments.NewValue > AddRemoveFromDrinkListButton.DEFAULT_INT_VALUE)
             {
                 if (button.ViewModel == null)
                 {
-                    button.ViewModel = new DrinkPageViewModel((int)eventArguments.NewValue, button.drinkService, button.userService);
+                    button.ViewModel = new DrinkPageViewModel((int)eventArguments.NewValue, button.drinkService);
                 }
                 else
                 {
@@ -75,9 +73,9 @@ namespace WinUIApp.Views.Components
 
         private async void AddRemoveFromDrinkListButton_Loaded(object sender, RoutedEventArgs eventArguments)
         {
-            if (this.ViewModel == null && this.DrinkId > DefaultIntValue)
+            if (this.ViewModel == null && this.DrinkId > DEFAULT_INT_VALUE)
             {
-                this.ViewModel = new DrinkPageViewModel(this.DrinkId, this.drinkService, this.userService);
+                this.ViewModel = new DrinkPageViewModel(this.DrinkId, this.drinkService);
             }
 
             if (this.ViewModel != null)

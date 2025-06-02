@@ -1,26 +1,22 @@
-﻿namespace WinUIApp.ViewModels
-{
-    using DataAccess.Constants;
-    using DataAccess.Service.Interfaces;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.ProxyServices.Models;
-    using WinUIApp.WebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using DataAccess.Service.Interfaces;
+using WinUiApp.Data.Data;
 
-    public partial class AddDrinkMenuViewModel(IDrinkService drinkService, IUserService userService, IDrinkModificationRequestService modificationRequestService) : INotifyPropertyChanged
+namespace WinUIApp.ViewModels
+{
+    public partial class AddDrinkMenuViewModel(IDrinkService drinkService) : INotifyPropertyChanged
     {
-        private const float MaxAlcoholContent = 100.0f;
-        private const float MinAlcoholContent = 0.0f;
+        private const float MAX_ALCOHOL_CONTENT = 100.0f;
+        private const float MIN_ALCOHOL_CONTENT = 0.0f;
+
         private readonly IDrinkService drinkService = drinkService;
-        private readonly IUserService userService = userService;
-        private readonly IDrinkModificationRequestService modificationRequestService = modificationRequestService;
+
         private string newDrinkName = string.Empty;
         private string newDrinkURL = string.Empty;
         private string newDrinkBrandName = string.Empty;
@@ -108,7 +104,9 @@
                 throw new ArgumentException("Brand is required");
             }
 
-            if (!float.TryParse(this.AlcoholContent, out var alcoholContentValue) || alcoholContentValue < MinAlcoholContent || alcoholContentValue > MaxAlcoholContent)
+            if (!float.TryParse(this.AlcoholContent, out var alcoholContentValue) ||
+                alcoholContentValue < AddDrinkMenuViewModel.MIN_ALCOHOL_CONTENT ||
+                alcoholContentValue > AddDrinkMenuViewModel.MAX_ALCOHOL_CONTENT)
             {
                 throw new ArgumentException("Valid alcohol content (0–100%) is required");
             }
@@ -133,11 +131,9 @@
                     inputtedDrinkBrandName: this.BrandName,
                     inputtedAlcoholPercentage: alcoholContent,
                     userId: App.CurrentUserId);
-                Debug.WriteLine("Drink added successfully (admin).");
             }
-            catch (Exception drinkValidationException)
+            catch
             {
-                Debug.WriteLine($"Error adding drink: {drinkValidationException.Message}");
                 throw;
             }
         }
@@ -149,17 +145,14 @@
                 List<Category> categories = this.GetSelectedCategories();
                 float alcoholContent = float.Parse(this.AlcoholContent);
 
-                // Check if brand exists
-                // Note: should a brand be created if it doesn't exist? - this should require admin approval as well
                 List<Brand> existingBrands = this.drinkService.GetDrinkBrandNames();
                 Brand? brand = existingBrands.FirstOrDefault(brand => brand.BrandName.Equals(this.BrandName, StringComparison.OrdinalIgnoreCase));
-                
+
                 if (brand == null)
                 {
                     throw new ArgumentException($"Brand '{this.BrandName}' does not exist. Please select an existing brand.");
                 }
 
-                // Add the drink
                 this.drinkService.AddDrink(
                     inputtedDrinkName: this.DrinkName,
                     inputtedDrinkPath: this.DrinkURL,
@@ -168,37 +161,9 @@
                     inputtedAlcoholPercentage: alcoholContent,
                     userId: App.CurrentUserId,
                     isDrinkRequestingApproval: true);
-
-                // Get the drink ID from the service
-                List<DrinkDTO> drinks = this.drinkService.GetDrinks(
-                    searchKeyword: this.DrinkName,
-                    drinkBrandNameFilter: new List<string> { brand.BrandName },
-                    drinkCategoryFilter: null,
-                    minimumAlcoholPercentage: null,
-                    maximumAlcoholPercentage: null,
-                    orderingCriteria: null);
-
-                DrinkDTO? newDrink = drinks.FirstOrDefault(drink => 
-                drink.DrinkName.Equals(this.DrinkName, StringComparison.OrdinalIgnoreCase) && 
-                drink.DrinkBrand.BrandName.Equals(brand.BrandName, StringComparison.OrdinalIgnoreCase));
-
-                if (newDrink == null)
-                {
-                    throw new InvalidOperationException("Failed to add drink");
-                }
-
-                // Send the modification request
-                this.modificationRequestService.AddRequest(
-                    DrinkModificationRequestType.Add,
-                    null,
-                    newDrink.DrinkId,
-                    App.CurrentUserId);
-
-                Debug.WriteLine("Drink add request sent to admin.");
             }
-            catch (Exception sendAddDrinkRequestException)
+            catch
             {
-                Debug.WriteLine($"Error sending add request: {sendAddDrinkRequestException.Message}");
                 throw;
             }
         }

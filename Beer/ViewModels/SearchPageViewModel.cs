@@ -1,17 +1,15 @@
-﻿namespace WinUIApp.ViewModels
-{
-    using DataAccess.Service.Interfaces;
-    using DrinkDb_Auth;
-    using System.Collections.Generic;
-    using System.Linq;
-    using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.ProxyServices.Models;
-    using WinUIApp.Views;
-    using WinUIApp.Views.Components.SearchPageComponents;
-    using WinUIApp.Views.Pages;
-    using WinUIApp.WebAPI.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DataAccess.Service.Interfaces;
+using DrinkDb_Auth;
+using WinUiApp.Data.Data;
+using WinUIApp.ProxyServices;
+using WinUIApp.Views.Components.SearchPageComponents;
+using WinUIApp.Views.Pages;
+using WinUIApp.WebAPI.Models;
 
+namespace WinUIApp.ViewModels
+{
     public class SearchPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService)
     {
         private const string NameField = "Name";

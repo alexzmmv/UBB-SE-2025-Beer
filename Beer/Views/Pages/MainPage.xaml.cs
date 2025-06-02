@@ -1,23 +1,21 @@
+using System.Collections.Generic;
+using System.Linq;
+using DataAccess.Service.Interfaces;
+using DataAccess.Constants;
+using DrinkDb_Auth;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
+using WinUiApp.Data.Data;
+using WinUIApp.ProxyServices;
+using WinUIApp.Utils.NavigationParameters;
+using WinUIApp.ViewModels;
+using WinUIApp.Views.Components.SearchPageComponents;
+
 namespace WinUIApp.Views.Pages
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using DataAccess.Service;
-    using DataAccess.Service.Interfaces;
-    using DataAccess.Constants;
-    using DrinkDb_Auth;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Input;
-    using Microsoft.UI.Xaml.Navigation;
-    using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.Utils.NavigationParameters;
-    using WinUIApp.ViewModels;
-    using WinUIApp.Views.Components.SearchPageComponents;
-    using WinUIApp.Views.Components;
-
     public sealed partial class MainPage : Page
     {
         private readonly MainPageViewModel viewModel;
@@ -33,9 +31,9 @@ namespace WinUIApp.Views.Pages
         {
             this.InitializeComponent();
 
-            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
-            drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
-            userService = App.Host.Services.GetRequiredService<IUserService>();
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
+            this.userService = App.Host.Services.GetRequiredService<IUserService>();
 
             this.viewModel = new MainPageViewModel(this.drinkService);
             this.DataContext = this.viewModel;
@@ -44,7 +42,7 @@ namespace WinUIApp.Views.Pages
 
         private async void InitializeAdminStatus()
         {
-            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+            this.isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs eventArguments)

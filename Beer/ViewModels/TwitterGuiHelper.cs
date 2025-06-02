@@ -46,14 +46,12 @@ namespace DrinkDb_Auth.ViewModel.Authentication
                 twitterLoginWebView.CoreWebView2.NavigationStarting += async (sender, navigationArgs) =>
                 {
                     string callbackUrl = navigationArgs.Uri;
-                    System.Diagnostics.Debug.WriteLine($"NavigationStarting -> {callbackUrl}");
 
                     if (callbackUrl.StartsWith(RedirectUri, StringComparison.OrdinalIgnoreCase))
                     {
                         navigationArgs.Cancel = true;
 
                         string receivedAuthCode = this.authProvider.ExtractQueryParameter(callbackUrl, "code");
-                        System.Diagnostics.Debug.WriteLine($"Found 'code' in callback: {receivedAuthCode}");
 
                         AuthenticationResponse twitterAuthResponse = await this.authProvider.ExchangeCodeForTokenAsync(receivedAuthCode);
 
@@ -71,7 +69,6 @@ namespace DrinkDb_Auth.ViewModel.Authentication
 
                 if (!twitterAuthenticationCompletion.Task.IsCompleted)
                 {
-                    System.Diagnostics.Debug.WriteLine("Dialog closed; no code was returned.");
                     twitterAuthenticationCompletion.SetResult(new AuthenticationResponse
                     {
                         AuthenticationSuccessful = false,
@@ -83,7 +80,6 @@ namespace DrinkDb_Auth.ViewModel.Authentication
             }
             catch (Exception twitterAuthenticationError)
             {
-                System.Diagnostics.Debug.WriteLine($"SignInWithTwitterAsync error: {twitterAuthenticationError.Message}");
                 twitterAuthenticationCompletion.TrySetException(twitterAuthenticationError);
             }
 

@@ -1,23 +1,21 @@
-﻿namespace WinUIApp.Views.ViewModels
-{
-    using DataAccess.Constants;
-    using DataAccess.DTOModels;
-    using DataAccess.Service.Interfaces;
-    using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
-    using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.ProxyServices.Models;
-    using WinUIApp.ViewModels;
-    using WinUIApp.WebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using DataAccess.Constants;
+using DataAccess.DTOModels;
+using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
+using WinUiApp.Data.Data;
+using WinUIApp.ProxyServices;
+using WinUIApp.ViewModels;
+using WinUIApp.WebAPI.Models;
 
+namespace WinUIApp.Views.ViewModels
+{
     public partial class DrinkDetailPageViewModel(IDrinkService drinkService, IDrinkReviewService reviewService, IUserService userService, IDrinkModificationRequestService modificationRequestService) : ViewModelBase
     {
         private readonly IDrinkService drinkService = drinkService;
@@ -40,20 +38,20 @@
         private bool isPopupOpen;
         public bool IsPopupOpen
         {
-            get => isPopupOpen;
+            get => this.isPopupOpen;
             set
             {
-                isPopupOpen = value;
+                this.isPopupOpen = value;
                 this.OnPropertyChanged(nameof(this.IsPopupOpen));
             }
         }
 
         public bool IsAdmin
         {
-            get => isAdmin;
+            get => this.isAdmin;
             set
             {
-                isAdmin = value;
+                this.isAdmin = value;
                 this.OnPropertyChanged(nameof(this.IsAdmin));
             }
         }
@@ -61,7 +59,7 @@
         public event EventHandler RequestOpenPopup;
         public event EventHandler RequestClosePopup;
 
-        public ICommand ShowPopupCommand => new RelayCommand(() => 
+        public ICommand ShowPopupCommand => new RelayCommand(() =>
         {
             IsPopupOpen = true;
             RequestOpenPopup?.Invoke(this, EventArgs.Empty);
@@ -178,10 +176,13 @@
 
         public void RefreshReviews()
         {
-            if (this.Drink == null) return;
-            
-            this.AverageReviewScore = (float)Math.Round(this.reviewService.GetReviewAverageByDrinkID(this.Drink.DrinkId), NUMBER_OF_DECIMALS_DISPLAYED);
-            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(this.Drink.DrinkId);
+            if (this.Drink == null)
+            {
+                return;
+            }
+
+            this.AverageReviewScore = (float)Math.Round(this.reviewService.GetReviewAverageByDrinkID(this.Drink.DrinkId), DrinkDetailPageViewModel.NUMBER_OF_DECIMALS_DISPLAYED);
+            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(this.Drink.DrinkId).Where(review => !review.IsHidden).ToList();
             this.Reviews.Clear();
             foreach (ReviewDTO review in reviews)
             {

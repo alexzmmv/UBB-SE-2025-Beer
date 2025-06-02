@@ -10,8 +10,8 @@
             get => imageSource;
             set
             {
-                imageSource = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
+                this.imageSource = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ImageSource)));
             }
         }
 

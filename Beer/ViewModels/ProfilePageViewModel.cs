@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using DataAccess.Service.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using WinUiApp.Data.Data;
 using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.ViewModels

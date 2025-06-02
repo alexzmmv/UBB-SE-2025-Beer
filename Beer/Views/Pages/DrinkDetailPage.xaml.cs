@@ -1,5 +1,12 @@
-﻿using DataAccess.Constants;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using DataAccess.Constants;
 using DataAccess.DTOModels;
+using DataAccess.Extensions;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
@@ -7,14 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
-using WinUIApp.ViewModels;
-using WinUIApp.Views.Components.Modals;
 using WinUIApp.Views.ViewModels;
-using WinUIApp.Views.Windows;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.Views.Pages
 {
@@ -24,8 +27,8 @@ namespace WinUIApp.Views.Pages
         private IDrinkReviewService drinkReviewService;
         private IUserService userService;
         private IReviewService reviewService;
-        private ICheckersService checkersService;
         private IDrinkModificationRequestService modificationRequestService;
+        private ICheckersService checkersService;
         private RoleType userRole;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,8 +59,8 @@ namespace WinUIApp.Views.Pages
             this.drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
-            this.checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
             this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
+            this.checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
 
             this.ViewModel = new DrinkDetailPageViewModel(
                 this.drinkService,
@@ -83,8 +86,8 @@ namespace WinUIApp.Views.Pages
 
         private async void InitializeUserRole()
         {
-            UserRole = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) ?? RoleType.User;
-            ViewModel.IsAdmin = UserRole == RoleType.Admin;
+            this.UserRole = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) ?? RoleType.User;
+            this.ViewModel.IsAdmin = this.UserRole == RoleType.Admin;
         }
 
         private void FlagReviewMenuItem_Click(object sender, RoutedEventArgs e)
@@ -93,12 +96,15 @@ namespace WinUIApp.Views.Pages
             {
                 try
                 {
-                    reviewService.UpdateNumberOfFlagsForReview(review.ReviewId, review.NumberOfFlags + 1);
-                    ViewModel.RefreshReviews();
+                    this.reviewService.UpdateNumberOfFlagsForReview(review.ReviewId, review.NumberOfFlags + 1);
+                    this.ViewModel.RefreshReviews();
+
+                    Thread.Sleep(1000);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.ViewModel.Drink.DrinkId);
                 }
                 catch (Exception ex)
                 {
-                    var dialog = new ContentDialog
+                    ContentDialog dialog = new ContentDialog
                     {
                         Title = "Error",
                         Content = "Failed to flag review: " + ex.Message,
@@ -116,12 +122,16 @@ namespace WinUIApp.Views.Pages
             {
                 try
                 {
-                    reviewService.HideReview(review.ReviewId);
-                    ViewModel.RefreshReviews();
+                    this.reviewService.HideReview(review.ReviewId);
+                    this.ViewModel.RefreshReviews();
+
+                    // I have to do this since RefreshReviews is not async
+                    Thread.Sleep(1000);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.ViewModel.Drink.DrinkId);
                 }
                 catch (Exception ex)
                 {
-                    var dialog = new ContentDialog
+                    ContentDialog dialog = new ContentDialog
                     {
                         Title = "Error",
                         Content = "Failed to hide review: " + ex.Message,
@@ -133,33 +143,44 @@ namespace WinUIApp.Views.Pages
             }
         }
 
+        public async Task PrepareReviewForCheck(Review review)
+        {
+            User? user = await this.userService.GetUserById(review.UserId);
+            DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
+
+            if (user == null || drink == null)
+            {
+                return;
+            }
+
+            Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+            regularDrink.UserDrinks = new List<UserDrink>();
+            regularDrink.Votes = new List<Vote>();
+            regularDrink.DrinkCategories = new List<DrinkCategory>();
+            review.User = user;
+            review.Drink = regularDrink;
+        }
+
         private async void AICheckMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
             {
-                //try
-                //{
-                //    var result = await reviewService.AICheckReview(review.ReviewId);
-                //    var dialog = new ContentDialog
-                //    {
-                //        Title = "AI Check Result",
-                //        Content = result,
-                //        CloseButtonText = "OK",
-                //        XamlRoot = this.XamlRoot
-                //    };
-                //    await dialog.ShowAsync();
-                //}
-                //catch (Exception ex)
-                //{
-                //    var dialog = new ContentDialog
-                //    {
-                //        Title = "Error",
-                //        Content = "Failed to perform AI check: " + ex.Message,
-                //        CloseButtonText = "OK",
-                //        XamlRoot = this.XamlRoot
-                //    };
-                //    await dialog.ShowAsync();
-                //}
+                Review regularReview = ReviewMapper.ToEntity(review);
+                try
+                {
+                    await this.PrepareReviewForCheck(regularReview);
+
+                    // If somebody with an actual key is checking this, this might not update because the function is of type void
+                    // and not task
+                    this.checkersService.RunAICheckForOneReviewAsync(regularReview);
+                    this.ViewModel.RefreshReviews();
+
+                    Thread.Sleep(1000);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.ViewModel.Drink.DrinkId);
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -220,12 +241,12 @@ namespace WinUIApp.Views.Pages
 
         private void OpenAddReviewModal(object sender, EventArgs e)
         {
-            AddReviewModalOverlay.Visibility = Visibility.Visible;
+            this.AddReviewModalOverlay.Visibility = Visibility.Visible;
         }
 
         private void CloseAddReviewModal(object sender,EventArgs e)
         {
-            AddReviewModalOverlay.Visibility = Visibility.Collapsed;
+            this.AddReviewModalOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void RefreshReviews(object sender, EventArgs e)

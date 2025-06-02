@@ -8,375 +8,584 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     xmlns:models="using:WinUiApp.Data.Data"
     xmlns:converters="using:DrinkDb_Auth.Converters"
     xmlns:viewmodels="using:DrinkDb_Auth.ViewModel.AdminDashboard"
     xmlns:dto="using:DataAccess.DTOModels"
     xmlns:admin="using:DataAccess.Model.AdminDashboard"
-    xmlns:components="using:WinUIApp.Views.Components"
->
+    xmlns:components="using:WinUIApp.Views.Components">
 
     <Page.Resources>
-        <!-- Windows 11 style resources -->
-        <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
-        <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
-        <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
-        <Thickness x:Key="CardBorderThickness">1</Thickness>
-        <SolidColorBrush x:Key="CardBackgroundFillColorDefault" Color="{ThemeResource SystemAltHighColor}" />
-        <SolidColorBrush x:Key="CardStrokeColorDefault" Color="{ThemeResource SystemChromeGrayColor}" Opacity="0.2" />
-        <SolidColorBrush x:Key="AccentColor" Color="#0078d4" />
-        <SolidColorBrush x:Key="HeaderBackgroundColor" Color="#1f3d7a" />
-        <SolidColorBrush x:Key="AcceptButtonColor" Color="#107C10" />
-        <SolidColorBrush x:Key="DeclineButtonColor" Color="#D13438" />
+        <!-- Modern gradient background matching MainPage -->
+        <LinearGradientBrush x:Key="PageBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0F0F1A" Offset="0"/>
+            <GradientStop Color="#1A1A2E" Offset="0.5"/>
+            <GradientStop Color="#0F0F1A" Offset="1"/>
+        </LinearGradientBrush>
 
-        <converters:UserIdToNameConverter x:Key="UserIdToNameConverter"/>
+        <!-- Modern colors matching MainPage theme -->
+        <SolidColorBrush x:Key="PrimaryAccentColor" Color="#4B6CDB"/>
+        <SolidColorBrush x:Key="AcceptButtonColor" Color="#4B6CDB"/>
+        <SolidColorBrush x:Key="DeclineButtonColor" Color="#4B6CDB"/>
+        <SolidColorBrush x:Key="NeutralButtonColor" Color="#4B6CDB"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#1A1A2E"/>
+        <SolidColorBrush x:Key="TextPrimaryColor" Color="White"/>
+        <SolidColorBrush x:Key="TextSecondaryColor" Color="#A0A0A0"/>
+        <SolidColorBrush x:Key="SeparatorColor" Color="#4B6CDB"/>
+
+        <!-- Modern corner radius and styling -->
+        <CornerRadius x:Key="ModernCornerRadius">12</CornerRadius>
+        <CornerRadius x:Key="ButtonCornerRadius">8</CornerRadius>
     </Page.Resources>
 
-    <!--main grid-->
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="8*"/>
-        </Grid.RowDefinitions>
-
-        <!-- Header with Acrylic effect -->
-        <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeaderBackgroundColor}">
+    <Grid Background="{StaticResource PageBackgroundBrush}">
+        <Grid Margin="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Column="0" Margin="24,0,0,0" HorizontalAlignment="Left" Source="Assets/beers-logo.png" Width="32" Height="32"/>
-            <TextBlock Grid.Column="1" Text="Admin Dashboard" Foreground="White" FontSize="18" FontWeight="SemiBold" 
-                     VerticalAlignment="Center" Margin="12,0,0,0"/>
-        </Grid>
+            <!-- Column Separators - using same style as MainPage -->
+            <Rectangle Grid.Column="0" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
+            <Rectangle Grid.Column="1" Width="1" Margin="0,0,20,0" Fill="#4B6CDB" HorizontalAlignment="Right" Opacity="0.7"/>
 
-        <!-- Left Column - Reviews -->
-        <Grid Grid.Row="1" Margin="24,24,12,24">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <!-- Left Column - Reviews -->
+            <Grid Grid.Column="0" Margin="0,0,20,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold">
-                List of all reviews
-            </TextBlock>
+                <TextBlock Grid.Row="0"
+                          FontSize="18" 
+                          FontWeight="Bold" 
+                          Foreground="{StaticResource TextPrimaryColor}"
+                          Margin="0,0,0,16">
+                    Review Management
+                </TextBlock>
 
-            <!-- Search Box with Windows 11 styling -->
-            <TextBox x:Name="ReviewSearchTextBox" Grid.Row="1" Margin="0,0,0,12" 
-                     PlaceholderText="Search reviews..."
-                     TextChanged="ReviewSearchTextBox_TextChanged"
-                     CornerRadius="{StaticResource ControlCornerRadius}"
-                     HorizontalAlignment="Stretch"/>
+                <!-- Search Box - Now Visible -->
+                <Border Grid.Row="1" 
+                        Background="{StaticResource CardBackgroundColor}"
+                        CornerRadius="{StaticResource ModernCornerRadius}"
+                        Margin="0,0,0,10">
+                    <TextBox x:Name="ReviewSearchTextBox" 
+                             PlaceholderText="Search reviews..."
+                             TextChanged="ReviewSearchTextBox_TextChanged"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Foreground="{StaticResource TextPrimaryColor}"
+                             PlaceholderForeground="{StaticResource TextSecondaryColor}"
+                             FontSize="14"
+                             Padding="12"/>
+                </Border>
 
-            <!-- Scrollable ListView with Windows 11 card styling -->
-            <ListView x:Name="ReviewsList" Grid.Row="2" 
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      Margin="0,0,0,12"
-                      Padding="0,4,0,0"
-                      SelectionMode="Single"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      ItemsSource="{x:Bind ViewModel.FlaggedReviews, Mode=OneWay}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0,4"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="dto:ReviewDTO">
-                        <Grid>
-                            <Border Padding="16" Background="{ThemeResource CardBackgroundFillColorDefault}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                                    BorderThickness="{StaticResource CardBorderThickness}"
-                                    CornerRadius="{StaticResource ControlCornerRadius}">
-                                <Border.Shadow>
-                                    <ThemeShadow />
-                                </Border.Shadow>
+                <ListView Grid.Row="2"
+                          x:Name="ReviewsList" 
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          ItemsSource="{x:Bind ViewModel.FlaggedReviewsWithUsernames, Mode=OneWay}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="0,6"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:ReviewWithUsername">
+                            <Border Background="{StaticResource CardBackgroundColor}"
+                                    CornerRadius="{StaticResource ModernCornerRadius}"
+                                    Padding="20"
+                                    Margin="0,4">
                                 <Border.ContextFlyout>
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="Allow" Click="MenuFlyoutAllowReview_Click">
                                             <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE73E;" />
+                                                <FontIcon Glyph="&#xE73E;" Foreground="{StaticResource AcceptButtonColor}"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem Text="Hide" Click="MenuFlyoutHideReview_Click">
                                             <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE711;" />
+                                                <FontIcon Glyph="&#xE711;" Foreground="{StaticResource DeclineButtonColor}"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                         <MenuFlyoutItem Text="AI Check" Click="MenuFlyoutAICheck_Click_2">
                                             <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE721;" />
+                                                <FontIcon Glyph="&#xE721;" Foreground="{StaticResource NeutralButtonColor}"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Border.ContextFlyout>
-                                <StackPanel>
-                                    <TextBlock FontWeight="SemiBold" Margin="0,0,0,4">
-                                        <Run Text="{x:Bind UserId}" />
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Content}" />
+                                <StackPanel Spacing="8">
+                                    <Border Background="{StaticResource PrimaryAccentColor}"
+                                            CornerRadius="6"
+                                            Padding="8,4"
+                                            HorizontalAlignment="Left">
+                                        <TextBlock Text="{x:Bind Username}" 
+                                                   FontWeight="SemiBold" 
+                                                   FontSize="12"
+                                                   Foreground="White"/>
+                                    </Border>
+                                    <StackPanel Orientation="Vertical" Spacing="4">
+                                        <TextBlock Text="Content:" 
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextSecondaryColor}"/>
+                                        <TextBlock Text="{x:Bind Review.Content}" 
+                                                   TextWrapping="Wrap" 
+                                                   Foreground="{StaticResource TextPrimaryColor}"
+                                                   FontSize="14"
+                                                   LineHeight="20"/>
+                                    </StackPanel>
                                 </StackPanel>
-                                <ToolTipService.ToolTip>
-                                    <TextBlock Text="Right click for options"/>
-                                </ToolTipService.ToolTip>
                             </Border>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
-            <Grid Grid.Row="3" HorizontalAlignment="Stretch" Margin="0,16,0,0" Padding="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <!-- Action Buttons - Now at the bottom -->
+                <Grid Grid.Row="3" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <Button 
-                    CornerRadius="8"
-                    Background="{StaticResource AccentColor}"
-                    Foreground="White"
-                    Padding="12,8"
-                    MinWidth="120"
-                    FontSize="13"
-                    FontWeight="SemiBold"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    Command="{x:Bind ViewModel.RunAutoCheckCommand}">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="8"/>
-                        </Style>
-                    </Button.Resources>
-                    <Button.Content>
-                        <TextBlock Text="Automatically check reviews" TextWrapping="Wrap" TextAlignment="Center"/>
-                    </Button.Content>
-                </Button>
+                    <Button CornerRadius="{StaticResource ButtonCornerRadius}"
+                            Background="{StaticResource AcceptButtonColor}"
+                            Foreground="White"
+                            Padding="16,12"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,6,0"
+                            Command="{x:Bind ViewModel.RunAutoCheckCommand}">
+                        <TextBlock Text="Auto Check Reviews" TextAlignment="Center"/>
+                    </Button>
 
-                <Button Grid.Column="1"
-                    CornerRadius="8"
-                    Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
-                    Foreground="{StaticResource SystemControlForegroundBaseHighBrush}"
-                    Padding="12,8"
-                    MinWidth="120"
-                    FontSize="13"
-                    FontWeight="SemiBold"
-                    BorderThickness="1"
-                    BorderBrush="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    Command="{x:Bind ViewModel.ShowWordListPopupCommand}">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="8"/>
-                        </Style>
-                    </Button.Resources>
-                    <Button.Content>
-                        <TextBlock Text="Modify offensive words list" TextWrapping="Wrap" TextAlignment="Center"/>
-                    </Button.Content>
-                </Button>
+                    <Button Grid.Column="1"
+                            CornerRadius="{StaticResource ButtonCornerRadius}"
+                            Background="{StaticResource NeutralButtonColor}"
+                            Foreground="White"
+                            Padding="16,12"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            HorizontalAlignment="Stretch"
+                            Margin="6,0,0,0"
+                            Command="{x:Bind ViewModel.ShowWordListPopupCommand}">
+                        <TextBlock Text="Manage Word List" TextAlignment="Center"/>
+                    </Button>
+                </Grid>
+            </Grid>
+
+            <!-- Middle Column - Requests -->
+            <Grid Grid.Column="1" Margin="0,0,20,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Role Upgrade Requests Section -->
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                              FontSize="18" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryColor}"
+                              Margin="0,0,0,16">
+                        Role Upgrades
+                    </TextBlock>
+
+                    <!-- Scrollable ListView for Upgrade Requests -->
+                    <ListView Grid.Row="1"
+                              x:Name="UpgradeRequestsList" 
+                              Background="Transparent"
+                              BorderThickness="0"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ItemsSource="{x:Bind ViewModel.UpgradeRequests, Mode=OneWay}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0,6"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="admin:UpgradeRequest">
+                                <Border Background="{StaticResource CardBackgroundColor}"
+                                        CornerRadius="{StaticResource ModernCornerRadius}"
+                                        Padding="20"
+                                        Margin="0,4">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- We'll use a TextBlock with loaded event to display username -->
+                                        <Border Background="{StaticResource PrimaryAccentColor}"
+                                                CornerRadius="6"
+                                                Padding="8,4"
+                                                HorizontalAlignment="Left"
+                                                Margin="0,0,0,8">
+                                            <TextBlock x:Name="UsernameBlock"
+                                                       Text="{x:Bind RequestingUserDisplayName}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="14"
+                                                       Foreground="White"/>
+                                        </Border>
+
+                                        <TextBlock Grid.Row="1"
+                                                   Text="{x:Bind RequestingUserIdentifier}"
+                                                   FontSize="12" 
+                                                   Foreground="{StaticResource TextSecondaryColor}"
+                                                   TextWrapping="Wrap" 
+                                                   Margin="0,0,0,12"/>
+
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button Content="Accept"
+                                                    Tag="{x:Bind UpgradeRequestId}"
+                                                    Background="{StaticResource AcceptButtonColor}"
+                                                    Foreground="White"
+                                                    CornerRadius="{StaticResource ButtonCornerRadius}"
+                                                    HorizontalAlignment="Stretch"
+                                                    Margin="0,0,6,0"
+                                                    Click="AcceptUpgradeRequestButton_Click"/>
+
+                                            <Button Grid.Column="1"
+                                                    Content="Decline"
+                                                    Tag="{x:Bind UpgradeRequestId}"
+                                                    Background="{StaticResource DeclineButtonColor}"
+                                                    Foreground="White"
+                                                    CornerRadius="{StaticResource ButtonCornerRadius}"
+                                                    HorizontalAlignment="Stretch"
+                                                    Margin="6,0,0,0"
+                                                    Click="DeclineUpgradeRequestButton_Click"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+
+                <!-- Drink Modification Requests Section -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                              FontSize="18" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryColor}"
+                              Margin="0,16,0,16">
+                        Drink Modifications
+                    </TextBlock>
+
+                    <!-- Scrollable ListView for Drink Modification Requests -->
+                    <ListView Grid.Row="1"
+                              x:Name="DrinkModificationRequestsList" 
+                              Background="Transparent"
+                              BorderThickness="0"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ItemsSource="{x:Bind ViewModel.DrinkModificationRequests, Mode=OneWay}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0,6"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:DrinkModificationRequestWithUsername">
+                                <Border Background="{StaticResource CardBackgroundColor}"
+                                        CornerRadius="{StaticResource ModernCornerRadius}"
+                                        Padding="20"
+                                        Margin="0,4">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Spacing="4" Margin="0,0,0,12">
+                                            <Border Background="{StaticResource PrimaryAccentColor}"
+                                                    CornerRadius="6"
+                                                    Padding="8,4"
+                                                    HorizontalAlignment="Left">
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock Text="{x:Bind Request.ModificationType}" 
+                                                               FontWeight="SemiBold" 
+                                                               FontSize="12"
+                                                               Foreground="White"/>
+                                                    <TextBlock Text="request" 
+                                                               FontSize="12"
+                                                               Foreground="White"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <TextBlock Text="{x:Bind Username}" 
+                                                       FontSize="14" 
+                                                       Foreground="{StaticResource TextSecondaryColor}"/>
+                                        </StackPanel>
+
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button Content="Accept"
+                                                    Tag="{x:Bind Request.DrinkModificationRequestId}"
+                                                    Background="{StaticResource AcceptButtonColor}"
+                                                    Foreground="White"
+                                                    CornerRadius="{StaticResource ButtonCornerRadius}"
+                                                    HorizontalAlignment="Stretch"
+                                                    Margin="0,0,6,0"
+                                                    Click="ApproveDrinkModificationButton_Click"/>
+
+                                            <Button Grid.Column="1"
+                                                    Content="Decline"
+                                                    Tag="{x:Bind Request.DrinkModificationRequestId}"
+                                                    Background="{StaticResource DeclineButtonColor}"
+                                                    Foreground="White"
+                                                    CornerRadius="{StaticResource ButtonCornerRadius}"
+                                                    HorizontalAlignment="Stretch"
+                                                    Margin="6,0,0,0"
+                                                    Click="DenyDrinkModificationButton_Click"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Grid>
+
+            <!-- Right Column - Appeals -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Appeals Section - First Half -->
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                              FontSize="18" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryColor}"
+                              Margin="0,0,0,16">
+                        Appeals Management
+                    </TextBlock>
+
+                    <!-- Search Box - Now Visible -->
+                    <Border Grid.Row="1" 
+                            Background="{StaticResource CardBackgroundColor}"
+                            CornerRadius="{StaticResource ModernCornerRadius}"
+                            Margin="0,0,0,10">
+                        <TextBox x:Name="BannedUserSearchTextBox" 
+                                 PlaceholderText="Search appeals..."
+                                 TextChanged="BannedUserSearchTextBox_TextChanged"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Foreground="{StaticResource TextPrimaryColor}"
+                                 PlaceholderForeground="{StaticResource TextSecondaryColor}"
+                                 FontSize="14"
+                                 Padding="12"/>
+                    </Border>
+
+                    <ListView Grid.Row="2"
+                              x:Name="AppealsList" 
+                              IsItemClickEnabled="True" 
+                              ItemClick="AppealsList_ItemClick"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              ItemsSource="{x:Bind ViewModel.AppealsUsers, Mode=OneWay}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0,6"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:User">
+                                <Border Background="{StaticResource CardBackgroundColor}"
+                                        CornerRadius="{StaticResource ModernCornerRadius}"
+                                        Padding="20">
+                                    <TextBlock Text="{x:Bind Username}" 
+                                               TextWrapping="Wrap"
+                                               Foreground="{StaticResource TextPrimaryColor}"
+                                               FontSize="14"/>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+
+                <!-- Hidden Reviews Section - Second Half -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                              FontSize="18" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryColor}"
+                              Margin="0,16,0,16">
+                        Hidden Reviews
+                    </TextBlock>
+
+                    <ListView Grid.Row="1"
+                              x:Name="UsersWithHiddenReviewsList" 
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              ItemsSource="{x:Bind ViewModel.UsersWithHiddenReviews, Mode=OneWay}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0,6"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:User">
+                                <Border Background="{StaticResource CardBackgroundColor}"
+                                        CornerRadius="{StaticResource ModernCornerRadius}"
+                                        Padding="20">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="{x:Bind Username}" 
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextPrimaryColor}"/>
+                                            <TextBlock Text="{x:Bind EmailAddress}" 
+                                                       Foreground="{StaticResource TextSecondaryColor}"
+                                                       FontSize="12"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1"
+                                                Content="Ban"
+                                                Click="BanUserButton_Click"
+                                                Tag="{x:Bind UserId}"
+                                                Background="{StaticResource DeclineButtonColor}"
+                                                Foreground="White"
+                                                Padding="12,8"
+                                                CornerRadius="{StaticResource ButtonCornerRadius}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </Grid>
         </Grid>
 
-        <!-- Middle Column - Requests -->
-        <Grid Grid.Row="1" Grid.Column="1" Margin="12,24">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold">
-                Role Upgrade Requests
-            </TextBlock>
-
-            <!-- Role Upgrade Requests List -->
-            <ListView x:Name="UpgradeRequestsList" Grid.Row="1" 
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      IsItemClickEnabled="True" 
-                      ItemsSource="{x:Bind ViewModel.UpgradeRequests, Mode=OneWay}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0,4"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="admin:UpgradeRequest">
-                        <Border Padding="16" 
-                                Background="{ThemeResource CardBackgroundFillColorDefault}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                                BorderThickness="{StaticResource CardBorderThickness}"
-                                CornerRadius="{StaticResource ControlCornerRadius}"
-                                Margin="0,4">
-                            <Border.Shadow>
-                                <ThemeShadow />
-                            </Border.Shadow>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1.5*" />
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="{x:Bind RequestingUserIdentifier}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" Grid.Column="0" TextWrapping="Wrap" Margin="0,0,8,0"/>
-
-                                <Button x:Name="AcceptUpgradeRequestButton"
-                                        Content="Accept"
-                                        Tag="{x:Bind UpgradeRequestId}"
-                                        Background="{StaticResource AcceptButtonColor}"
-                                        Foreground="White"
-                                        HorizontalAlignment="Stretch"
-                                        Grid.Column="1"
-                                        Margin="4,0"
-                                        Click="AcceptUpgradeRequestButton_Click"
-                                        />
-
-                                <Button x:Name="DeclineUpgradeRequestButton"
-                                        Content="Decline"
-                                        Tag="{x:Bind UpgradeRequestId}"
-                                        Background="{StaticResource DeclineButtonColor}"
-                                        Foreground="White"
-                                        HorizontalAlignment="Stretch"
-                                        Grid.Column="2"
-                                        Margin="4,0"
-                                        Click="DeclineUpgradeRequestButton_Click"
-                                        />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
-
-        <!-- Right Column - Appeals -->
-        <Grid Grid.Row="1" Grid.Column="2" Margin="12,24,24,24">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Margin="0,0,0,12" FontSize="16" FontWeight="SemiBold">
-                List of all appeals
-            </TextBlock>
-
-            <TextBox x:Name="BannedUserSearchTextBox" Grid.Row="1" Margin="0,0,0,12" 
-                     PlaceholderText="Search appeals..."
-                     TextChanged="BannedUserSearchTextBox_TextChanged"
-                     CornerRadius="{StaticResource ControlCornerRadius}"
-                     HorizontalAlignment="Stretch"/>
-
-            <ListView x:Name="AppealsList" Grid.Row="2" 
-                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                      IsItemClickEnabled="True" 
-                      ItemClick="AppealsList_ItemClick"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      ItemsSource="{x:Bind ViewModel.AppealsUsers, Mode=OneWay}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Padding" Value="0,4"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:User">
-                        <Border Padding="16" 
-                                Background="{ThemeResource CardBackgroundFillColorDefault}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                                BorderThickness="{StaticResource CardBorderThickness}"
-                                CornerRadius="{StaticResource ControlCornerRadius}">
-                            <Border.Shadow>
-                                <ThemeShadow />
-                            </Border.Shadow>
-                            <TextBlock Text="{x:Bind Username}" TextWrapping="Wrap"/>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <!-- Users with Hidden Reviews Section -->
-            <TextBlock Grid.Row="3" Margin="0,24,0,12" FontSize="16" FontWeight="SemiBold">
-                Users with Hidden Reviews
-            </TextBlock>
-
-            <ListView x:Name="UsersWithHiddenReviewsList" Grid.Row="4" Grid.Column="2" ItemsSource="{x:Bind ViewModel.UsersWithHiddenReviews, Mode=OneWay}">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:User">
-                        <Grid Margin="0,4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="{x:Bind Username}" 
-                                         FontWeight="SemiBold"/>
-                                <TextBlock Text="{x:Bind EmailAddress}" 
-                                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                         FontSize="12"/>
-                            </StackPanel>
-                            <Button Grid.Column="1"
-                                    Content="Ban"
-                                    Click="BanUserButton_Click"
-                                    
-                                    Tag="{x:Bind UserId}"
-                                    Background="{StaticResource DeclineButtonColor}"
-                                    Foreground="White"
-                                    Padding="12,4"
-                                    CornerRadius="4"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
-
-        <!-- Forbidden Words Popup -->
+        <!-- Modern Forbidden Words Popup -->
         <Grid x:Name="WordListPopup" 
               Visibility="Collapsed"
-              Background="#80000000" 
-              Grid.RowSpan="2" 
+              Background="#CC000000" 
+              Grid.RowSpan="2"
               Grid.ColumnSpan="3">
-            <Border Background="{ThemeResource CardBackgroundFillColorDefault}"
-                    CornerRadius="{StaticResource ControlCornerRadius}"
-                    Padding="20" Width="400" Height="400"
-                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                    BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                    BorderThickness="{StaticResource CardBorderThickness}">
-                <StackPanel>
-                    <TextBlock Text="Forbidden Words" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+            <Border Background="{StaticResource CardBackgroundColor}"
+                    CornerRadius="{StaticResource ModernCornerRadius}"
+                    Padding="32" 
+                    Width="500" 
+                    Height="500"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
+                <StackPanel Spacing="20">
+                    <TextBlock Text="Forbidden Words Management" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               Foreground="{StaticResource TextPrimaryColor}"/>
 
-                    <ListView x:Name="WordsList" Height="200"
-                      SelectionMode="Single"
-                      BorderThickness="1" Margin="0,0,0,12"
-                      ItemsSource="{x:Bind ViewModel.OffensiveWords, Mode=OneWay}"/>
+                    <Border Background="#0F0F1A"
+                            CornerRadius="{StaticResource ButtonCornerRadius}"
+                            Padding="2">
+                        <ListView x:Name="WordsList" 
+                                  Height="280"
+                                  SelectionMode="Single"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  ItemsSource="{x:Bind ViewModel.OffensiveWords, Mode=OneWay}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Padding" Value="12,8"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                    </Border>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Add" Width="100" Margin="0,0,8,0" Click="AddWord_Click"/>
-                        <Button Content="Delete" Width="100" 
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Content="Add" 
+                                Background="{StaticResource AcceptButtonColor}"
+                                Foreground="White"
+                                CornerRadius="{StaticResource ButtonCornerRadius}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,0,6,0"
+                                Click="AddWord_Click"/>
+
+                        <Button Grid.Column="1"
+                                Content="Delete" 
+                                Background="{StaticResource DeclineButtonColor}"
+                                Foreground="White"
+                                CornerRadius="{StaticResource ButtonCornerRadius}"
+                                HorizontalAlignment="Stretch"
+                                Margin="3,0"
                                 Command="{x:Bind ViewModel.DeleteOffensiveWordCommand}" 
                                 CommandParameter="{x:Bind WordsList.SelectedItem, Mode=OneWay}"/>
-                        <Button Content="Cancel" Width="100" 
+
+                        <Button Grid.Column="2"
+                                Content="Close" 
+                                Background="{StaticResource NeutralButtonColor}"
+                                Foreground="White"
+                                CornerRadius="{StaticResource ButtonCornerRadius}"
+                                HorizontalAlignment="Stretch"
+                                Margin="6,0,0,0"
                                 Command="{x:Bind ViewModel.HideWordListPopupCommand}"/>
-                    </StackPanel>
+                    </Grid>
                 </StackPanel>
             </Border>
         </Grid>

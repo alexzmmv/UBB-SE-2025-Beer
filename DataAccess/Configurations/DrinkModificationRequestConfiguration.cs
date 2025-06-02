@@ -18,17 +18,17 @@ namespace DataAccess.Configurations
             builder.HasOne(x => x.OldDrink)
                    .WithMany()
                    .HasForeignKey(x => x.OldDrinkId)
-                   .OnDelete(DeleteBehavior.Restrict); // avoid cascade deletes if not desired
+                   .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.NewDrink)
                    .WithMany()
                    .HasForeignKey(x => x.NewDrinkId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.RequestingUser)
                    .WithMany()
                    .HasForeignKey(x => x.RequestingUserId)
-                   .OnDelete(DeleteBehavior.Cascade); // depends on your data model
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 

@@ -6,11 +6,9 @@ namespace DrinkDb_Auth
     using DataAccess.AuthProviders.Github;
     using DataAccess.AuthProviders.LinkedIn;
     using DataAccess.AuthProviders.Twitter;
-    using DataAccess.Model.Authentication;
     using DataAccess.OAuthProviders;
     using DataAccess.Service.Interfaces;
     using DataAccess.Service;
-    using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.AuthProviders.Google;
     using DrinkDb_Auth.ViewModel.Authentication;
     using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +17,11 @@ namespace DrinkDb_Auth
     using Microsoft.UI.Windowing;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Quartz;
-    using Quartz.Impl;
     using Windows.Graphics;
     using WinUIApp;
     using WinUiApp.Data.Data;
     using Microsoft.UI.Xaml.Navigation;
-    using WinUIApp.Views.Pages;
-    using DrinkDb_Auth.View;
+    using DataAccess.Constants;
 
     public sealed partial class AuthenticationWindow : Window
     {
@@ -53,7 +48,7 @@ namespace DrinkDb_Auth
             this.userService = userService;
             this.twitterOAuth2Provider = twitterOAuth2Provider;
             this.googleOAuth2Provider = googleOAuth2Provider;
-            this.MainFrame.Navigated += FrameNavigated;
+            this.MainFrame.Navigated += this.FrameNavigated;
 
             this.Title = "Beer";
 
@@ -107,7 +102,6 @@ namespace DrinkDb_Auth
                     App.CurrentUserId = user.UserId;
                     App.CurrentSessionId = response.SessionId;
 
-                    // Initialize the header after successful 2FA
                     this.HeaderComponent.Initialize();
                     this.HeaderComponent.Visibility = Visibility.Visible;
 
@@ -242,7 +236,7 @@ namespace DrinkDb_Auth
             await errorDialog.ShowAsync();
         }
 
-        private void FrameNavigated(object sender, NavigationEventArgs e)
+        private async void FrameNavigated(object sender, NavigationEventArgs e)
         {
             if (this.HeaderComponent != null)
             {
@@ -253,6 +247,20 @@ namespace DrinkDb_Auth
                 else
                 {
                     this.HeaderComponent.Visibility = Visibility.Visible;
+
+                    User? user = await this.userService.GetUserById(App.CurrentUserId);
+
+                    if (user == null)
+                    {
+                        return;
+                    }
+
+                    RoleType roletype = user.AssignedRole;
+
+                    if (roletype == RoleType.Banned)
+                    {
+                        this.HeaderComponent.HideAddButton();
+                    }
                 }
             }
         }
@@ -265,6 +273,8 @@ namespace DrinkDb_Auth
             this.PasswordBox.Password = string.Empty;
             this.MainFrame.BackStack.Clear();
             this.MainFrame.Content = this.RootGrid;
+            this.HeaderComponent.ShowAddButton();
+            this.HeaderComponent.isInitialized = false;
         }
     }
 }

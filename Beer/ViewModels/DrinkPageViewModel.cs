@@ -1,18 +1,16 @@
-﻿namespace WinUIApp.ViewModels
-{
-    using DataAccess.Service.Interfaces;
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.WebAPI.Models;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using DataAccess.Service.Interfaces;
+using WinUIApp.WebAPI.Models;
 
+namespace WinUIApp.ViewModels
+{
     public class DrinkPageViewModel : INotifyPropertyChanged
     {
         private readonly IDrinkService drinkService;
-        private readonly IUserService userService;
         private int userId;
         private int drinkId;
         private bool isInUserDrinksList;
@@ -35,17 +33,15 @@
             }
         }
 
-        public DrinkPageViewModel(IDrinkService drinkService, IUserService userService)
+        public DrinkPageViewModel(IDrinkService drinkService)
         {
             this.drinkService = drinkService;
-            this.userService = userService;
             this.buttonText = "Add to Favorites";
         }
 
-        public DrinkPageViewModel(int drinkId, IDrinkService drinkService, IUserService userService)
+        public DrinkPageViewModel(int drinkId, IDrinkService drinkService)
         {
             this.drinkService = drinkService;
-            this.userService = userService;
             this.drinkId = drinkId;
             this.buttonText = "Add to Favorites";
         }
@@ -111,9 +107,8 @@
                 this.isInUserDrinksList = await Task.Run(() => this.drinkService.IsDrinkInUserPersonalList(this.GetCurrentUserId(), this.DrinkId));
                 this.UpdateButtonText();
             }
-            catch (Exception checkingDrinkListException)
+            catch
             {
-                Debug.WriteLine($"DrinkPageViewModel: Error checking drink list: {checkingDrinkListException.Message}");
             }
         }
 
@@ -146,9 +141,8 @@
 
                 this.UpdateButtonText();
             }
-            catch (Exception updateDrinkListException)
+            catch
             {
-                Debug.WriteLine($"DrinkPageViewModel: Error updating drink list: {updateDrinkListException.Message}");
             }
         }
 

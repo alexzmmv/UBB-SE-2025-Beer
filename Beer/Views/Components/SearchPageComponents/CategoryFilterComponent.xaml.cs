@@ -3,16 +3,14 @@ namespace WinUIApp.Views.Components.SearchPageComponents
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.UI.Xaml.Controls;
     using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices.Models;
 
     public sealed partial class CategoryFilterComponent : UserControl
     {
-        private const int SelectionDelayMilliseconds = 50;
+        private const int SELECTION_DELAY_MILLISECONDS = 50;
         private List<Category> originalCategories = new List<Category>();
         private HashSet<Category> selectedCategories = new HashSet<Category>();
 
@@ -59,7 +57,7 @@ namespace WinUIApp.Views.Components.SearchPageComponents
             }
 
             this.CategoryList.SelectedItems.Clear();
-            await Task.Delay(SelectionDelayMilliseconds);
+            await Task.Delay(SELECTION_DELAY_MILLISECONDS);
             foreach (Category category in this.originalCategories)
             {
                 if (categoryIdentifiers.Contains(category.CategoryId))

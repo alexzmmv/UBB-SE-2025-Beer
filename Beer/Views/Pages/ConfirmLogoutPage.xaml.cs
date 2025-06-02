@@ -12,7 +12,7 @@ namespace DrinkDb_Auth
         public ConfirmLogoutPage()
         {
             this.InitializeComponent();
-            Loaded += ConfirmLogoutPage_Loaded;
+            this.Loaded += ConfirmLogoutPage_Loaded;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -26,7 +26,7 @@ namespace DrinkDb_Auth
             App.CurrentUserId = Guid.Empty;
             App.CurrentSessionId = Guid.Empty;
 
-            var window = (AuthenticationWindow)App.MainWindow;
+            AuthenticationWindow window = (AuthenticationWindow)App.MainWindow;
             window.HandleLogout();
         }
 
