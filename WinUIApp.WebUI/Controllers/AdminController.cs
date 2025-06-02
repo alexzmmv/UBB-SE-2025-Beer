@@ -34,13 +34,19 @@ namespace WebServer.Controllers
             this.drinkService = drinkService;
         }
 
-        public async Task<IActionResult> AdminDashboard()
+        public async Task<IActionResult> AdminDashboard(string? search)
         {
             Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
             if (currentUserId == Guid.Empty)
                 return RedirectToAction("AuthenticationPage", "Auth");
 
             IEnumerable<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                reviews = reviews.Where(r => r.Content.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
             IEnumerable<UpgradeRequest> upgradeRequests = await this.upgradeRequestService.RetrieveAllUpgradeRequests();
             IEnumerable<string> offensiveWords = await this.checkersService.GetOffensiveWordsList();
             List<User> users = await this.userService.GetAllUsers();
