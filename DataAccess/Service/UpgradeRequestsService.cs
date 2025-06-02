@@ -32,6 +32,17 @@ namespace DataAccess.Service
             {
             }
         }
+        public async Task<bool> HasPendingUpgradeRequest(Guid userId)
+        {
+            try
+            {
+                return await this.upgradeRequestsRepository.HasPendingUpgradeRequest(userId);
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         public async Task<List<UpgradeRequest>> RetrieveAllUpgradeRequests()
         {
@@ -153,7 +164,7 @@ namespace DataAccess.Service
             if (user != null && !string.IsNullOrEmpty(user.EmailAddress))
             {
                 string smtpEmail = Environment.GetEnvironmentVariable("SMTP_MODERATOR_EMAIL") ?? "ionutcora66@gmail.com";
-                string smtpPassword = Environment.GetEnvironmentVariable("SMTP_MODERATOR_PASSWORD") ?? "qvzl vtbe kkzm rlur";
+                string smtpPassword = Environment.GetEnvironmentVariable("SMTP_MODERATOR_PASSWORD") ?? "qvzl vtoe kkzm rlur";
 
                 // Used to be a check here for environment variables, but if they are not setup, I made it default to me, the desktop tech lead
                 string htmlBody = $@"

@@ -1,4 +1,5 @@
-﻿using DataAccess.Model.AdminDashboard;
+﻿using DataAccess.Constants;
+using DataAccess.Model.AdminDashboard;
 using DataAccess.Model.Authentication;
 using DataAccess.Service;
 using DataAccess.Service.Interfaces;
@@ -13,10 +14,14 @@ namespace WebServer.Controllers
     {
         private IUserService userService;
         private IReviewService reviewService;
-        public ProfileController(IUserService userService, IReviewService reviewService)
+        private IUpgradeRequestsService upgradeRequestsService;
+        private IDrinkService drinkService;
+        public ProfileController(IUserService userService, IReviewService reviewService, IDrinkService drinkService, IUpgradeRequestsService upgradeRequestsService)
         {
             this.userService = userService;
             this.reviewService = reviewService;
+            this.drinkService = drinkService;
+            this.upgradeRequestsService = upgradeRequestsService;
         }
 
         public async Task<IActionResult> UserPage()
@@ -32,13 +37,90 @@ namespace WebServer.Controllers
             }
 
             IEnumerable<DataAccess.DTOModels.ReviewDTO> reviews = await reviewService.GetReviewsByUser(currentUser.UserId);
+            bool hasPendingUpgradeRequest = false;
+
+            if (currentUser.AssignedRole == RoleType.User)
+            {
+                hasPendingUpgradeRequest = await upgradeRequestsService.HasPendingUpgradeRequest(currentUser.UserId);
+            }
+
+            var favoriteDrinks = drinkService.GetUserPersonalDrinkList(userId);
             UserPageModel userPageModel = new UserPageModel()
             {
                 CurrentUser = currentUser,
                 CurrentUserReviews = reviews,
-                CurrentUserDrinks = new List<string>() { "beer", "lemonade", "vodka" }
+                FavoriteDrinks = favoriteDrinks.ToList(),
+                HasPendingUpgradeRequest = hasPendingUpgradeRequest
             };
             return View(userPageModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SubmitAppeal()
+        {
+            Guid userId = AuthenticationService.GetCurrentUserId();
+            User? currentUser = await this.userService.GetUserById(userId);
+
+            if (currentUser == null)
+            {
+                return RedirectToAction("AuthenticationPage", "Auth");
+            }
+
+            if (currentUser.AssignedRole != RoleType.Banned)
+            {
+                TempData["ErrorMessage"] = "Only banned users can submit appeals.";
+                return RedirectToAction("UserPage");
+            }
+
+            if (currentUser.HasSubmittedAppeal)
+            {
+                TempData["InfoMessage"] = "You have already submitted an appeal.";
+                return RedirectToAction("UserPage");
+            }
+
+            currentUser.HasSubmittedAppeal = true;
+            await this.userService.UpdateUser(currentUser);
+
+            TempData["SuccessMessage"] = "Your appeal has been submitted successfully.";
+            return RedirectToAction("UserPage");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RequestRoleUpgrade()
+        {
+            Guid userId = AuthenticationService.GetCurrentUserId();
+            User? currentUser = await this.userService.GetUserById(userId);
+
+            if (currentUser == null)
+            {
+                return RedirectToAction("AuthenticationPage", "Auth");
+            }
+
+            if (currentUser.AssignedRole != RoleType.User)
+            {
+                TempData["ErrorMessage"] = "Only regular users can request role upgrades.";
+                return RedirectToAction("UserPage");
+            }
+
+            bool hasPendingRequest = await upgradeRequestsService.HasPendingUpgradeRequest(userId);
+            if (hasPendingRequest)
+            {
+                TempData["InfoMessage"] = "You already have a pending upgrade request.";
+                return RedirectToAction("UserPage");
+            }
+
+            try
+            {
+                await this.upgradeRequestsService.AddUpgradeRequest(userId);
+                TempData["SuccessMessage"] = "Your role upgrade request has been submitted successfully.";
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Failed to submit upgrade request. Please try again.";
+                
+            }
+
+            return RedirectToAction("UserPage");
         }
 
         public IActionResult LogOut()

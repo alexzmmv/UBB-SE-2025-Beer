@@ -12,5 +12,7 @@
         Task AddUpgradeRequest(Guid userId);
 
         Task<UpgradeRequest?> RetrieveUpgradeRequestByIdentifier(int upgradeRequestIdentifier);
+
+        Task<bool> HasPendingUpgradeRequest(Guid userId);
     }
 }

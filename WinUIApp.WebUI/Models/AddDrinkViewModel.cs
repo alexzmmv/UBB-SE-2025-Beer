@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using WinUIApp.ProxyServices.Models;
+using DataAccess.Constants;
 
 namespace WinUIApp.WebUI.Models
 {
@@ -23,5 +24,6 @@ namespace WinUIApp.WebUI.Models
         public float DrinkAlcoholPercentage { get; set; } = 0.0f;
 
         public List<SelectListItem> AvailableCategories { get; set; } = new();
+        public RoleType UserRole { get; set; }
     }
 }

@@ -97,6 +97,8 @@ namespace WebServer.Controllers
                 AuthenticationService.SetCurrentSessionId(response.SessionId);
                 AuthenticationService.SetCurrentUserId(currentUser.UserId);
 
+                HttpContext.Session.SetString("AssignedRole", currentUser.AssignedRole.ToString());
+
                 ViewBag.Username = currentUser.Username;
                 return View("TwoFactorAuthSetup");
             }

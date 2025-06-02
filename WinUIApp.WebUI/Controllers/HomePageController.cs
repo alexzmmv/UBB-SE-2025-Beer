@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
@@ -15,11 +16,13 @@ public class HomePageController : Controller
     private readonly ILogger<HomePageController> _logger;
 
     private readonly IDrinkService drinkService;
+    private readonly IReviewService drinkReviewService;
 
-    public HomePageController(ILogger<HomePageController> logger, IDrinkService drinkService)
+    public HomePageController(ILogger<HomePageController> logger, IDrinkService drinkService, IReviewService reviewService)
     {
         _logger = logger;
         this.drinkService = drinkService;
+        this.drinkReviewService = reviewService;
     }
 
     public IActionResult Index(string? searchKeyword, float? minValue, float? maxValue, int? minStars, string[] SelectedCategories, string[] SelectedBrandNames)
@@ -36,17 +39,33 @@ public class HomePageController : Controller
         {
             searchKeyword = null;
         }
+        if (minStars == null) minStars = 0;
 
         Dictionary<string, bool> drinkOrderingCriteria = new Dictionary<string, bool>();
+        
+        List<DrinkElementViewModel> drinksViewModels = new List<DrinkElementViewModel>();
 
-        var drinks = drinkService.GetDrinks(searchKeyword, drinkBrandsList, drinkCategoriesList, minValue, maxValue, drinkOrderingCriteria);
+        var drinks = drinkService.GetDrinks(searchKeyword, drinkBrandsList, drinkCategoriesList, minValue, maxValue, drinkOrderingCriteria).Where(drink => !drink.IsRequestingApproval).ToList();
+        foreach (var drink in drinks)
+        {
+            if (drinkReviewService.GetAverageRating(drink.DrinkId).Result >= minStars) {
+                drinksViewModels.Add(new DrinkElementViewModel { Drink = drink, AverageRating = drinkReviewService.GetAverageRating(drink.DrinkId).Result });
+            }
+        }
 
         var homeViewModel = new HomeViewModel
         {
-            Drink = drinkOfTheDay,
+            Drink = new DrinkElementViewModel { Drink = drinkOfTheDay, AverageRating = drinkReviewService.GetAverageRating(drinkOfTheDay.DrinkId).Result },
             drinkCategories = drinkCategories,
             drinkBrands = drinkBrands,
-            drinks = drinks ?? new List<DrinkDTO>() // Ensure drinks is not null
+            drinks = drinksViewModels ?? new List<DrinkElementViewModel>(), // Ensure drinks is not null
+             
+            SearchKeyword = searchKeyword,
+            MinValue = minValue,
+            MaxValue = maxValue,
+            MinStars = minStars,
+            SelectedCategories = SelectedCategories ?? new string[0],
+            SelectedBrandNames = SelectedBrandNames ?? new string[0],
         };
 
         return View(homeViewModel);
@@ -78,6 +97,9 @@ public class HomePageController : Controller
     //     return View(homeViewModel);
     // }
 
+    public IActionResult ClearFilters() {
+        return RedirectToAction("Index");
+    }
 
     public IActionResult Privacy()
     {

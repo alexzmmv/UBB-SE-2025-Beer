@@ -5,6 +5,6 @@ namespace WinUIApp.WebUI.Models
 {
     public class FavoriteDrinksViewModel
     {
-        public List<DrinkDTO> FavoriteDrinks { get; set; } = new();
+        public List<DrinkElementViewModel> FavoriteDrinks { get; set; } = new();
     }
 }

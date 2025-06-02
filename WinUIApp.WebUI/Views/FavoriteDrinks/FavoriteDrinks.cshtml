@@ -10,11 +10,7 @@
         @foreach (var drink in Model.FavoriteDrinks)
         {
             <div class="card shadow-sm border" style="width: 220px; height: 400px; overflow: hidden;">
-                @await Html.PartialAsync(
-                    "~/Views/Drink/DrinkElement.cshtml",
-                    new WinUIApp.WebUI.Models.DrinkElementViewModel { Drink = drink },
-                    null
-                )
+				@await Html.PartialAsync( "~/Views/Drink/DrinkElement.cshtml",@drink, null);
             </div>
         }
     </div>

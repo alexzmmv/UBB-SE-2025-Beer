@@ -1,7 +1,9 @@
 ﻿@using DataAccess.Constants
+@using DataAccess.DTOModels
 @using DataAccess.Model.AdminDashboard
 @using WebServer.Models
 @using WinUiApp.Data.Data
+@using DataAccess.Constants
 @model UserPageModel
 @{
     ViewData["Title"] = "UserPage";
@@ -9,12 +11,36 @@
 
 
 <div class="container-fluid bg-white py-5">
+    @* Add this section for messages *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @TempData["InfoMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
     <div class="row">
-        <!-- LEFT COLUMN: User Info -->
+<!-- LEFT COLUMN: User Info -->
         <div class="col-md-4 d-flex justify-content-center align-items-center">
             <div class="card border-dark p-4" style="width: 100%; max-width: 400px;">
                 <div class="text-center mb-4 d-flex justify-content-center align-items-center">
-                    <div class="rounded-circle bg-secondary" style="width: 100px; height: 100px;"></div>
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
                 </div>
 
                 <div class="text-center mb-3">
@@ -23,41 +49,105 @@
                 </div>
 
                 <div class="text-center mb-3">
-                    <p id="StatusTextBlock">Status: Online</p>
+                    <p id="StatusTextBlock">
+                        Status: 
+                        @if (Model.CurrentUser.AssignedRole == RoleType.Banned)
+                        {
+                            <span class="badge bg-danger">Banned</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Online</span>
+                        }
+                    </p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    @* Admin Dashboard Button *@
+                    @if (Model.CurrentUser.AssignedRole == RoleType.Admin)
+                    {
+                        <a asp-controller="Admin" asp-action="AdminDashboard" class="btn btn-primary">
+                            <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                        </a>
+                    }
+
+                    @* Request Role Upgrade Button for Regular Users *@
+                    @if (Model.CurrentUser.AssignedRole == RoleType.User)
+                    {
+                        @if (!Model.HasPendingUpgradeRequest)
+                        {
+                            <a asp-controller="Profile" asp-action="RequestRoleUpgrade" class="btn btn-primary">
+                                <i class="fas fa-arrow-up me-2"></i>Request Role Upgrade
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" disabled>
+                                <i class="fas fa-clock me-2"></i>Upgrade Request Pending
+                            </button>
+                        }
+                    }
+
+                    @* Appeal Button for Banned Users *@
+                    @if (Model.CurrentUser.AssignedRole == RoleType.Banned)
+                    {
+                        @if (!Model.CurrentUser.HasSubmittedAppeal)
+                        {
+                            <a asp-controller="Profile" asp-action="SubmitAppeal" class="btn btn-warning">
+                                <i class="fas fa-gavel me-2"></i>Appeal Ban
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" disabled>
+                                <i class="fas fa-hourglass-half me-2"></i>Appeal Pending
+                            </button>
+                        }
+                    }
+
+                    
                 </div>
             </div>
         </div>
-
         <!-- RIGHT COLUMN: Reviews and Drinklist -->
         <div class="col-md-8">
             <div class="mb-5">
                 <h4 class="fw-bold">Reviews</h4>
                 <div id="ReviewsItemsControl" class="list-group">
                     <ul>
-                        @foreach (DataAccess.DTOModels.ReviewDTO review in Model.CurrentUserReviews)
+                        @foreach (ReviewDTO review in Model.CurrentUserReviews)
                         {
-                            <li class="list-group-item">
-                                <strong>@review.RatingValue</strong><br />
-                                <span>@review.Content</span>
+                            <li class="list-group-item list-group-item-action">
+                                <a href="@Url.Action("DrinkDetail", "Drink", new { id = review.DrinkId })" class="text-decoration-none text-dark">
+                                    <strong>@review.RatingValue</strong><br />
+                                    <span>@review.Content</span>
+                                </a>
                             </li>
                         }
                     </ul>
                 </div>
             </div>
 
-            <div>
-                <h4 class="fw-bold">Drinklist</h4>
-                <div id="DrinklistItemsControl" class="list-group">
+            
+            @if (Model.FavoriteDrinks != null && Model.FavoriteDrinks.Any())
+            {
+                <h4 class="fw-bold">Favorite Drinks</h4>
+                <div id="FavoriteDrinksItemsControl" class="list-group">
                     <ul>
-                        @foreach (string drink in Model.CurrentUserDrinks)
+                        @foreach (var drink in Model.FavoriteDrinks)
                         {
                             <li class="list-group-item">
-                                <strong>@drink</strong><br />
+                                <strong>@drink.DrinkName</strong><br />
+                                <a href="@Url.Action("DrinkDetail", "Drink", new { id = drink.DrinkId })" class="btn btn-primary btn-sm mt-2">View Details</a>
                             </li>
                         }
                     </ul>
                 </div>
-            </div>
+            }
+            else
+            {
+                <p>You have no favorite drinks yet.</p>
+            }
         </div>
     </div>
 </div>
