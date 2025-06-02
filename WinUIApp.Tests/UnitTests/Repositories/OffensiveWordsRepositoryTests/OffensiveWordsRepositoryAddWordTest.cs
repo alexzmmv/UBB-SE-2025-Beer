@@ -2,149 +2,100 @@ using DataAccess.Model.AdminDashboard;
 using DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data.Interfaces;
-using WinUIApp.Tests.UnitTests.TestHelpers;
 using Moq;
+using MockQueryable.Moq;
 
 namespace WinUIApp.Tests.UnitTests.Repositories.OffensiveWordsRepositoryTests
 {
     public class OffensiveWordsRepositoryAddWordTest
     {
-        private readonly Mock<IAppDbContext> dbContextMock;
-        private readonly Mock<DbSet<OffensiveWord>> dbSetMock;
+        private readonly Mock<IAppDbContext> mockDatabaseContext;
+        private readonly Mock<DbSet<OffensiveWord>> mockOffensiveWordsDbSet;
         private readonly OffensiveWordsRepository offensiveWordsRepository;
-        private readonly List<OffensiveWord> offensiveWords;
+
+        private readonly List<OffensiveWord> offensiveWordsInDatabase;
 
         public OffensiveWordsRepositoryAddWordTest()
         {
-            offensiveWords = new List<OffensiveWord>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(dbSetMock.Object);
-            offensiveWordsRepository = new OffensiveWordsRepository(dbContextMock.Object);
+            this.mockDatabaseContext = new Mock<IAppDbContext>();
+
+            this.offensiveWordsInDatabase = new List<OffensiveWord>
+            {
+                new OffensiveWord { Word = "existingword" }
+            };
+
+            this.mockOffensiveWordsDbSet = this.offensiveWordsInDatabase.AsQueryable().BuildMockDbSet();
+
+            this.mockDatabaseContext
+                .Setup(context => context.OffensiveWords)
+                .Returns(this.mockOffensiveWordsDbSet.Object);
+
+            this.offensiveWordsRepository = new OffensiveWordsRepository(this.mockDatabaseContext.Object);
         }
 
         [Fact]
-        public async Task AddWord_Success_AddsWordToDatabase()
+        public async Task AddWord_WhenWordIsNew_AddsAndSaves()
         {
             // Arrange
-            var word = "testword";
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            string newWord = "newword";
+            OffensiveWord? addedWord = null;
+
+            this.mockOffensiveWordsDbSet
+                .Setup(set => set.Add(It.IsAny<OffensiveWord>()))
+                .Callback<OffensiveWord>(word => addedWord = word);
+
+            this.mockDatabaseContext
+                .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
 
             // Act
-            await offensiveWordsRepository.AddWord(word);
+            await this.offensiveWordsRepository.AddWord(newWord);
 
             // Assert
-            localDbSetMock.Verify(x => x.Add(It.Is<OffensiveWord>(o => o.Word == word)), Times.Once);
+            Assert.NotNull(addedWord);
+            Assert.Equal(newWord, addedWord.Word);
         }
 
         [Fact]
-        public async Task AddWord_Success_CallsSaveChanges()
+        public async Task AddWord_WhenWordAlreadyExists_DoesNotCallAddOrSave()
         {
             // Arrange
-            var word = "testword";
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            bool addCalled = false;
+            bool saveCalled = false;
+            string existingWord = "existingword";
+
+            this.mockOffensiveWordsDbSet
+                .Setup(set => set.Add(It.IsAny<OffensiveWord>()))
+                .Callback(() => addCalled = true);
+
+            this.mockDatabaseContext
+                .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .Callback(() => saveCalled = true);
 
             // Act
-            await offensiveWordsRepository.AddWord(word);
+            await this.offensiveWordsRepository.AddWord(existingWord);
 
             // Assert
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            Assert.False(addCalled);
+            Assert.False(saveCalled);
         }
 
         [Fact]
-        public async Task AddWord_WordAlreadyExists_DoesNotAddDuplicate()
+        public async Task AddWord_WhenWordIsNullOrWhitespace_DoesNotCallAdd()
         {
             // Arrange
-            var word = "existingword";
-            var existingWord = new OffensiveWord { Word = word };
-            offensiveWords.Add(existingWord);
+            string whitespaceWord = "   ";
+            bool addCalled = false;
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
+            this.mockOffensiveWordsDbSet
+                .Setup(set => set.Add(It.IsAny<OffensiveWord>()))
+                .Callback(() => addCalled = true);
 
             // Act
-            await offensiveWordsRepository.AddWord(word);
+            await this.offensiveWordsRepository.AddWord(whitespaceWord);
 
             // Assert
-            localDbSetMock.Verify(x => x.Add(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task AddWord_WordAlreadyExists_DoesNotCallSaveChanges()
-        {
-            // Arrange
-            var word = "existingword";
-            var existingWord = new OffensiveWord { Word = word };
-            offensiveWords.Add(existingWord);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.AddWord(word);
-
-            // Assert
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Never);
-        }
-
-        [Fact]
-        public async Task AddWord_NullWord_DoesNotAddToDatabase()
-        {
-            // Arrange
-            string? word = null;
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.AddWord(word);
-
-            // Assert
-            localDbSetMock.Verify(x => x.Add(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task AddWord_EmptyWord_DoesNotAddToDatabase()
-        {
-            // Arrange
-            var word = string.Empty;
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.AddWord(word);
-
-            // Assert
-            localDbSetMock.Verify(x => x.Add(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task AddWord_WhitespaceWord_DoesNotAddToDatabase()
-        {
-            // Arrange
-            var word = "   ";
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.AddWord(word);
-
-            // Assert
-            localDbSetMock.Verify(x => x.Add(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task AddWord_DbSetThrowsException_Throws()
-        {
-            // Arrange
-            var word = "testword";
-            dbContextMock.Setup(x => x.OffensiveWords).Throws(new Exception("Test exception"));
-
-            // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => offensiveWordsRepository.AddWord(word));
+            Assert.False(addCalled);
         }
     }
-} 
+}

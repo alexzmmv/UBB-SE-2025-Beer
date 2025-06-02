@@ -27,7 +27,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             this.offensiveWordsServiceProxy = new OffensiveWordsServiceProxy(this.baseUrl);
 
             // Use reflection to set the private httpClient field
-            var httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            System.Reflection.FieldInfo? httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             httpClientField?.SetValue(this.offensiveWordsServiceProxy, this.httpClient);
         }
 
@@ -36,13 +36,13 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string newWord = "newbadword";
-            var existingWords = new List<OffensiveWord>
+            List<OffensiveWord> existingWords = new()
             {
                 new OffensiveWord("existingword1"),
                 new OffensiveWord("existingword2")
             };
 
-            var getResponse = JsonSerializer.Serialize(existingWords);
+            string? getResponse = JsonSerializer.Serialize(existingWords);
 
             // Setup GET request to check existing words
             this.httpMessageHandlerMock.Protected()
@@ -90,13 +90,13 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string newWord = "newbadword";
-            var existingWords = new List<OffensiveWord>
+            List<OffensiveWord> existingWords = new()
             {
                 new OffensiveWord("existingword1"),
                 new OffensiveWord("existingword2")
             };
 
-            var getResponse = JsonSerializer.Serialize(existingWords);
+            string? getResponse = JsonSerializer.Serialize(existingWords);
 
             // Setup GET request to check existing words
             this.httpMessageHandlerMock.Protected()
@@ -144,13 +144,13 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string existingWord = "existingword1";
-            var existingWords = new List<OffensiveWord>
+            List<OffensiveWord> existingWords = new()
             {
                 new OffensiveWord("existingword1"),
                 new OffensiveWord("existingword2")
             };
 
-            var getResponse = JsonSerializer.Serialize(existingWords);
+            string? getResponse = JsonSerializer.Serialize(existingWords);
 
             // Setup GET request to check existing words
             this.httpMessageHandlerMock.Protected()
@@ -184,13 +184,13 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string existingWord = "existingword1";
-            var existingWords = new List<OffensiveWord>
+            List<OffensiveWord> existingWords = new()
             {
                 new OffensiveWord("existingword1"),
                 new OffensiveWord("existingword2")
             };
 
-            var getResponse = JsonSerializer.Serialize(existingWords);
+            string? getResponse = JsonSerializer.Serialize(existingWords);
 
             // Setup GET request to check existing words
             this.httpMessageHandlerMock.Protected()
@@ -299,8 +299,8 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string newWord = "newbadword";
-            var existingWords = new List<OffensiveWord>();
-            var getResponse = JsonSerializer.Serialize(existingWords);
+            List<OffensiveWord> existingWords = new();
+            string? getResponse = JsonSerializer.Serialize(existingWords);
 
             // Setup successful GET request
             this.httpMessageHandlerMock.Protected()
@@ -340,8 +340,8 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string newWord = "newbadword";
-            var emptyWordsList = new List<OffensiveWord>();
-            var getResponse = JsonSerializer.Serialize(emptyWordsList);
+            List<OffensiveWord> emptyWordsList = new();
+            string? getResponse = JsonSerializer.Serialize(emptyWordsList);
 
             // Setup GET request
             this.httpMessageHandlerMock.Protected()
@@ -389,8 +389,8 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string newWord = "newbadword";
-            var emptyWordsList = new List<OffensiveWord>();
-            var getResponse = JsonSerializer.Serialize(emptyWordsList);
+            List<OffensiveWord> emptyWordsList = new();
+            string? getResponse = JsonSerializer.Serialize(emptyWordsList);
 
             // Setup GET request
             this.httpMessageHandlerMock.Protected()
@@ -433,4 +433,4 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 ItExpr.IsAny<CancellationToken>());
         }
     }
-} 
+}

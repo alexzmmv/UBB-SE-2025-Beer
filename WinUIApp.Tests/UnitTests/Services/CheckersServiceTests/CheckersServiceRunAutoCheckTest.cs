@@ -14,16 +14,16 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
 
         public CheckersServiceRunAutoCheckTest()
         {
-            reviewServiceMock = new Mock<IReviewService>();
-            autoCheckMock = new Mock<IAutoCheck>();
-            checkersService = new CheckersService(reviewServiceMock.Object, autoCheckMock.Object);
+            this.reviewServiceMock = new Mock<IReviewService>();
+            this.autoCheckMock = new Mock<IAutoCheck>();
+            this.checkersService = new CheckersService(this.reviewServiceMock.Object, this.autoCheckMock.Object);
         }
 
         [Fact]
         public async Task RunAutoCheck_NullReviews_ReturnsEmptyList()
         {
             // Act
-            var result = await checkersService.RunAutoCheck(null);
+            List<string> result = await this.checkersService.RunAutoCheck(null);
 
             // Assert
             Assert.Empty(result);
@@ -33,10 +33,10 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_EmptyReviews_ReturnsEmptyList()
         {
             // Arrange
-            var reviews = new List<Review>();
+            List<Review> reviews = new();
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Empty(result);
@@ -46,31 +46,31 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_ReviewWithNullContent_SkipsReview()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = null }
             };
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Empty(result);
-            autoCheckMock.Verify(x => x.AutoCheckReview(It.IsAny<string>()), Times.Never);
+            this.autoCheckMock.Verify(x => x.AutoCheckReview(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task RunAutoCheck_OffensiveReview_HidesReviewAndReturnsMessage()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Offensive content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Single(result);
@@ -81,48 +81,48 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_OffensiveReview_CallsHideReview()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Offensive content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
 
             // Act
-            await checkersService.RunAutoCheck(reviews);
+            await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(1), Times.Once);
+            this.reviewServiceMock.Verify(x => x.HideReview(1), Times.Once);
         }
 
         [Fact]
         public async Task RunAutoCheck_OffensiveReview_CallsResetReviewFlags()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Offensive content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
 
             // Act
-            await checkersService.RunAutoCheck(reviews);
+            await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
-            reviewServiceMock.Verify(x => x.ResetReviewFlags(1), Times.Once);
+            this.reviewServiceMock.Verify(x => x.ResetReviewFlags(1), Times.Once);
         }
 
         [Fact]
         public async Task RunAutoCheck_NonOffensiveReview_ReturnsNotOffensiveMessage()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Good content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Good content")).ReturnsAsync(false);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Good content")).ReturnsAsync(false);
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Single(result);
@@ -133,31 +133,31 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_NonOffensiveReview_DoesNotCallHideReview()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Good content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Good content")).ReturnsAsync(false);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Good content")).ReturnsAsync(false);
 
             // Act
-            await checkersService.RunAutoCheck(reviews);
+            await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public async Task RunAutoCheck_ExceptionThrown_ReturnsEmptyList()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Test content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Test content")).ThrowsAsync(new Exception("Test exception"));
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Test content")).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Empty(result);
@@ -167,16 +167,16 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_MultipleReviews_ProcessesAllReviews()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Good content" },
                 new Review { ReviewId = 2, Content = "Bad content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Good content")).ReturnsAsync(false);
-            autoCheckMock.Setup(x => x.AutoCheckReview("Bad content")).ReturnsAsync(true);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Good content")).ReturnsAsync(false);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Bad content")).ReturnsAsync(true);
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Equal(2, result.Count);
@@ -186,15 +186,15 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_NullReviewInList_SkipsNullReview()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 null,
                 new Review { ReviewId = 2, Content = "Valid content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Valid content")).ReturnsAsync(false);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Valid content")).ReturnsAsync(false);
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Single(result);
@@ -205,14 +205,14 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_EmptyStringContent_ProcessesReview()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = string.Empty }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview(string.Empty)).ReturnsAsync(false);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview(string.Empty)).ReturnsAsync(false);
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Single(result);
@@ -223,14 +223,14 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_WhitespaceContent_ProcessesReview()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "   " }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("   ")).ReturnsAsync(false);
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("   ")).ReturnsAsync(false);
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Single(result);
@@ -241,15 +241,15 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_HideReviewFails_ContinuesProcessing()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Offensive content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
-            reviewServiceMock.Setup(x => x.HideReview(1)).ThrowsAsync(new Exception("Hide failed"));
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
+            this.reviewServiceMock.Setup(x => x.HideReview(1)).ThrowsAsync(new Exception("Hide failed"));
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Empty(result);
@@ -259,15 +259,15 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_ResetReviewFlagsFails_ContinuesProcessing()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Offensive content" }
             };
-            autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
-            reviewServiceMock.Setup(x => x.ResetReviewFlags(1)).ThrowsAsync(new Exception("Reset failed"));
+            this.autoCheckMock.Setup(x => x.AutoCheckReview("Offensive content")).ReturnsAsync(true);
+            this.reviewServiceMock.Setup(x => x.ResetReviewFlags(1)).ThrowsAsync(new Exception("Reset failed"));
 
             // Act
-            var result = await checkersService.RunAutoCheck(reviews);
+            List<string> result = await this.checkersService.RunAutoCheck(reviews);
 
             // Assert
             Assert.Empty(result);
@@ -277,17 +277,17 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task RunAutoCheck_NullAutoCheck_ThrowsException()
         {
             // Arrange
-            var reviews = new List<Review>
+            List<Review> reviews = new()
             {
                 new Review { ReviewId = 1, Content = "Test content" }
             };
-            var checkersServiceWithNullAutoCheck = new CheckersService(reviewServiceMock.Object, null);
+            CheckersService checkersServiceWithNullAutoCheck = new(this.reviewServiceMock.Object, null);
 
             // Act
-            var result = await checkersServiceWithNullAutoCheck.RunAutoCheck(reviews);
+            List<string> result = await checkersServiceWithNullAutoCheck.RunAutoCheck(reviews);
 
             // Assert
             Assert.Empty(result);
         }
     }
-} 
+}

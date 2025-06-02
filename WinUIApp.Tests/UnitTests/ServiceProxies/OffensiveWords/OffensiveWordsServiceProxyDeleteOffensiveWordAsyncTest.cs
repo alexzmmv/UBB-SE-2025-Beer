@@ -24,7 +24,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             this.offensiveWordsServiceProxy = new OffensiveWordsServiceProxy(this.baseUrl);
 
             // Use reflection to set the private httpClient field
-            var httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            System.Reflection.FieldInfo? httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             httpClientField?.SetValue(this.offensiveWordsServiceProxy, this.httpClient);
         }
 
@@ -274,4 +274,4 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 ItExpr.IsAny<CancellationToken>());
         }
     }
-} 
+}

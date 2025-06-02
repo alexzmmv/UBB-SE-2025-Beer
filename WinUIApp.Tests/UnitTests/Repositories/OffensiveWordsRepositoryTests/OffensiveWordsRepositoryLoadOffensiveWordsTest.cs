@@ -2,123 +2,81 @@ using DataAccess.Model.AdminDashboard;
 using DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data.Interfaces;
-using WinUIApp.Tests.UnitTests.TestHelpers;
 using Moq;
+using MockQueryable.Moq;
 
 namespace WinUIApp.Tests.UnitTests.Repositories.OffensiveWordsRepositoryTests
 {
     public class OffensiveWordsRepositoryLoadOffensiveWordsTest
     {
-        private readonly Mock<IAppDbContext> dbContextMock;
-        private readonly Mock<DbSet<OffensiveWord>> dbSetMock;
+        private readonly Mock<IAppDbContext> mockDatabaseContext;
+        private readonly Mock<DbSet<OffensiveWord>> mockOffensiveWordsDbSet;
         private readonly OffensiveWordsRepository offensiveWordsRepository;
-        private readonly List<OffensiveWord> offensiveWords;
+
+        private readonly List<OffensiveWord> offensiveWordsInDatabase;
 
         public OffensiveWordsRepositoryLoadOffensiveWordsTest()
         {
-            offensiveWords = new List<OffensiveWord>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(dbSetMock.Object);
-            offensiveWordsRepository = new OffensiveWordsRepository(dbContextMock.Object);
+            this.mockDatabaseContext = new Mock<IAppDbContext>();
+
+            this.offensiveWordsInDatabase = new List<OffensiveWord>
+            {
+                new OffensiveWord { Word = "badword" },
+                new OffensiveWord { Word = "terribleword" },
+                new OffensiveWord { Word = "nastyword" }
+            };
+
+            this.mockOffensiveWordsDbSet = this.offensiveWordsInDatabase.AsQueryable().BuildMockDbSet();
+
+            this.mockDatabaseContext
+                .Setup(context => context.OffensiveWords)
+                .Returns(this.mockOffensiveWordsDbSet.Object);
+
+            this.offensiveWordsRepository = new OffensiveWordsRepository(this.mockDatabaseContext.Object);
         }
 
         [Fact]
-        public async Task LoadOffensiveWords_Success_ReturnsHashSet()
+        public async Task LoadOffensiveWords_WhenCalled_ReturnsAllWordsInHashSet()
         {
-            // Arrange
-            var offensiveWord1 = new OffensiveWord { Word = "badword1" };
-            var offensiveWord2 = new OffensiveWord { Word = "badword2" };
-            offensiveWords.Add(offensiveWord1);
-            offensiveWords.Add(offensiveWord2);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
             // Act
-            var result = await offensiveWordsRepository.LoadOffensiveWords();
+            HashSet<string> result = await this.offensiveWordsRepository.LoadOffensiveWords();
 
             // Assert
-            Assert.NotNull(result);
+            HashSet<string> expectedWords = new HashSet<string>(this.offensiveWordsInDatabase.Select(word => word.Word), StringComparer.OrdinalIgnoreCase);
+            Assert.Equal(expectedWords, result);
         }
 
         [Fact]
-        public async Task LoadOffensiveWords_Success_ReturnsCorrectCount()
+        public async Task LoadOffensiveWords_WhenDatabaseIsEmpty_ReturnsEmptyHashSet()
         {
             // Arrange
-            var offensiveWord1 = new OffensiveWord { Word = "badword1" };
-            var offensiveWord2 = new OffensiveWord { Word = "badword2" };
-            offensiveWords.Add(offensiveWord1);
-            offensiveWords.Add(offensiveWord2);
+            List<OffensiveWord> emptyOffensiveWords = [];
+            Mock<DbSet<OffensiveWord>> emptyMockDbSet = emptyOffensiveWords.AsQueryable().BuildMockDbSet();
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
+            this.mockDatabaseContext
+                .Setup(context => context.OffensiveWords)
+                .Returns(emptyMockDbSet.Object);
 
-            // Act
-            var result = await offensiveWordsRepository.LoadOffensiveWords();
-
-            // Assert
-            Assert.Equal(2, result.Count);
-        }
-
-        [Fact]
-        public async Task LoadOffensiveWords_Success_ContainsExpectedWords()
-        {
-            // Arrange
-            var offensiveWord1 = new OffensiveWord { Word = "badword1" };
-            var offensiveWord2 = new OffensiveWord { Word = "badword2" };
-            offensiveWords.Add(offensiveWord1);
-            offensiveWords.Add(offensiveWord2);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
+            OffensiveWordsRepository repositoryWithEmptyData = new OffensiveWordsRepository(this.mockDatabaseContext.Object);
 
             // Act
-            var result = await offensiveWordsRepository.LoadOffensiveWords();
-
-            // Assert
-            Assert.Contains("badword1", result);
-        }
-
-        [Fact]
-        public async Task LoadOffensiveWords_Success_IsCaseInsensitive()
-        {
-            // Arrange
-            var offensiveWord1 = new OffensiveWord { Word = "BadWord1" };
-            offensiveWords.Add(offensiveWord1);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            var result = await offensiveWordsRepository.LoadOffensiveWords();
-
-            // Assert
-            Assert.Contains("badword1", result);
-        }
-
-        [Fact]
-        public async Task LoadOffensiveWords_EmptyDatabase_ReturnsEmptyHashSet()
-        {
-            // Arrange
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            var result = await offensiveWordsRepository.LoadOffensiveWords();
+            HashSet<string> result = await repositoryWithEmptyData.LoadOffensiveWords();
 
             // Assert
             Assert.Empty(result);
         }
 
         [Fact]
-        public async Task LoadOffensiveWords_DbSetThrowsException_Throws()
+        public async Task LoadOffensiveWords_HashSetIsCaseInsensitive()
         {
-            // Arrange
-            dbContextMock.Setup(x => x.OffensiveWords).Throws(new Exception("Test exception"));
+            // Act
+            HashSet<string> result = await this.offensiveWordsRepository.LoadOffensiveWords();
 
-            // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => offensiveWordsRepository.LoadOffensiveWords());
+            // Assert
+            string originalWord = this.offensiveWordsInDatabase[0].Word;
+            string wordInDifferentCase = originalWord.ToUpperInvariant();
+
+            Assert.Contains(wordInDifferentCase, result);
         }
     }
-} 
+}

@@ -25,7 +25,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             this.offensiveWordsServiceProxy = new OffensiveWordsServiceProxy(this.baseUrl);
 
             // Use reflection to set the private httpClient field
-            var httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            System.Reflection.FieldInfo? httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             httpClientField?.SetValue(this.offensiveWordsServiceProxy, this.httpClient);
         }
 
@@ -33,7 +33,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_ValidReview_CallsAPISuccessfully()
         {
             // Arrange
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a great beer!", DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, "This is a great beer!", DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -68,7 +68,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_ReviewWithEmptyContent_CallsAPISuccessfully()
         {
             // Arrange
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, "", DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, "", DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -121,7 +121,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_ReviewWithNullContent_DoesNotCallAPI()
         {
             // Arrange
-            var review = new Review();
+            Review review = new();
             review.Content = null;
 
             // Act
@@ -141,7 +141,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_HTTPRequestFails_HandlesExceptionGracefully()
         {
             // Arrange
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a test review", DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, "This is a test review", DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -177,7 +177,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_HTTPRequestThrowsException_HandlesExceptionGracefully()
         {
             // Arrange
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a test review", DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, "This is a test review", DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -210,7 +210,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         {
             // Arrange
             string longContent = new string('a', 10000); // Very long content
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, longContent, DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, longContent, DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -244,7 +244,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_ReviewWithSpecialCharacters_CallsAPISuccessfully()
         {
             // Arrange
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, "Review with special chars: !@#$%^&*()", DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, "Review with special chars: !@#$%^&*()", DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -278,7 +278,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public void RunAICheckForOneReviewAsync_Timeout_HandlesExceptionGracefully()
         {
             // Arrange
-            var review = new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a test review", DateTime.Now);
+            Review review = new(1, Guid.NewGuid(), 1, 4.5f, "This is a test review", DateTime.Now);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -306,4 +306,4 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             // The method should handle the timeout gracefully and not throw
         }
     }
-} 
+}

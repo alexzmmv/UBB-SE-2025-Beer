@@ -13,20 +13,20 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
 
         public CheckersServiceGetOffensiveWordsListTest()
         {
-            reviewServiceMock = new Mock<IReviewService>();
-            autoCheckMock = new Mock<IAutoCheck>();
-            checkersService = new CheckersService(reviewServiceMock.Object, autoCheckMock.Object);
+            this.reviewServiceMock = new Mock<IReviewService>();
+            this.autoCheckMock = new Mock<IAutoCheck>();
+            this.checkersService = new CheckersService(this.reviewServiceMock.Object, this.autoCheckMock.Object);
         }
 
         [Fact]
         public async Task GetOffensiveWordsList_Success_ReturnsWordsList()
         {
             // Arrange
-            var expectedWords = new HashSet<string> { "word1", "word2", "word3" };
-            autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ReturnsAsync(expectedWords);
+            HashSet<string> expectedWords = new() { "word1", "word2", "word3" };
+            this.autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ReturnsAsync(expectedWords);
 
             // Act
-            var result = await checkersService.GetOffensiveWordsList();
+            HashSet<string> result = await this.checkersService.GetOffensiveWordsList();
 
             // Assert
             Assert.Equal(expectedWords, result);
@@ -36,25 +36,25 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task GetOffensiveWordsList_Success_CallsAutoCheckMethod()
         {
             // Arrange
-            var expectedWords = new HashSet<string> { "word1", "word2" };
-            autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ReturnsAsync(expectedWords);
+            HashSet<string> expectedWords = new() { "word1", "word2" };
+            this.autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ReturnsAsync(expectedWords);
 
             // Act
-            await checkersService.GetOffensiveWordsList();
+            await this.checkersService.GetOffensiveWordsList();
 
             // Assert
-            autoCheckMock.Verify(x => x.GetOffensiveWordsList(), Times.Once);
+            this.autoCheckMock.Verify(x => x.GetOffensiveWordsList(), Times.Once);
         }
 
         [Fact]
         public async Task GetOffensiveWordsList_EmptyList_ReturnsEmptyHashSet()
         {
             // Arrange
-            var emptyWords = new HashSet<string>();
-            autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ReturnsAsync(emptyWords);
+            HashSet<string> emptyWords = new();
+            this.autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ReturnsAsync(emptyWords);
 
             // Act
-            var result = await checkersService.GetOffensiveWordsList();
+            HashSet<string> result = await this.checkersService.GetOffensiveWordsList();
 
             // Assert
             Assert.Empty(result);
@@ -64,10 +64,10 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task GetOffensiveWordsList_ExceptionThrown_ReturnsEmptyHashSet()
         {
             // Arrange
-            autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ThrowsAsync(new Exception("Test exception"));
+            this.autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await checkersService.GetOffensiveWordsList();
+            HashSet<string> result = await this.checkersService.GetOffensiveWordsList();
 
             // Assert
             Assert.Empty(result);
@@ -77,26 +77,26 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public async Task GetOffensiveWordsList_ExceptionThrown_CallsAutoCheckMethod()
         {
             // Arrange
-            autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ThrowsAsync(new Exception("Test exception"));
+            this.autoCheckMock.Setup(x => x.GetOffensiveWordsList()).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            await checkersService.GetOffensiveWordsList();
+            await this.checkersService.GetOffensiveWordsList();
 
             // Assert
-            autoCheckMock.Verify(x => x.GetOffensiveWordsList(), Times.Once);
+            this.autoCheckMock.Verify(x => x.GetOffensiveWordsList(), Times.Once);
         }
 
         [Fact]
         public async Task GetOffensiveWordsList_NullAutoCheck_ReturnsEmptyHashSet()
         {
             // Arrange
-            var checkersServiceWithNullAutoCheck = new CheckersService(reviewServiceMock.Object, null);
+            CheckersService checkersServiceWithNullAutoCheck = new(this.reviewServiceMock.Object, null);
 
             // Act
-            var result = await checkersServiceWithNullAutoCheck.GetOffensiveWordsList();
+            HashSet<string> result = await checkersServiceWithNullAutoCheck.GetOffensiveWordsList();
 
             // Assert
             Assert.Empty(result);
         }
     }
-} 
+}

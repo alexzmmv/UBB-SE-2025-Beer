@@ -20,126 +20,126 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
 
         public CheckersServiceRunAICheckForOneReviewAsyncTest()
         {
-            reviewServiceMock = new Mock<IReviewService>();
-            autoCheckMock = new Mock<IAutoCheck>();
-            checkersService = new CheckersService(reviewServiceMock.Object, autoCheckMock.Object);
+            this.reviewServiceMock = new Mock<IReviewService>();
+            this.autoCheckMock = new Mock<IAutoCheck>();
+            this.checkersService = new CheckersService(this.reviewServiceMock.Object, this.autoCheckMock.Object);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_NullReview_DoesNotCallReviewService()
         {
             // Act
-            checkersService.RunAICheckForOneReviewAsync(null);
+            this.checkersService.RunAICheckForOneReviewAsync(null);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_ReviewWithNullContent_DoesNotCallReviewService()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = null };
+            Review review = new() { ReviewId = 1, Content = null };
 
             // Act
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_ReviewWithNullContent_DoesNotCallResetReviewFlags()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = null };
+            Review review = new() { ReviewId = 1, Content = null };
 
             // Act
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
 
             // Assert
-            reviewServiceMock.Verify(x => x.ResetReviewFlags(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.ResetReviewFlags(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_ValidReviewNotOffensive_DoesNotCallHideReview()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = "Good content" };
+            Review review = new() { ReviewId = 1, Content = "Good content" };
 
             // Act
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_ValidReviewNotOffensive_DoesNotCallResetReviewFlags()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = "Good content" };
+            Review review = new() { ReviewId = 1, Content = "Good content" };
 
             // Act
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
 
             // Assert
-            reviewServiceMock.Verify(x => x.ResetReviewFlags(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.ResetReviewFlags(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_EmptyContent_DoesNotCallReviewService()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = string.Empty };
+            Review review = new() { ReviewId = 1, Content = string.Empty };
 
             // Act
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_WhitespaceContent_DoesNotCallReviewService()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = "   " };
+            Review review = new() { ReviewId = 1, Content = "   " };
 
             // Act
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
 
             // Assert
-            reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
+            this.reviewServiceMock.Verify(x => x.HideReview(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_ExceptionThrown_DoesNotThrow()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = "Test content" };
+            Review review = new() { ReviewId = 1, Content = "Test content" };
 
             // Act & Assert (should not throw)
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_ExceptionInReviewService_DoesNotThrow()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = "Test content" };
-            reviewServiceMock.Setup(x => x.HideReview(It.IsAny<int>())).Throws(new Exception("Service error"));
+            Review review = new() { ReviewId = 1, Content = "Test content" };
+            this.reviewServiceMock.Setup(x => x.HideReview(It.IsAny<int>())).Throws(new Exception("Service error"));
 
             // Act & Assert (should not throw)
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_NullReviewService_DoesNotThrow()
         {
             // Arrange
-            var review = new Review { ReviewId = 1, Content = "Test content" };
-            var checkersServiceWithNullReviewService = new CheckersService(null, autoCheckMock.Object);
+            Review review = new() { ReviewId = 1, Content = "Test content" };
+            CheckersService checkersServiceWithNullReviewService = new(null, this.autoCheckMock.Object);
 
             // Act & Assert (should not throw)
             checkersServiceWithNullReviewService.RunAICheckForOneReviewAsync(review);
@@ -149,33 +149,33 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
         public void RunAICheckForOneReviewAsync_LongContent_DoesNotThrow()
         {
             // Arrange
-            var longContent = new string('a', 10000); // Very long content
-            var review = new Review { ReviewId = 1, Content = longContent };
+            string longContent = new string('a', 10000); // Very long content
+            Review review = new() { ReviewId = 1, Content = longContent };
 
             // Act & Assert (should not throw)
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_SpecialCharactersContent_DoesNotThrow()
         {
             // Arrange
-            var specialContent = "!@#$%^&*()_+{}|:\"<>?[]\\;',./ test content";
-            var review = new Review { ReviewId = 1, Content = specialContent };
+            string specialContent = "!@#$%^&*()_+{}|:\"<>?[]\\;',./ test content";
+            Review review = new() { ReviewId = 1, Content = specialContent };
 
             // Act & Assert (should not throw)
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
         }
 
         [Fact]
         public void RunAICheckForOneReviewAsync_UnicodeContent_DoesNotThrow()
         {
             // Arrange
-            var unicodeContent = "Test content with unicode: 🚀 こんにちは العربية";
-            var review = new Review { ReviewId = 1, Content = unicodeContent };
+            string unicodeContent = "Test content with unicode: 🚀 こんにちは العربية";
+            Review review = new() { ReviewId = 1, Content = unicodeContent };
 
             // Act & Assert (should not throw)
-            checkersService.RunAICheckForOneReviewAsync(review);
+            this.checkersService.RunAICheckForOneReviewAsync(review);
         }
     }
-} 
+}

@@ -28,7 +28,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             this.offensiveWordsServiceProxy = new OffensiveWordsServiceProxy(this.baseUrl);
 
             // Use reflection to set the private httpClient field
-            var httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            System.Reflection.FieldInfo? httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             httpClientField?.SetValue(this.offensiveWordsServiceProxy, this.httpClient);
         }
 
@@ -36,14 +36,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_ValidResponse_ReturnsNotNull()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("badword1"),
                 new OffensiveWord("badword2"),
                 new OffensiveWord("offensive")
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -59,7 +59,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.NotNull(result);
@@ -69,14 +69,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_ValidResponse_ReturnsCorrectCount()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("badword1"),
                 new OffensiveWord("badword2"),
                 new OffensiveWord("offensive")
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -92,7 +92,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.Equal(3, result.Count);
@@ -102,14 +102,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_ValidResponse_ContainsAllExpectedWords()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("badword1"),
                 new OffensiveWord("badword2"),
                 new OffensiveWord("offensive")
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -125,7 +125,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert - Combining multiple Contains into one assertion for related functionality
             Assert.True(result.Contains("badword1") && result.Contains("badword2") && result.Contains("offensive"));
@@ -135,8 +135,8 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_EmptyResponse_ReturnsNotNull()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>();
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            List<OffensiveWord> offensiveWords = new();
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -152,7 +152,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.NotNull(result);
@@ -162,8 +162,8 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_EmptyResponse_ReturnsEmptyHashSet()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>();
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            List<OffensiveWord> offensiveWords = new();
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -179,7 +179,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.Empty(result);
@@ -189,14 +189,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_CaseInsensitiveComparison_ReturnsNotNull()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("BadWord"),
                 new OffensiveWord("OFFENSIVE"),
                 new OffensiveWord("inappropriate")
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -212,7 +212,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.NotNull(result);
@@ -222,14 +222,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_CaseInsensitiveComparison_ReturnsCorrectCount()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("BadWord"),
                 new OffensiveWord("OFFENSIVE"),
                 new OffensiveWord("inappropriate")
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -245,7 +245,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.Equal(3, result.Count);
@@ -255,14 +255,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_CaseInsensitiveComparison_ContainsWordsRegardlessOfCase()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("BadWord"),
                 new OffensiveWord("OFFENSIVE"),
                 new OffensiveWord("inappropriate")
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -278,10 +278,10 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert - Testing case insensitive behavior as one logical assertion
-            Assert.True(result.Contains("badword") && result.Contains("BADWORD") && 
+            Assert.True(result.Contains("badword") && result.Contains("BADWORD") &&
                        result.Contains("offensive") && result.Contains("OFFENSIVE"));
         }
 
@@ -343,7 +343,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.NotNull(result);
@@ -367,7 +367,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.Empty(result);
@@ -377,7 +377,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_DuplicateWords_ReturnsNotNull()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("badword"),
                 new OffensiveWord("BADWORD"), // Same word, different case
@@ -385,7 +385,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 new OffensiveWord("badword") // Duplicate
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -401,7 +401,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.NotNull(result);
@@ -411,7 +411,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_DuplicateWords_ReturnsUniqueHashSetWithCorrectCount()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("badword"),
                 new OffensiveWord("BADWORD"), // Same word, different case
@@ -419,7 +419,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 new OffensiveWord("badword") // Duplicate
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -435,7 +435,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.Equal(2, result.Count); // Should only contain unique words (case-insensitive)
@@ -445,7 +445,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         public async Task GetOffensiveWordsList_DuplicateWords_ContainsExpectedUniqueWords()
         {
             // Arrange
-            var offensiveWords = new List<OffensiveWord>
+            List<OffensiveWord> offensiveWords = new()
             {
                 new OffensiveWord("badword"),
                 new OffensiveWord("BADWORD"), // Same word, different case
@@ -453,7 +453,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 new OffensiveWord("badword") // Duplicate
             };
 
-            var jsonResponse = JsonSerializer.Serialize(offensiveWords);
+            string? jsonResponse = JsonSerializer.Serialize(offensiveWords);
 
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -469,10 +469,10 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                 });
 
             // Act
-            var result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
+            HashSet<string> result = await this.offensiveWordsServiceProxy.GetOffensiveWordsList();
 
             // Assert
             Assert.True(result.Contains("badword") && result.Contains("offensive"));
         }
     }
-} 
+}

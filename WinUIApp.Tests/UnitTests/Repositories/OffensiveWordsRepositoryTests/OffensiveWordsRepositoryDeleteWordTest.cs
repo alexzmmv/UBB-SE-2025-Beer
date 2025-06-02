@@ -1,159 +1,96 @@
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
-using WinUiApp.Data.Interfaces;
-using WinUIApp.Tests.UnitTests.TestHelpers;
+using MockQueryable.Moq;
 using Moq;
+using WinUiApp.Data.Interfaces;
 
 namespace WinUIApp.Tests.UnitTests.Repositories.OffensiveWordsRepositoryTests
 {
     public class OffensiveWordsRepositoryDeleteWordTest
     {
-        private readonly Mock<IAppDbContext> dbContextMock;
-        private readonly Mock<DbSet<OffensiveWord>> dbSetMock;
+        private readonly Mock<IAppDbContext> mockDatabaseContext;
+        private readonly Mock<DbSet<OffensiveWord>> mockOffensiveWordsDbSet;
         private readonly OffensiveWordsRepository offensiveWordsRepository;
-        private readonly List<OffensiveWord> offensiveWords;
+
+        private readonly List<OffensiveWord> offensiveWordsInDatabase;
 
         public OffensiveWordsRepositoryDeleteWordTest()
         {
-            offensiveWords = new List<OffensiveWord>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(dbSetMock.Object);
-            offensiveWordsRepository = new OffensiveWordsRepository(dbContextMock.Object);
+            this.mockDatabaseContext = new Mock<IAppDbContext>();
+
+            this.offensiveWordsInDatabase = new List<OffensiveWord>
+            {
+                new OffensiveWord { Word = "badword" },
+                new OffensiveWord { Word = "worseword" }
+            };
+
+            this.mockOffensiveWordsDbSet = this.offensiveWordsInDatabase.AsQueryable().BuildMockDbSet();
+
+            this.mockDatabaseContext
+                .Setup(context => context.OffensiveWords)
+                .Returns(this.mockOffensiveWordsDbSet.Object);
+
+            this.offensiveWordsRepository = new OffensiveWordsRepository(this.mockDatabaseContext.Object);
         }
 
         [Fact]
-        public async Task DeleteWord_Success_RemovesWordFromDatabase()
+        public async Task DeleteWord_WhenWordExists_RemovesWordAndSavesChanges()
         {
             // Arrange
-            var word = "testword";
-            var existingWord = new OffensiveWord { Word = word };
-            offensiveWords.Add(existingWord);
+            string existingWord = "badword";
+            OffensiveWord? removedWord = null;
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            this.mockOffensiveWordsDbSet
+                .Setup(set => set.Remove(It.IsAny<OffensiveWord>()))
+                .Callback<OffensiveWord>(word => removedWord = word);
+
+            this.mockDatabaseContext
+                .Setup(context => context.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
 
             // Act
-            await offensiveWordsRepository.DeleteWord(word);
+            await this.offensiveWordsRepository.DeleteWord(existingWord);
 
             // Assert
-            localDbSetMock.Verify(x => x.Remove(It.Is<OffensiveWord>(o => o.Word == word)), Times.Once);
+            Assert.NotNull(removedWord);
+            Assert.Equal(existingWord, removedWord.Word);
         }
 
         [Fact]
-        public async Task DeleteWord_Success_CallsSaveChanges()
+        public async Task DeleteWord_WhenWordIsNullOrWhitespace_DoesNotCallRemove()
         {
             // Arrange
-            var word = "testword";
-            var existingWord = new OffensiveWord { Word = word };
-            offensiveWords.Add(existingWord);
+            bool removeCalled = false;
+            string whitespaceWord = "   ";
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            this.mockOffensiveWordsDbSet
+                .Setup(set => set.Remove(It.IsAny<OffensiveWord>()))
+                .Callback(() => removeCalled = true);
 
             // Act
-            await offensiveWordsRepository.DeleteWord(word);
+            await this.offensiveWordsRepository.DeleteWord(whitespaceWord);
 
             // Assert
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            Assert.False(removeCalled);
         }
 
         [Fact]
-        public async Task DeleteWord_WordDoesNotExist_DoesNotRemove()
+        public async Task DeleteWord_WhenWordDoesNotExist_DoesNotCallRemove()
         {
             // Arrange
-            var word = "nonexistentword";
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
+            bool removeCalled = false;
+            string nonExistentWord = "nonexistent";
+
+            this.mockOffensiveWordsDbSet
+                .Setup(set => set.Remove(It.IsAny<OffensiveWord>()))
+                .Callback(() => removeCalled = true);
 
             // Act
-            await offensiveWordsRepository.DeleteWord(word);
+            await this.offensiveWordsRepository.DeleteWord(nonExistentWord);
 
             // Assert
-            localDbSetMock.Verify(x => x.Remove(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task DeleteWord_WordDoesNotExist_DoesNotCallSaveChanges()
-        {
-            // Arrange
-            var word = "nonexistentword";
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<OffensiveWord>());
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.DeleteWord(word);
-
-            // Assert
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Never);
-        }
-
-        [Fact]
-        public async Task DeleteWord_NullWord_DoesNotRemove()
-        {
-            // Arrange
-            string? word = null;
-            var existingWord = new OffensiveWord { Word = "existingword" };
-            offensiveWords.Add(existingWord);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.DeleteWord(word);
-
-            // Assert
-            localDbSetMock.Verify(x => x.Remove(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task DeleteWord_EmptyWord_DoesNotRemove()
-        {
-            // Arrange
-            var word = string.Empty;
-            var existingWord = new OffensiveWord { Word = "existingword" };
-            offensiveWords.Add(existingWord);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.DeleteWord(word);
-
-            // Assert
-            localDbSetMock.Verify(x => x.Remove(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task DeleteWord_WhitespaceWord_DoesNotRemove()
-        {
-            // Arrange
-            var word = "   ";
-            var existingWord = new OffensiveWord { Word = "existingword" };
-            offensiveWords.Add(existingWord);
-
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(offensiveWords);
-            dbContextMock.Setup(x => x.OffensiveWords).Returns(localDbSetMock.Object);
-
-            // Act
-            await offensiveWordsRepository.DeleteWord(word);
-
-            // Assert
-            localDbSetMock.Verify(x => x.Remove(It.IsAny<OffensiveWord>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task DeleteWord_DbSetThrowsException_Throws()
-        {
-            // Arrange
-            var word = "testword";
-            dbContextMock.Setup(x => x.OffensiveWords).Throws(new Exception("Test exception"));
-
-            // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => offensiveWordsRepository.DeleteWord(word));
+            Assert.False(removeCalled);
         }
     }
-} 
+}

@@ -13,102 +13,102 @@ namespace WinUIApp.Tests.UnitTests.Services.CheckersServiceTests
 
         public CheckersServiceAddOffensiveWordAsyncTest()
         {
-            reviewServiceMock = new Mock<IReviewService>();
-            autoCheckMock = new Mock<IAutoCheck>();
-            checkersService = new CheckersService(reviewServiceMock.Object, autoCheckMock.Object);
+            this.reviewServiceMock = new Mock<IReviewService>();
+            this.autoCheckMock = new Mock<IAutoCheck>();
+            this.checkersService = new CheckersService(this.reviewServiceMock.Object, this.autoCheckMock.Object);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_ValidWord_CallsAutoCheckMethod()
         {
             // Arrange
-            var word = "testword";
+            string word = "testword";
 
             // Act
-            await checkersService.AddOffensiveWordAsync(word);
+            await this.checkersService.AddOffensiveWordAsync(word);
 
             // Assert
-            autoCheckMock.Verify(x => x.AddOffensiveWordAsync(word), Times.Once);
+            this.autoCheckMock.Verify(x => x.AddOffensiveWordAsync(word), Times.Once);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_NullWord_DoesNotCallAutoCheckMethod()
         {
             // Act
-            await checkersService.AddOffensiveWordAsync(null);
+            await this.checkersService.AddOffensiveWordAsync(null);
 
             // Assert
-            autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
+            this.autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_EmptyWord_DoesNotCallAutoCheckMethod()
         {
             // Act
-            await checkersService.AddOffensiveWordAsync(string.Empty);
+            await this.checkersService.AddOffensiveWordAsync(string.Empty);
 
             // Assert
-            autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
+            this.autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_WhitespaceWord_DoesNotCallAutoCheckMethod()
         {
             // Act
-            await checkersService.AddOffensiveWordAsync("   ");
+            await this.checkersService.AddOffensiveWordAsync("   ");
 
             // Assert
-            autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
+            this.autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_ExceptionThrown_DoesNotThrow()
         {
             // Arrange
-            var word = "testword";
-            autoCheckMock.Setup(x => x.AddOffensiveWordAsync(word)).ThrowsAsync(new Exception("Test exception"));
+            string word = "testword";
+            this.autoCheckMock.Setup(x => x.AddOffensiveWordAsync(word)).ThrowsAsync(new Exception("Test exception"));
 
             // Act & Assert
-            await checkersService.AddOffensiveWordAsync(word);
+            await this.checkersService.AddOffensiveWordAsync(word);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_ExceptionThrown_CallsAutoCheckMethod()
         {
             // Arrange
-            var word = "testword";
-            autoCheckMock.Setup(x => x.AddOffensiveWordAsync(word)).ThrowsAsync(new Exception("Test exception"));
+            string word = "testword";
+            this.autoCheckMock.Setup(x => x.AddOffensiveWordAsync(word)).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            await checkersService.AddOffensiveWordAsync(word);
+            await this.checkersService.AddOffensiveWordAsync(word);
 
             // Assert
-            autoCheckMock.Verify(x => x.AddOffensiveWordAsync(word), Times.Once);
+            this.autoCheckMock.Verify(x => x.AddOffensiveWordAsync(word), Times.Once);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_NullAutoCheck_DoesNotCallAutoCheckMethod()
         {
             // Arrange
-            var word = "testword";
-            var checkersServiceWithNullAutoCheck = new CheckersService(reviewServiceMock.Object, null);
+            string word = "testword";
+            CheckersService checkersServiceWithNullAutoCheck = new(this.reviewServiceMock.Object, null);
 
             // Act
             await checkersServiceWithNullAutoCheck.AddOffensiveWordAsync(word);
 
             // Assert
-            autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
+            this.autoCheckMock.Verify(x => x.AddOffensiveWordAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task AddOffensiveWordAsync_NullAutoCheck_DoesNotThrow()
         {
             // Arrange
-            var word = "testword";
-            var checkersServiceWithNullAutoCheck = new CheckersService(reviewServiceMock.Object, null);
+            string word = "testword";
+            CheckersService checkersServiceWithNullAutoCheck = new(this.reviewServiceMock.Object, null);
 
             // Act & Assert (should not throw)
             await checkersServiceWithNullAutoCheck.AddOffensiveWordAsync(word);
         }
     }
-} 
+}
