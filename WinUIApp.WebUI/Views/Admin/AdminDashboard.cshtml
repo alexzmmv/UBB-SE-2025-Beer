@@ -258,7 +258,52 @@
             </div>
         </div>
     </div>
-    
+    <div class="col-lg-6">
+    <h5 class="fw-bold mb-3">Users with Hidden Reviews</h5>
+    <input id="hiddenReviewsSearch" type="text" class="form-control mb-2" placeholder="Search users with hidden reviews…" />
+    <div class="list-group" id="hiddenReviewsList">
+        @foreach (var userWithHidden in Model.UsersWithHiddenReviews)
+        {
+            <div class="list-group-item bg-secondary text-white p-3 mb-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-3">
+                                <strong>Name:</strong> @userWithHidden.Username
+                            </div>
+                            <div class="me-3">
+                                <strong>Email:</strong> @userWithHidden.EmailAddress
+                            </div>
+                            <span class="badge bg-warning text-dark">
+                                @userWithHidden.NumberOfDeletedReviews hidden reviews
+                            </span>
+                        </div>
+                        <div class="text-muted small">
+                            User ID: @userWithHidden.UserId
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <form asp-controller="Admin" asp-action="BanUser" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="userId" value="@userWithHidden.UserId" />
+                            <button type="submit" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to ban user @userWithHidden.Username?');">
+                                <i class="fas fa-ban me-1"></i>Ban User
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!Model.UsersWithHiddenReviews.Any())
+        {
+            <div class="list-group-item text-center text-muted bg-light">
+                <i class="fas fa-info-circle me-2"></i>No users with hidden reviews
+            </div>
+        }
+    </div>
+</div>
 </div>
 
 <!-- ───────── MODAL : FORBIDDEN WORDS ───────── -->

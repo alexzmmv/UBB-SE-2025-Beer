@@ -53,6 +53,7 @@ namespace WebServer.Controllers
             IEnumerable<User> appealeadUsers = users.Where(user => user.HasSubmittedAppeal && user.AssignedRole == RoleType.Banned);
             IEnumerable<DrinkModificationRequestDTO> drinkModificationRequests = await this.drinkModificationRequestService.GetAllModificationRequests();
             IEnumerable<DrinkDTO> drinks = this.drinkService.GetDrinks(string.Empty, new List<string>(), new List<string>(), 0, 100, new Dictionary<string, bool>());
+            IEnumerable<User> usersWithHiddenReviews = userService.GetUsersWithHiddenReviews().Result.Where(user=>user.AssignedRole==RoleType.User);
 
             AdminDashboardViewModel adminDashboardViewModel = new AdminDashboardViewModel()
             {
@@ -61,7 +62,8 @@ namespace WebServer.Controllers
                 OffensiveWords = offensiveWords,
                 AppealsList = appealeadUsers,
                 DrinkModificationRequests = drinkModificationRequests,
-                Drinks = drinks
+                Drinks = drinks,
+                UsersWithHiddenReviews = usersWithHiddenReviews.ToList()
             };
 
             List<AppealDetailsViewModel> appealsWithDetails = new List<AppealDetailsViewModel>();
@@ -265,6 +267,12 @@ namespace WebServer.Controllers
         {
             await drinkModificationRequestService.DenyRequest(drinkModificationRequestId, userId);
             return RedirectToAction("AdminDashboard");
+        }
+        [HttpPost]
+        public async Task<IActionResult> BanUser(Guid UserId) {
+            userService.UpdateUserRole(UserId, RoleType.Banned);
+            return RedirectToAction("AdminDashboard");
+
         }
     }
 }

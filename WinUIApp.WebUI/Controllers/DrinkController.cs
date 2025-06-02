@@ -46,6 +46,7 @@ namespace WinUIApp.WebUI.Controllers
 
             var viewModel = new DrinkDetailViewModel
             {
+                UserRole = userService.GetUserById(CurrentUserId).Result.AssignedRole,
                 Drink = drink,
                 CategoriesDisplay = drink.CategoryList != null
                     ? string.Join(", ", drink.CategoryList.Select(c => c.CategoryName))
