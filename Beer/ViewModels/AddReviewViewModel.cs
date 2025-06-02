@@ -80,7 +80,7 @@ namespace WinUIApp.ViewModels
                 Content = Content,
                 RatingValue = this.RatingScore,
                 UserId = App.CurrentUserId,
-                IsHidden = true,
+                IsHidden = false,
                 CreatedDate = DateTime.UtcNow,
                 NumberOfFlags = 0,
             };

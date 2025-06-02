@@ -239,11 +239,19 @@ namespace DrinkDb_Auth
                     BorderThickness = new Thickness(1)
                 };
 
-                Image drinkImage = new Image
+                Image? drinkImage = null;
+                try
                 {
-                    Source = new BitmapImage(new Uri(drink.DrinkImageUrl)),
-                    Stretch = Stretch.UniformToFill
-                };
+                    drinkImage = new Image
+                    {
+                        Source = new BitmapImage(new Uri(drink.DrinkImageUrl)),
+                        Stretch = Stretch.UniformToFill
+                    };
+                }
+                catch
+                {
+                    continue;
+                }
                 imageBorder.Child = drinkImage;
                 drinkHeader.Children.Add(imageBorder);
 
