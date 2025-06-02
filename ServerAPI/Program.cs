@@ -11,7 +11,6 @@ using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using WinUiApp.Data;
 using WinUiApp.Data.Interfaces;
-using WinUIApp.WebAPI.Repositories;
 using WinUIApp.WebAPI.Services;
 using WinUIApp.ProxyServices;
 using DataAccess.IRepository;

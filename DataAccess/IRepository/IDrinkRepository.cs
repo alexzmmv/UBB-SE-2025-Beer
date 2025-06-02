@@ -37,11 +37,7 @@
 
         List<Category> GetDrinkCategories();
 
-        List<Category> GetDrinkCategoriesById(int drinkId);
-
         List<Brand> GetDrinkBrands();
-
-        Brand GetBrandById(int drinkId);
 
         bool IsBrandInDatabase(string brandName);
 
