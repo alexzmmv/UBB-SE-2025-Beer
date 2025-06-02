@@ -1,11 +1,4 @@
-﻿
-@{
-    Boolean isLoginPage =
-         string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Auth", StringComparison.OrdinalIgnoreCase);
-    String? assignedRole = Context.Session.GetString("AssignedRole");
-    Boolean isAdmin = assignedRole == "Admin";
-}
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -124,57 +117,88 @@
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item ms-4 me-3">
-                                <a class="nav-link text-white @(ViewContext.RouteData.Values["controller"]?.ToString() == "HomePage" ? "active" : "")" asp-area="" asp-controller="HomePage" asp-action="Index">
-                                    <i class="bi bi-house"></i> Home
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-white" asp-area="" asp-controller="FavoriteDrinks" asp-action="FavoriteDrinks">
-                                    <i class="bi bi-heart"></i> My Favorites
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Add" asp-action="Drink">
-                                    <i class="bi bi-plus-circle"></i> Add Drink
-                                </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Profile" asp-action="UserPage">
-                                    <i class="bi bi-person"></i> Profile
-                                </a>
-                            </li>
-                            @if (isAdmin)
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="HomePage" asp-action="Index">
+                            <i class="bi bi-house me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="FavoriteDrinks" asp-action="FavoriteDrinks">
+                            <i class="bi bi-heart me-1"></i> My Favorites
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Add" asp-action="Drink">
+                            <i class="bi bi-plus-circle me-1"></i> Add Drink
+                        </a>
+                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Profile" asp-action="UserPage">
+                                <i class="bi bi-person me-1"></i> Go To Profile
+                            </a>
+                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="HomePage" asp-action="Privacy">
+                            <i class="bi bi-shield-check me-1"></i> Privacy
+                        </a>
+                    </li>
+                </ul>
+                @{
+                    User? currentUser = null;
+                    bool isAdmin = false;
+                    bool isUserLoggedIn = false;
+                    
+                    // Don't show buttons on auth pages
+                    string currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+                    bool isAuthPage = currentController.Equals("Auth", StringComparison.OrdinalIgnoreCase);
+                    
+                    if (!isAuthPage)
+                    {
+                        try
+                        {
+                            Guid userId = AuthenticationService.GetCurrentUserId();
+                            if (userId != Guid.Empty)
                             {
-                                <li class="nav-item me-3">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">
-                                        <i class="bi bi-shield-lock"></i> Admin Dashboard
-                                    </a>
-                                </li>
+                                currentUser = await UserService.GetUserById(userId);
+                                if (currentUser != null)
+                                {
+                                    isAdmin = currentUser.AssignedRole == RoleType.Admin;
+                                    isUserLoggedIn = true;
+                                }
                             }
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-white" asp-area="" asp-controller="HomePage" asp-action="Privacy">
-                                    <i class="bi bi-shield-check"></i> Privacy
+                        }
+                        catch
+                        {
+                            // User not logged in or error occurred
+                            isUserLoggedIn = false;
+                        }
+                    }
+                }
+                @if (isUserLoggedIn && currentUser != null && !isAuthPage)
+                {
+                    <ul class="navbar-nav">
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">
+                                    <i class="bi bi-gear me-1"></i> Admin Dashboard
                                 </a>
                             </li>
-                        </ul>
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
-                                <form asp-controller="Profile" asp-action="LogOut" method="post" class="d-inline">
-                                    <button type="submit" class="nav-link btn btn-link text-white" style="text-decoration:none;">
-                                        <i class="bi bi-box-arrow-right me-1"></i> Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-    }
+                        }
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Profile" asp-action="LogOut">
+                                <i class="bi bi-box-arrow-right me-1"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                } 
+            </div>
+        </div>
+    </nav>
 </header>
 <div class="container-fluid">
     <main role="main" class="pb-3">

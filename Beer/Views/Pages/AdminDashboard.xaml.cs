@@ -20,7 +20,7 @@ namespace DrinkDb_Auth.View
     using System.Threading.Tasks;
     using DataAccess.DTOModels;
     using Microsoft.UI.Xaml.Navigation;
-    using WinUIApplication.Views.Components;
+    using WinUIApp.Views.Components;
 
     public sealed partial class AdminPage : Page
     {
