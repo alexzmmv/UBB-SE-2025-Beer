@@ -28,9 +28,15 @@ namespace WebServer.Controllers
             this.userService = userService;
         }
 
-        public async Task<IActionResult> AdminDashboard()
+        public async Task<IActionResult> AdminDashboard(string? search)
         {
             IEnumerable<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                reviews = reviews.Where(r => r.Content.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
             IEnumerable<UpgradeRequest> upgradeRequests = await this.upgradeRequestService.RetrieveAllUpgradeRequests();
             IEnumerable<string> offensiveWords = await this.checkersService.GetOffensiveWordsList();
             List<User> users = await this.userService.GetAllUsers();
@@ -41,7 +47,8 @@ namespace WebServer.Controllers
                 Reviews = reviews,
                 UpgradeRequests = upgradeRequests,
                 OffensiveWords = offensiveWords,
-                AppealsList = appealeadUsers
+                AppealsList = appealeadUsers,
+                SearchBarContent = search ?? string.Empty
             };
 
             List<AppealDetailsViewModel> appealsWithDetails = new List<AppealDetailsViewModel>();

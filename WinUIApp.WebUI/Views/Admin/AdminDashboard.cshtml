@@ -27,50 +27,46 @@
         <div class="col-lg-4">
             <h5 class="fw-bold mb-3">List of all reviews</h5>
 
-            <input type="text" class="form-control mb-2" placeholder="Search reviews…" />
+            <form method="get" asp-action="AdminDashboard">
+                <input type="text" name="search" class="form-control mb-2" placeholder="Search reviews…" value="@Model.SearchBarContent" />
+                <button type="submit" class="btn btn-secondary mb-2">Search</button>
+            </form>
 
-            <ul class="list-group mb-3 shadow-sm" style="height: 250px; overflow-y: auto;">
-                @foreach (DataAccess.DTOModels.ReviewDTO review in Model.Reviews)
-                {
-                    <li class="list-group-item review-item" ondblclick="toggleReviewActions(@review.ReviewId)">
-                        <div>
-                            <strong>@review.ReviewId</strong>: @review.Content
-                        </div>
-                        <div class="review-actions" id="actions-@review.ReviewId" style="display: none">
-                            <div class="btn-group btn-group-sm mt-2" role="group">
-                                <form asp-controller="Admin" asp-action="AcceptReview" method="post" style="display: inline;">
-                                    <input type="hidden" name="reviewId" value="@review.ReviewId" />
-                                    <button type="submit" class="btn btn-success btn-sm">Accept</button>
-                                </form>
-                                <form asp-controller="Admin" asp-action="HideReview" method="post" style="display: inline;">
-                                    <input type="hidden" name="reviewId" value="@review.ReviewId" />
-                                    <button type="submit" class="btn btn-warning btn-sm">Hide</button>
-                                </form>
-                                <form asp-controller="Admin" asp-action="AICheckReview" method="post" style="display: inline;">
-                                    <input type="hidden" name="reviewId" value="@review.ReviewId" />
-                                    <button type="submit" class="btn btn-info btn-sm">AI Check</button>
-                                </form>
+            @if (!Model.Reviews.Any())
+            {
+                <div class="alert alert-warning mt-2">
+                    No reviews found.
+                </div>
+            }
+            else
+            {
+                <ul class="list-group mb-3 shadow-sm" style="height: 250px; overflow-y: auto;">
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <li class="list-group-item review-item" ondblclick="toggleReviewActions(@review.ReviewId)">
+                            <div>
+                                <strong>@review.ReviewId</strong>: @review.Content
                             </div>
-                        </div>
-                    </li>
-                }
-            </ul>
-
-            <div class="btn-group w-100 review-btn-group" role="group">
-                <form asp-controller="Admin" asp-action="AutomaticallyCheckReviews" method="post">
-                    <button type="submit"
-                            class="btn btn-primary w-100 fw-semibold rounded-0 rounded-start">
-                        Automatically check reviews
-                    </button>
-                </form>
-                <button type="button"
-                        class="btn btn-secondary w-50 fw-semibold"
-                        data-bs-toggle="modal"
-                        data-bs-target="#forbiddenWordsModal"
-                        style="border-top-left-radius:0;border-bottom-left-radius:0;">
-                    Modify offensive words list
-                </button>
-            </div>
+                            <div class="review-actions" id="actions-@review.ReviewId" style="display: none">
+                                <div class="btn-group btn-group-sm mt-2" role="group">
+                                    <form asp-controller="Admin" asp-action="AcceptReview" method="post" style="display: inline;">
+                                        <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                                        <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                                    </form>
+                                    <form asp-controller="Admin" asp-action="HideReview" method="post" style="display: inline;">
+                                        <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                                        <button type="submit" class="btn btn-warning btn-sm">Hide</button>
+                                    </form>
+                                    <form asp-controller="Admin" asp-action="AICheckReview" method="post" style="display: inline;">
+                                        <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                                        <button type="submit" class="btn btn-info btn-sm">AI Check</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
         </div>
 
         <!-- ───────── MID COL : ROLE UPGRADE ───────── -->
