@@ -6,7 +6,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
     public class OffensiveWordsServiceProxyConstructorTest
     {
         [Fact]
-        public void Constructor_ValidBaseUrl_InitializesCorrectly()
+        public void Constructor_ValidBaseUrl_InitializesProxyNotNull()
         {
             // Arrange
             string baseUrl = "https://api.example.com";
@@ -16,19 +16,49 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(proxy);
+        }
 
-            // Use reflection to verify internal fields are set correctly
+        [Fact]
+        public void Constructor_ValidBaseUrl_SetsBaseUrlFieldCorrectly()
+        {
+            // Arrange
+            string baseUrl = "https://api.example.com";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(baseUrl);
+
+            // Assert
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            Assert.NotNull(baseUrlField);
-            Assert.NotNull(httpClientField);
-
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-            var httpClient = httpClientField?.GetValue(proxy);
-
             Assert.Equal("https://api.example.com", actualBaseUrl);
+        }
+
+        [Fact]
+        public void Constructor_ValidBaseUrl_InitializesHttpClientField()
+        {
+            // Arrange
+            string baseUrl = "https://api.example.com";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(baseUrl);
+
+            // Assert
+            var httpClientField = typeof(OffensiveWordsServiceProxy).GetField("httpClient", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var httpClient = httpClientField?.GetValue(proxy);
             Assert.NotNull(httpClient);
+        }
+
+        [Fact]
+        public void Constructor_BaseUrlWithTrailingSlash_InitializesProxy()
+        {
+            // Arrange
+            string baseUrlWithSlash = "https://api.example.com/";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(baseUrlWithSlash);
+
+            // Assert
+            Assert.NotNull(proxy);
         }
 
         [Fact]
@@ -41,13 +71,22 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var proxy = new OffensiveWordsServiceProxy(baseUrlWithSlash);
 
             // Assert
-            Assert.NotNull(proxy);
-
-            // Use reflection to verify the trailing slash was trimmed
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("https://api.example.com", actualBaseUrl);
+        }
+
+        [Fact]
+        public void Constructor_BaseUrlWithMultipleTrailingSlashes_InitializesProxy()
+        {
+            // Arrange
+            string baseUrlWithSlashes = "https://api.example.com///";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(baseUrlWithSlashes);
+
+            // Assert
+            Assert.NotNull(proxy);
         }
 
         [Fact]
@@ -60,17 +99,13 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var proxy = new OffensiveWordsServiceProxy(baseUrlWithSlashes);
 
             // Assert
-            Assert.NotNull(proxy);
-
-            // Use reflection to verify all trailing slashes were trimmed
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("https://api.example.com", actualBaseUrl);
         }
 
         [Fact]
-        public void Constructor_EmptyBaseUrl_InitializesWithEmptyString()
+        public void Constructor_EmptyBaseUrl_InitializesProxy()
         {
             // Arrange
             string emptyBaseUrl = string.Empty;
@@ -80,11 +115,20 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(proxy);
+        }
 
-            // Use reflection to verify base URL is empty
+        [Fact]
+        public void Constructor_EmptyBaseUrl_SetsEmptyBaseUrlField()
+        {
+            // Arrange
+            string emptyBaseUrl = string.Empty;
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(emptyBaseUrl);
+
+            // Assert
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal(string.Empty, actualBaseUrl);
         }
 
@@ -99,7 +143,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public void Constructor_BaseUrlWithPath_KeepsPath()
+        public void Constructor_BaseUrlWithPath_InitializesProxy()
         {
             // Arrange
             string baseUrlWithPath = "https://api.example.com/v1/services";
@@ -109,16 +153,25 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(proxy);
+        }
 
-            // Use reflection to verify the path is kept
+        [Fact]
+        public void Constructor_BaseUrlWithPath_KeepsPath()
+        {
+            // Arrange
+            string baseUrlWithPath = "https://api.example.com/v1/services";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(baseUrlWithPath);
+
+            // Assert
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("https://api.example.com/v1/services", actualBaseUrl);
         }
 
         [Fact]
-        public void Constructor_BaseUrlWithPathAndTrailingSlash_TrimsSlash()
+        public void Constructor_BaseUrlWithPathAndTrailingSlash_InitializesProxy()
         {
             // Arrange
             string baseUrlWithPathAndSlash = "https://api.example.com/v1/services/";
@@ -128,16 +181,25 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(proxy);
+        }
 
-            // Use reflection to verify the trailing slash is trimmed but path is kept
+        [Fact]
+        public void Constructor_BaseUrlWithPathAndTrailingSlash_TrimsSlashButKeepsPath()
+        {
+            // Arrange
+            string baseUrlWithPathAndSlash = "https://api.example.com/v1/services/";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(baseUrlWithPathAndSlash);
+
+            // Assert
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("https://api.example.com/v1/services", actualBaseUrl);
         }
 
         [Fact]
-        public void Constructor_LocalhostUrl_InitializesCorrectly()
+        public void Constructor_LocalhostUrl_InitializesProxy()
         {
             // Arrange
             string localhostUrl = "http://localhost:8080";
@@ -147,16 +209,25 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(proxy);
+        }
 
-            // Use reflection to verify localhost URL is handled correctly
+        [Fact]
+        public void Constructor_LocalhostUrl_SetsBaseUrlCorrectly()
+        {
+            // Arrange
+            string localhostUrl = "http://localhost:8080";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(localhostUrl);
+
+            // Assert
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("http://localhost:8080", actualBaseUrl);
         }
 
         [Fact]
-        public void Constructor_HttpsUrl_InitializesCorrectly()
+        public void Constructor_HttpsUrl_InitializesProxy()
         {
             // Arrange
             string httpsUrl = "https://secure-api.example.com";
@@ -166,12 +237,34 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(proxy);
+        }
 
-            // Use reflection to verify HTTPS URL is handled correctly
+        [Fact]
+        public void Constructor_HttpsUrl_SetsBaseUrlCorrectly()
+        {
+            // Arrange
+            string httpsUrl = "https://secure-api.example.com";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(httpsUrl);
+
+            // Assert
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("https://secure-api.example.com", actualBaseUrl);
+        }
+
+        [Fact]
+        public void Constructor_UrlWithQueryParameters_InitializesProxy()
+        {
+            // Arrange
+            string urlWithQuery = "https://api.example.com?version=v1&format=json";
+
+            // Act
+            var proxy = new OffensiveWordsServiceProxy(urlWithQuery);
+
+            // Assert
+            Assert.NotNull(proxy);
         }
 
         [Fact]
@@ -184,12 +277,8 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var proxy = new OffensiveWordsServiceProxy(urlWithQuery);
 
             // Assert
-            Assert.NotNull(proxy);
-
-            // Use reflection to verify query parameters are kept
             var baseUrlField = typeof(OffensiveWordsServiceProxy).GetField("baseUrl", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualBaseUrl = baseUrlField?.GetValue(proxy) as string;
-
             Assert.Equal("https://api.example.com?version=v1&format=json", actualBaseUrl);
         }
     }

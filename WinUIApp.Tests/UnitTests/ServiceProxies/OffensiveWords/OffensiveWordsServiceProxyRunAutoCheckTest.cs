@@ -32,7 +32,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task RunAutoCheck_ValidReviews_ReturnsListOfOffensiveWords()
+        public async Task RunAutoCheck_ValidReviews_ReturnsNotNull()
         {
             // Arrange
             var reviews = new List<Review>
@@ -62,8 +62,100 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
 
             // Assert
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_ValidReviews_ReturnsCorrectCount()
+        {
+            // Arrange
+            var reviews = new List<Review>
+            {
+                new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a good beer", DateTime.Now),
+                new Review(2, Guid.NewGuid(), 2, 2.0f, "This beer contains offensive content", DateTime.Now)
+            };
+
+            var expectedOffensiveWords = new List<string> { "offensive", "content" };
+            var jsonResponse = JsonSerializer.Serialize(expectedOffensiveWords);
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
             Assert.Equal(expectedOffensiveWords.Count, result.Count);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_ValidReviews_ReturnsExpectedContent()
+        {
+            // Arrange
+            var reviews = new List<Review>
+            {
+                new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a good beer", DateTime.Now),
+                new Review(2, Guid.NewGuid(), 2, 2.0f, "This beer contains offensive content", DateTime.Now)
+            };
+
+            var expectedOffensiveWords = new List<string> { "offensive", "content" };
+            var jsonResponse = JsonSerializer.Serialize(expectedOffensiveWords);
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
             Assert.Equal(expectedOffensiveWords, result);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_EmptyReviewsList_ReturnsNotNull()
+        {
+            // Arrange
+            var reviews = new List<Review>();
+            var expectedOffensiveWords = new List<string>();
+            var jsonResponse = JsonSerializer.Serialize(expectedOffensiveWords);
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -91,8 +183,36 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_HttpRequestFails_ReturnsNotNull()
+        {
+            // Arrange
+            var reviews = new List<Review>
+            {
+                new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a good beer", DateTime.Now)
+            };
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Content = new StringContent("Internal Server Error")
+                });
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -121,8 +241,32 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_HttpRequestThrowsException_ReturnsNotNull()
+        {
+            // Arrange
+            var reviews = new List<Review>
+            {
+                new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a good beer", DateTime.Now)
+            };
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ThrowsAsync(new HttpRequestException("Network error"));
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -147,8 +291,36 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_ResponseContentIsNull_ReturnsNotNull()
+        {
+            // Arrange
+            var reviews = new List<Review>
+            {
+                new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a good beer", DateTime.Now)
+            };
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("null", Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -177,8 +349,36 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task RunAutoCheck_InvalidJsonResponse_ReturnsNotNull()
+        {
+            // Arrange
+            var reviews = new List<Review>
+            {
+                new Review(1, Guid.NewGuid(), 1, 4.5f, "This is a good beer", DateTime.Now)
+            };
+
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/check"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("invalid json", Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
+
+            // Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -207,7 +407,6 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
             var result = await this.offensiveWordsServiceProxy.RunAutoCheck(reviews);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Empty(result);
         }
     }

@@ -32,7 +32,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task AddOffensiveWordAsync_ValidNewWord_AddsWordSuccessfully()
+        public async Task AddOffensiveWordAsync_ValidNewWord_CallsGetRequest()
         {
             // Arrange
             string newWord = "newbadword";
@@ -83,7 +83,53 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                     req.Method == HttpMethod.Get &&
                     req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords"),
                 ItExpr.IsAny<CancellationToken>());
+        }
 
+        [Fact]
+        public async Task AddOffensiveWordAsync_ValidNewWord_CallsPostRequest()
+        {
+            // Arrange
+            string newWord = "newbadword";
+            var existingWords = new List<OffensiveWord>
+            {
+                new OffensiveWord("existingword1"),
+                new OffensiveWord("existingword2")
+            };
+
+            var getResponse = JsonSerializer.Serialize(existingWords);
+
+            // Setup GET request to check existing words
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Get &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(getResponse, Encoding.UTF8, "application/json")
+                });
+
+            // Setup POST request to add new word
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/add"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("", Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            await this.offensiveWordsServiceProxy.AddOffensiveWordAsync(newWord);
+
+            // Assert
             this.httpMessageHandlerMock.Protected().Verify(
                 "SendAsync",
                 Times.Once(),
@@ -94,7 +140,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task AddOffensiveWordAsync_WordAlreadyExists_DoesNotAddWord()
+        public async Task AddOffensiveWordAsync_WordAlreadyExists_CallsGetRequest()
         {
             // Arrange
             string existingWord = "existingword1";
@@ -131,8 +177,39 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                     req.Method == HttpMethod.Get &&
                     req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords"),
                 ItExpr.IsAny<CancellationToken>());
+        }
 
-            // Verify that POST was never called
+        [Fact]
+        public async Task AddOffensiveWordAsync_WordAlreadyExists_DoesNotCallPostRequest()
+        {
+            // Arrange
+            string existingWord = "existingword1";
+            var existingWords = new List<OffensiveWord>
+            {
+                new OffensiveWord("existingword1"),
+                new OffensiveWord("existingword2")
+            };
+
+            var getResponse = JsonSerializer.Serialize(existingWords);
+
+            // Setup GET request to check existing words
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Get &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(getResponse, Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            await this.offensiveWordsServiceProxy.AddOffensiveWordAsync(existingWord);
+
+            // Assert
             this.httpMessageHandlerMock.Protected().Verify(
                 "SendAsync",
                 Times.Never(),
@@ -143,7 +220,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task AddOffensiveWordAsync_NullWord_ReturnsEarly()
+        public async Task AddOffensiveWordAsync_NullWord_DoesNotCallAnyRequest()
         {
             // Arrange
             string nullWord = null;
@@ -160,7 +237,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task AddOffensiveWordAsync_EmptyWord_ReturnsEarly()
+        public async Task AddOffensiveWordAsync_EmptyWord_DoesNotCallAnyRequest()
         {
             // Arrange
             string emptyWord = string.Empty;
@@ -177,7 +254,7 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task AddOffensiveWordAsync_WhitespaceWord_ReturnsEarly()
+        public async Task AddOffensiveWordAsync_WhitespaceWord_DoesNotCallAnyRequest()
         {
             // Arrange
             string whitespaceWord = "   ";
@@ -259,14 +336,14 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
         }
 
         [Fact]
-        public async Task AddOffensiveWordAsync_EmptyExistingWordsList_AddsWordSuccessfully()
+        public async Task AddOffensiveWordAsync_EmptyExistingWordsList_CallsGetRequest()
         {
             // Arrange
             string newWord = "newbadword";
-            var existingWords = new List<OffensiveWord>();
-            var getResponse = JsonSerializer.Serialize(existingWords);
+            var emptyWordsList = new List<OffensiveWord>();
+            var getResponse = JsonSerializer.Serialize(emptyWordsList);
 
-            // Setup GET request to return empty list
+            // Setup GET request
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
@@ -280,7 +357,56 @@ namespace WinUIApp.Tests.UnitTests.ServiceProxies.OffensiveWords
                     Content = new StringContent(getResponse, Encoding.UTF8, "application/json")
                 });
 
-            // Setup POST request to add new word
+            // Setup POST request
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Post &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords/add"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("", Encoding.UTF8, "application/json")
+                });
+
+            // Act
+            await this.offensiveWordsServiceProxy.AddOffensiveWordAsync(newWord);
+
+            // Assert
+            this.httpMessageHandlerMock.Protected().Verify(
+                "SendAsync",
+                Times.Once(),
+                ItExpr.Is<HttpRequestMessage>(req =>
+                    req.Method == HttpMethod.Get &&
+                    req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords"),
+                ItExpr.IsAny<CancellationToken>());
+        }
+
+        [Fact]
+        public async Task AddOffensiveWordAsync_EmptyExistingWordsList_CallsPostRequest()
+        {
+            // Arrange
+            string newWord = "newbadword";
+            var emptyWordsList = new List<OffensiveWord>();
+            var getResponse = JsonSerializer.Serialize(emptyWordsList);
+
+            // Setup GET request
+            this.httpMessageHandlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req =>
+                        req.Method == HttpMethod.Get &&
+                        req.RequestUri.ToString() == $"{this.baseUrl}/api/offensiveWords"),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(getResponse, Encoding.UTF8, "application/json")
+                });
+
+            // Setup POST request
             this.httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
