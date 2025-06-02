@@ -12,6 +12,7 @@ namespace WinUIApp.WebAPI.Repositories
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using DataAccess.Data;
     using DataAccess.Extensions;
     using DataAccess.IRepository;
     using Microsoft.EntityFrameworkCore;
@@ -184,7 +185,6 @@ namespace WinUIApp.WebAPI.Repositories
                     .Where(dc => dc.DrinkId == existingDrink.DrinkId)
                     .ToList();
                 dbContext.DrinkCategories.RemoveRange(oldCategories);
-                //dbContext.SaveChanges(); // Potential SaveChanges call after removing old categories
 
                 // Add new DrinkCategory rows
                 foreach (Category category in drinkDto.CategoryList)
@@ -241,9 +241,23 @@ namespace WinUIApp.WebAPI.Repositories
                                     .Include(drink => drink.DrinkCategories)
                                     .FirstOrDefault(drink => drink.DrinkId == drinkId);
 
+
             if (drink == null)
             {
                 throw new Exception("No drink found with the provided ID.");
+            }
+
+            List<DrinkModificationRequest> requests = dbContext.DrinkModificationRequests
+                .Where(req => drink.DrinkId == req.NewDrinkId || drink.DrinkId == req.OldDrinkId)
+                .ToList();
+
+            foreach (DrinkModificationRequest req in requests)
+            {
+                req.OldDrink = null;
+                req.NewDrink = null;
+                req.OldDrinkId = null;
+                req.NewDrinkId = null;
+                dbContext.DrinkModificationRequests.Remove(req);
             }
 
             dbContext.DrinkCategories.RemoveRange(drink.DrinkCategories);

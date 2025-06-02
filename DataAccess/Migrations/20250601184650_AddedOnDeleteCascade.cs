@@ -26,12 +26,12 @@ namespace DataAccess.Migrations
 
             // Step 3: Create foreign keys one at a time with individual transactions
             migrationBuilder.AddForeignKey(
-name: "FK_DrinkModificationRequests_Drinks_OldDrinkId",
-table: "DrinkModificationRequests",
-column: "OldDrinkId",
-principalTable: "Drinks",
-principalColumn: "DrinkId",
-onDelete: ReferentialAction.NoAction);
+                name: "FK_DrinkModificationRequests_Drinks_OldDrinkId",
+                table: "DrinkModificationRequests",
+                column: "OldDrinkId",
+                principalTable: "Drinks",
+                principalColumn: "DrinkId",
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_DrinkModificationRequests_Drinks_NewDrinkId",
@@ -40,27 +40,6 @@ onDelete: ReferentialAction.NoAction);
                 principalTable: "Drinks",
                 principalColumn: "DrinkId",
                 onDelete: ReferentialAction.NoAction);
-
-            // Create trigger to handle SET NULL behavior
-            migrationBuilder.Sql(@"
-        CREATE TRIGGER TR_Drinks_Delete_SetNull
-        ON [Drinks]
-        INSTEAD OF DELETE
-        AS
-        BEGIN
-            -- Set foreign keys to null
-            UPDATE [DrinkModificationRequests] 
-            SET [OldDrinkId] = NULL 
-            WHERE [OldDrinkId] IN (SELECT [DrinkId] FROM deleted);
-            
-            UPDATE [DrinkModificationRequests] 
-            SET [NewDrinkId] = NULL 
-            WHERE [NewDrinkId] IN (SELECT [DrinkId] FROM deleted);
-            
-            -- Delete the drinks
-            DELETE FROM [Drinks] WHERE [DrinkId] IN (SELECT [DrinkId] FROM deleted);
-        END
-    ");
         }
 
         /// <inheritdoc />
