@@ -198,5 +198,33 @@ namespace DataAccess.ServiceProxy
                 throw new Exception($"Error happened while getting average rating for drink with ID {drinkId}:", exception);
             }
         }
+
+        public async Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrink(int drinkId)
+        {
+            try
+            {
+                HttpResponseMessage response = await this.httpClient.GetAsync($"{API_ROUTE}/get-reviews-with-user-info-by-drink?drinkId={drinkId}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<ReviewWithUserDTO>>() ?? new List<ReviewWithUserDTO>();
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error happened while getting reviews with user info for drink with ID {drinkId}:", exception);
+            }
+        }
+
+        public async Task<List<ReviewDTO>> GetReviewsByDrinkAndUser(int drinkId, Guid userId)
+        {
+            try
+            {
+                HttpResponseMessage response = await this.httpClient.GetAsync($"{API_ROUTE}/get-reviews-by-drink-and-user?drinkId={drinkId}&userId={userId}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<ReviewDTO>>() ?? new List<ReviewDTO>();
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error happened while getting reviews for drink with ID {drinkId} and user with ID {userId}:", exception);
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -91,8 +91,7 @@ namespace DataAccess.Migrations
                     DrinkName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DrinkURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: true),
-                    AlcoholContent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsRequestingApproval = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    AlcoholContent = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,8 +100,7 @@ namespace DataAccess.Migrations
                         name: "FK_Drinks_Brands_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brands",
-                        principalColumn: "BrandId",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "BrandId");
                 });
 
             migrationBuilder.CreateTable(
@@ -168,40 +166,6 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DrinkModificationRequests",
-                columns: table => new
-                {
-                    DrinkModificationRequestId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ModificationType = table.Column<int>(type: "int", nullable: false),
-                    OldDrinkId = table.Column<int>(type: "int", nullable: true),
-                    NewDrinkId = table.Column<int>(type: "int", nullable: true),
-                    RequestingUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DrinkModificationRequests", x => x.DrinkModificationRequestId);
-                    table.ForeignKey(
-                        name: "FK_DrinkModificationRequests_Drinks_NewDrinkId",
-                        column: x => x.NewDrinkId,
-                        principalTable: "Drinks",
-                        principalColumn: "DrinkId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DrinkModificationRequests_Drinks_OldDrinkId",
-                        column: x => x.OldDrinkId,
-                        principalTable: "Drinks",
-                        principalColumn: "DrinkId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DrinkModificationRequests_Users_RequestingUserId",
-                        column: x => x.RequestingUserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DrinkOfTheDays",
                 columns: table => new
                 {
@@ -220,35 +184,32 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "Ratings",
                 columns: table => new
                 {
-                    ReviewId = table.Column<int>(type: "int", nullable: false)
+                    RatingId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DrinkId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    IsActive = table.Column<byte>(type: "tinyint", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    NumberOfFlags = table.Column<int>(type: "int", nullable: false),
-                    IsHidden = table.Column<bool>(type: "bit", nullable: false),
-                    RatingValue = table.Column<double>(type: "float", nullable: true)
+                    RatingValue = table.Column<double>(type: "float", nullable: true),
+                    RatingDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    IsActive = table.Column<byte>(type: "tinyint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.ReviewId);
+                    table.PrimaryKey("PK_Ratings", x => x.RatingId);
                     table.ForeignKey(
-                        name: "FK_Reviews_Drinks_DrinkId",
+                        name: "FK_Ratings_Drinks_DrinkId",
                         column: x => x.DrinkId,
                         principalTable: "Drinks",
                         principalColumn: "DrinkId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reviews_Users_UserId",
+                        name: "FK_Ratings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -326,24 +287,36 @@ namespace DataAccess.Migrations
                         principalColumn: "UserId");
                 });
 
-            migrationBuilder.InsertData(
-                table: "Brands",
-                columns: new[] { "BrandId", "BrandName" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
                 {
-                    { 1, "Sunbrew Co." },
-                    { 2, "Berry Spirits" },
-                    { 3, "Mocktails Inc." }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "CategoryId", "CategoryName" },
-                values: new object[,]
+                    ReviewId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RatingId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    IsActive = table.Column<byte>(type: "tinyint", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NumberOfFlags = table.Column<int>(type: "int", nullable: false),
+                    IsHidden = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
                 {
-                    { 1, "Ale" },
-                    { 2, "Vodka" },
-                    { 3, "Soft Drink" }
+                    table.PrimaryKey("PK_Reviews", x => x.ReviewId);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Ratings_RatingId",
+                        column: x => x.RatingId,
+                        principalTable: "Ratings",
+                        principalColumn: "RatingId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -354,44 +327,6 @@ namespace DataAccess.Migrations
                     { 0, "Banned" },
                     { 1, "User" },
                     { 2, "Admin" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "UserId", "AssignedRole", "EmailAddress", "HasSubmittedAppeal", "NumberOfDeletedReviews", "PasswordHash", "TwoFASecret", "Username" },
-                values: new object[,]
-                {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), 1, "john.doe@example.com", false, 0, "$2a$11$K2xKJ9.vF8wHqJ4bK9mZXeJ8vKlM3nO2pQ7rS9tU1vW3xY4zA5bC6", null, "john_doe" },
-                    { new Guid("22222222-2222-2222-2222-222222222222"), 1, "jane.smith@example.com", false, 1, "$2a$11$L3yLK0.wG9xIrK5cL0nAYfK9wLmN4oP3qR8sT0uV2wX4yZ5aB6dD7", null, "jane_smith" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Drinks",
-                columns: new[] { "DrinkId", "AlcoholContent", "BrandId", "DrinkName", "DrinkURL" },
-                values: new object[,]
-                {
-                    { 1, 5.2m, 1, "Golden Ale", "https://example.com/drinks/golden-ale.jpg" },
-                    { 2, 37.5m, 2, "Cherry Vodka", "https://example.com/drinks/cherry-vodka.jpg" },
-                    { 3, 0.0m, 3, "Ginger Beer", "https://example.com/drinks/ginger-beer.jpg" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "DrinkCategories",
-                columns: new[] { "CategoryId", "DrinkId" },
-                values: new object[,]
-                {
-                    { 1, 1 },
-                    { 2, 2 },
-                    { 3, 3 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Reviews",
-                columns: new[] { "ReviewId", "Content", "CreatedDate", "DrinkId", "IsActive", "IsHidden", "NumberOfFlags", "RatingValue", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "Great taste, smooth and refreshing.", new DateTime(2024, 12, 20, 10, 30, 0, 0, DateTimeKind.Utc), 1, (byte)1, false, 0, 4.5, new Guid("11111111-1111-1111-1111-111111111111") },
-                    { 2, "Too bitter for my preference.", new DateTime(2024, 12, 20, 10, 30, 0, 0, DateTimeKind.Utc), 2, (byte)1, false, 1, 3.0, new Guid("22222222-2222-2222-2222-222222222222") }
                 });
 
             migrationBuilder.CreateIndex(
@@ -406,35 +341,30 @@ namespace DataAccess.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DrinkModificationRequests_NewDrinkId",
-                table: "DrinkModificationRequests",
-                column: "NewDrinkId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DrinkModificationRequests_OldDrinkId",
-                table: "DrinkModificationRequests",
-                column: "OldDrinkId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DrinkModificationRequests_RequestingUserId",
-                table: "DrinkModificationRequests",
-                column: "RequestingUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Drinks_BrandId",
                 table: "Drinks",
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_DrinkId",
-                table: "Reviews",
+                name: "IX_Ratings_DrinkId",
+                table: "Ratings",
                 column: "DrinkId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_UserId_DrinkId",
-                table: "Reviews",
+                name: "IX_Ratings_UserId_DrinkId",
+                table: "Ratings",
                 columns: new[] { "UserId", "DrinkId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_RatingId",
+                table: "Reviews",
+                column: "RatingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_UserId",
+                table: "Reviews",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sessions_UserId",
@@ -489,9 +419,6 @@ namespace DataAccess.Migrations
                 name: "DrinkCategories");
 
             migrationBuilder.DropTable(
-                name: "DrinkModificationRequests");
-
-            migrationBuilder.DropTable(
                 name: "DrinkOfTheDays");
 
             migrationBuilder.DropTable(
@@ -517,6 +444,9 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Ratings");
 
             migrationBuilder.DropTable(
                 name: "Drinks");

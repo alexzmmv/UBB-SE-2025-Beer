@@ -44,5 +44,9 @@
         Task<List<ReviewDTO>> GetReviewsByDrink(int drinkId);
 
         Task<double> GetAverageRating(int drinkId);
+
+        Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrink(int drinkId);
+
+        Task<List<ReviewDTO>> GetReviewsByDrinkAndUser(int drinkId, Guid userId);
     }
 }

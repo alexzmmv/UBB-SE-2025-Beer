@@ -41,5 +41,7 @@
         Task<List<ReviewDTO>> GetReviewsByUserId(Guid userId);
 
         Task<List<ReviewDTO>> GetReviewsByDrinkIdAndUserId(int drinkId, Guid userId);
+
+        Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrinkId(int drinkId);
     }
 }

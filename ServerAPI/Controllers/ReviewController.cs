@@ -118,5 +118,19 @@ namespace WinUIApp.WebAPI.Controllers
             double averageRating = await reviewService.GetAverageRating(drinkId);
             return Ok(averageRating);
         }
+
+        [HttpGet("get-reviews-with-user-info-by-drink")]
+        public async Task<IActionResult> GetReviewsWithUserInfoByDrink([FromQuery] int drinkId)
+        {
+            List<ReviewWithUserDTO> reviews = await reviewService.GetReviewsWithUserInfoByDrink(drinkId);
+            return Ok(reviews);
+        }
+
+        [HttpGet("get-reviews-by-drink-and-user")]
+        public async Task<IActionResult> GetReviewsByDrinkAndUser([FromQuery] int drinkId, [FromQuery] Guid userId)
+        {
+            List<ReviewDTO> reviews = await reviewService.GetReviewsByDrinkAndUser(drinkId, userId);
+            return Ok(reviews);
+        }
     }
 }
