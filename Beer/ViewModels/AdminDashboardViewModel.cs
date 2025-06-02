@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,10 +17,9 @@ using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
 using Microsoft.Extensions.DependencyInjection;
-using WinUiApp.Data.Data;
 using WinUIApp;
+using WinUiApp.Data.Data;
 using WinUIApp.WebAPI.Models;
-using System.Reflection;
 
 namespace DrinkDb_Auth.ViewModel.AdminDashboard
 {
@@ -111,6 +111,19 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 this.OnPropertyChanged();
             }
         }
+
+        private ObservableCollection<ReviewWithUsername> flaggedReviewsWithUsernames;
+
+        public ObservableCollection<ReviewWithUsername> FlaggedReviewsWithUsernames
+        {
+            get => this.flaggedReviewsWithUsernames;
+            set
+            {
+                this.flaggedReviewsWithUsernames = value;
+                this.OnPropertyChanged();
+            }
+        }
+
 
         public ObservableCollection<User> AppealsUsers
         {
@@ -282,6 +295,19 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             List<ReviewDTO> reviews = await this.reviewsService.GetFlaggedReviews();
             this.FlaggedReviews = new ObservableCollection<ReviewDTO>(reviews);
+
+            List<ReviewWithUsername> reviewsWithUsernames = new List<ReviewWithUsername>();
+            foreach (var review in reviews)
+            {
+                string username = await this.GetUsernameById(review.UserId);
+                reviewsWithUsernames.Add(new ReviewWithUsername
+                {
+                    Review = review,
+                    Username = username
+                });
+            }
+
+            this.FlaggedReviewsWithUsernames = new ObservableCollection<ReviewWithUsername>(reviewsWithUsernames);
         }
 
         public async Task LoadAppeals()
@@ -887,5 +913,11 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 return $"User {userId}";
             }
         }
+    }
+
+    public class ReviewWithUsername
+    {
+        public ReviewDTO Review { get; set; }
+        public string Username { get; set; }
     }
 }

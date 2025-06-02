@@ -197,25 +197,25 @@ namespace DrinkDb_Auth.View
 
         private void MenuFlyoutAllowReview_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewWithUsername reviewWithUsername)
             {
-                ViewModel.ResetReviewFlags(review.ReviewId);
+                ViewModel.ResetReviewFlags(reviewWithUsername.Review.ReviewId);
             }
         }
 
         private void MenuFlyoutHideReview_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewWithUsername reviewWithUsername)
             {
-                ViewModel.HideReview(review.ReviewId);
+                ViewModel.HideReview(reviewWithUsername.Review.ReviewId);
             }
         }
 
         private async void MenuFlyoutAICheck_Click_2(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewWithUsername reviewWithUsername)
             {
-                await ViewModel.RunAICheck(review);
+                await ViewModel.RunAICheck(reviewWithUsername.Review);
             }
         }
 
