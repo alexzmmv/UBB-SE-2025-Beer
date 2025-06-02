@@ -47,6 +47,9 @@ namespace WebServer.Controllers
 
         public IActionResult AuthenticationPage()
         {
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (CurrentUserId != Guid.Empty)
+                return RedirectToAction("Index", "HomePage");
             return View();
         }
 
@@ -93,12 +96,7 @@ namespace WebServer.Controllers
                 {
                     ViewBag.ShowQRCode = false;
                 }
-
-                AuthenticationService.SetCurrentSessionId(response.SessionId);
-                AuthenticationService.SetCurrentUserId(currentUser.UserId);
-
-                HttpContext.Session.SetString("AssignedRole", currentUser.AssignedRole.ToString());
-
+                HttpContext.Session.SetString("UserId", user.UserId.ToString());
                 ViewBag.Username = currentUser.Username;
                 return View("TwoFactorAuthSetup");
             }

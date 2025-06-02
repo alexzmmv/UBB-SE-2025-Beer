@@ -36,6 +36,10 @@ namespace WebServer.Controllers
 
         public async Task<IActionResult> AdminDashboard()
         {
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+
             IEnumerable<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
             IEnumerable<UpgradeRequest> upgradeRequests = await this.upgradeRequestService.RetrieveAllUpgradeRequests();
             IEnumerable<string> offensiveWords = await this.checkersService.GetOffensiveWordsList();

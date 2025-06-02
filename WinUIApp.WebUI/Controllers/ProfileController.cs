@@ -27,8 +27,10 @@ namespace WebServer.Controllers
         public async Task<IActionResult> UserPage()
         {
             // TO DO: The SET / GET approach for user / session id will probably not work with multiple browser connections
-            Guid userId = AuthenticationService.GetCurrentUserId();
-            User? currentUser = await this.userService.GetUserById(userId);
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            User? currentUser = await this.userService.GetUserById(currentUserId);
 
             if (currentUser == null)
             {
@@ -44,7 +46,7 @@ namespace WebServer.Controllers
                 hasPendingUpgradeRequest = await upgradeRequestsService.HasPendingUpgradeRequest(currentUser.UserId);
             }
 
-            var favoriteDrinks = drinkService.GetUserPersonalDrinkList(userId);
+            var favoriteDrinks = drinkService.GetUserPersonalDrinkList(currentUserId);
             UserPageModel userPageModel = new UserPageModel()
             {
                 CurrentUser = currentUser,
@@ -58,8 +60,10 @@ namespace WebServer.Controllers
         [HttpGet]
         public async Task<IActionResult> SubmitAppeal()
         {
-            Guid userId = AuthenticationService.GetCurrentUserId();
-            User? currentUser = await this.userService.GetUserById(userId);
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            User? currentUser = await this.userService.GetUserById(currentUserId);
 
             if (currentUser == null)
             {
@@ -88,8 +92,10 @@ namespace WebServer.Controllers
         [HttpGet]
         public async Task<IActionResult> RequestRoleUpgrade()
         {
-            Guid userId = AuthenticationService.GetCurrentUserId();
-            User? currentUser = await this.userService.GetUserById(userId);
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            User? currentUser = await this.userService.GetUserById(currentUserId);
 
             if (currentUser == null)
             {
@@ -102,7 +108,7 @@ namespace WebServer.Controllers
                 return RedirectToAction("UserPage");
             }
 
-            bool hasPendingRequest = await upgradeRequestsService.HasPendingUpgradeRequest(userId);
+            bool hasPendingRequest = await upgradeRequestsService.HasPendingUpgradeRequest(currentUserId);
             if (hasPendingRequest)
             {
                 TempData["InfoMessage"] = "You already have a pending upgrade request.";
@@ -111,7 +117,7 @@ namespace WebServer.Controllers
 
             try
             {
-                await this.upgradeRequestsService.AddUpgradeRequest(userId);
+                await this.upgradeRequestsService.AddUpgradeRequest(currentUserId);
                 TempData["SuccessMessage"] = "Your role upgrade request has been submitted successfully.";
             }
             catch (Exception)
@@ -125,6 +131,7 @@ namespace WebServer.Controllers
 
         public IActionResult LogOut()
         {
+            HttpContext.Session.Clear();
             return RedirectToAction("AuthenticationPage", "Auth");
         }
     }

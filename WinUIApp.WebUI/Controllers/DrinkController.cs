@@ -8,7 +8,6 @@ using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebUI.Models;
-using WinUIApp.WebUI.Models;
 using System.Text.Json;
 using System.Collections.Generic;
 using DataAccess.DTOModels;
@@ -30,6 +29,7 @@ namespace WinUIApp.WebUI.Controllers
 
         public IActionResult DrinkDetail(int id)
         {
+
             var drink = drinkService.GetDrinkById(id);
             if (drink == null)
             {
@@ -39,7 +39,9 @@ namespace WinUIApp.WebUI.Controllers
             // Get all reviews for this drink
             var reviews = reviewService.GetReviewsByDrink(id).Result;
             double averageRating = reviews.Count > 0 ? reviews.Average(r => r.RatingValue ?? 0) : 0;
-            Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (CurrentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
             bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
             var viewModel = new DrinkDetailViewModel
@@ -60,6 +62,9 @@ namespace WinUIApp.WebUI.Controllers
         [HttpPost]
         public IActionResult AddRatingAndReview(RatingReviewViewModel model)
         {
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (CurrentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Please fill in all required fields.";
@@ -118,7 +123,9 @@ namespace WinUIApp.WebUI.Controllers
         {
             try
             {
-                Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
+                Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+                if (CurrentUserId == Guid.Empty)
+                    return RedirectToAction("AuthenticationPage", "Auth");
                 bool isInFavorites = drinkService.IsDrinkInUserPersonalList(CurrentUserId, id);
 
                 if (isInFavorites)
@@ -145,8 +152,10 @@ namespace WinUIApp.WebUI.Controllers
         {
             try
             {
-                Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
-                drinkService.DeleteDrink(id, CurrentUserId);
+                Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+                if (currentUserId == Guid.Empty)
+                    return RedirectToAction("AuthenticationPage", "Auth");
+                drinkService.DeleteDrink(id, currentUserId);
                 return RedirectToAction("Index", "HomePage");
             }
             catch (Exception ex)

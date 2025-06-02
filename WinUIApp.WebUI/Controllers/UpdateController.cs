@@ -14,6 +14,9 @@ namespace WinUIApp.WebUI.Controllers
         [HttpGet]
         public IActionResult Drink(int id)
         {
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (CurrentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
             try
             {
                 var drink = drinkService.GetDrinkById(id);
@@ -54,7 +57,9 @@ namespace WinUIApp.WebUI.Controllers
                 var categories = drinkService.GetDrinkCategories();
                 if (ModelState.IsValid)
                 {
-                    Guid currentUserId = AuthenticationService.GetCurrentUserId();
+                    Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+                    if (currentUserId == Guid.Empty)
+                        return RedirectToAction("AuthenticationPage", "Auth");
                     drinkService.UpdateDrink(new DrinkDTO
                     {
                         DrinkId = updateDrinkViewModel.DrinkId,

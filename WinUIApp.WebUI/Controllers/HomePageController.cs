@@ -27,6 +27,10 @@ public class HomePageController : Controller
 
     public IActionResult Index(string? searchKeyword, float? minValue, float? maxValue, int? minStars, string[] SelectedCategories, string[] SelectedBrandNames)
     {
+        Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+        if (currentUserId == Guid.Empty)
+            return RedirectToAction("AuthenticationPage", "Auth");
+
         var drinkOfTheDay = drinkService.GetDrinkOfTheDay();
         var drinkCategories = drinkService.GetDrinkCategories();
         var drinkBrands = drinkService.GetDrinkBrandNames();
