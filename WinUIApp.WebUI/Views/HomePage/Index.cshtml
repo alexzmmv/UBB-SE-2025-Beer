@@ -150,11 +150,8 @@
                     @foreach (var drink in Model.drinks)
                     {
                         <div class="modern-card mb-4">
-                            @await Html.PartialAsync(
-                                "~/Views/Drink/DrinkElement.cshtml",
-                                new WinUIApp.WebUI.Models.DrinkElementViewModel { Drink = drink },
-                                null
-                            )
+                            @await Html.PartialAsync("~/Views/Drink/DrinkElement.cshtml", @drink, null);
+
                         </div>
                     }
                 </div>

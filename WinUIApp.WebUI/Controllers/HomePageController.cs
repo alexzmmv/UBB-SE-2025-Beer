@@ -42,16 +42,23 @@ public class HomePageController : Controller
         if (minStars == null) minStars = 0;
 
         Dictionary<string, bool> drinkOrderingCriteria = new Dictionary<string, bool>();
+        
+        List<DrinkElementViewModel> drinksViewModels = new List<DrinkElementViewModel>();
 
         var drinks = drinkService.GetDrinks(searchKeyword, drinkBrandsList, drinkCategoriesList, minValue, maxValue, drinkOrderingCriteria).Where(drink => !drink.IsRequestingApproval).ToList();
+        foreach (var drink in drinks)
+        {
+            if (drinkReviewService.GetAverageRating(drink.DrinkId).Result >= minStars) {
+                drinksViewModels.Add(new DrinkElementViewModel { Drink = drink, AverageRating = drinkReviewService.GetAverageRating(drink.DrinkId).Result });
+            }
+        }
 
-        drinks = drinks.Where(drink =>  drinkReviewService.GetAverageRating(drink.DrinkId).Result >= minStars).ToList();
         var homeViewModel = new HomeViewModel
         {
             Drink = drinkOfTheDay,
             drinkCategories = drinkCategories,
             drinkBrands = drinkBrands,
-            drinks = drinks ?? new List<DrinkDTO>(), // Ensure drinks is not null
+            drinks = drinksViewModels ?? new List<DrinkElementViewModel>(), // Ensure drinks is not null
              
             SearchKeyword = searchKeyword,
             MinValue = minValue,
