@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using DataAccess.Constants;
 using DataAccess.DTOModels;
+using DataAccess.Extensions;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
@@ -10,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
 using WinUIApp.Views.ViewModels;
+using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.Views.Pages
 {
@@ -22,6 +28,7 @@ namespace WinUIApp.Views.Pages
         private IUserService userService;
         private IReviewService reviewService;
         private IDrinkModificationRequestService modificationRequestService;
+        private ICheckersService checkersService;
         private RoleType userRole;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -53,6 +60,7 @@ namespace WinUIApp.Views.Pages
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
             this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
+            this.checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
 
             this.ViewModel = new DrinkDetailPageViewModel(
                 this.drinkService,
@@ -90,6 +98,9 @@ namespace WinUIApp.Views.Pages
                 {
                     this.reviewService.UpdateNumberOfFlagsForReview(review.ReviewId, review.NumberOfFlags + 1);
                     this.ViewModel.RefreshReviews();
+
+                    Thread.Sleep(1000);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.ViewModel.Drink.DrinkId);
                 }
                 catch (Exception ex)
                 {
@@ -113,6 +124,10 @@ namespace WinUIApp.Views.Pages
                 {
                     this.reviewService.HideReview(review.ReviewId);
                     this.ViewModel.RefreshReviews();
+
+                    // I have to do this since RefreshReviews is not async
+                    Thread.Sleep(1000);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.ViewModel.Drink.DrinkId);
                 }
                 catch (Exception ex)
                 {
@@ -128,11 +143,44 @@ namespace WinUIApp.Views.Pages
             }
         }
 
+        public async Task PrepareReviewForCheck(Review review)
+        {
+            User? user = await this.userService.GetUserById(review.UserId);
+            DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
+
+            if (user == null || drink == null)
+            {
+                return;
+            }
+
+            Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+            regularDrink.UserDrinks = new List<UserDrink>();
+            regularDrink.Votes = new List<Vote>();
+            regularDrink.DrinkCategories = new List<DrinkCategory>();
+            review.User = user;
+            review.Drink = regularDrink;
+        }
+
         private async void AICheckMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
             {
-                // TO DO
+                Review regularReview = ReviewMapper.ToEntity(review);
+                try
+                {
+                    await this.PrepareReviewForCheck(regularReview);
+
+                    // If somebody with an actual key is checking this, this might not update because the function is of type void
+                    // and not task
+                    this.checkersService.RunAICheckForOneReviewAsync(regularReview);
+                    this.ViewModel.RefreshReviews();
+
+                    Thread.Sleep(1000);
+                    AuthenticationWindow.NavigationFrame.Navigate(typeof(DrinkDetailPage), this.ViewModel.Drink.DrinkId);
+                }
+                catch
+                {
+                }
             }
         }
 

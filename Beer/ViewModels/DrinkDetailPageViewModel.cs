@@ -182,7 +182,7 @@ namespace WinUIApp.Views.ViewModels
             }
 
             this.AverageReviewScore = (float)Math.Round(this.reviewService.GetReviewAverageByDrinkID(this.Drink.DrinkId), DrinkDetailPageViewModel.NUMBER_OF_DECIMALS_DISPLAYED);
-            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(this.Drink.DrinkId);
+            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(this.Drink.DrinkId).Where(review => !review.IsHidden).ToList();
             this.Reviews.Clear();
             foreach (ReviewDTO review in reviews)
             {
