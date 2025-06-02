@@ -55,7 +55,7 @@ public class HomePageController : Controller
 
         var homeViewModel = new HomeViewModel
         {
-            Drink = drinkOfTheDay,
+            Drink = new DrinkElementViewModel { Drink = drinkOfTheDay, AverageRating = drinkReviewService.GetAverageRating(drinkOfTheDay.DrinkId).Result },
             drinkCategories = drinkCategories,
             drinkBrands = drinkBrands,
             drinks = drinksViewModels ?? new List<DrinkElementViewModel>(), // Ensure drinks is not null

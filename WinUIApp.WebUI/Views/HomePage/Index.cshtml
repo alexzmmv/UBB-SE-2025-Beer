@@ -136,11 +136,7 @@
                     <h2 class="h3">Drink of the Day</h2>
                 </div>
                 <div class="modern-card mx-auto" style="max-width: 500px;">
-                    @await Html.PartialAsync(
-                        "~/Views/Drink/DrinkElement.cshtml",
-                        new WinUIApp.WebUI.Models.DrinkElementViewModel { Drink = Model.Drink },
-                        null
-                    )
+                    @await Html.PartialAsync("~/Views/Drink/DrinkElement.cshtml", @Model.Drink, null)
                 </div>
             </div>
 
