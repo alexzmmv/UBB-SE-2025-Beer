@@ -189,5 +189,27 @@ namespace DataAccess.Repository
                 .ToListAsync();
             return reviews.Select(ReviewMapper.ToDTO).ToList();
         }
+
+        public async Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrinkId(int drinkId)
+        {
+            List<Review> reviews = await this.dataContext.Reviews
+                .Include(review => review.User)
+                .Where(review => review.DrinkId == drinkId)
+                .ToListAsync();
+
+            return reviews.Select(review => new ReviewWithUserDTO
+            {
+                ReviewId = review.ReviewId,
+                DrinkId = review.DrinkId,
+                UserId = review.UserId,
+                RatingValue = review.RatingValue,
+                Content = review.Content,
+                CreatedDate = review.CreatedDate,
+                NumberOfFlags = review.NumberOfFlags,
+                IsHidden = review.IsHidden,
+                Username = review.User?.Username ?? string.Empty,
+                EmailAddress = review.User?.EmailAddress ?? string.Empty
+            }).ToList();
+        }
     }
 }

@@ -279,5 +279,29 @@
                 return 0.0;
             }
         }
+
+        public async Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrink(int drinkId)
+        {
+            try
+            {
+                return await this.reviewsRepository.GetReviewsWithUserInfoByDrinkId(drinkId);
+            }
+            catch
+            {
+                return new List<ReviewWithUserDTO>();
+            }
+        }
+
+        public async Task<List<ReviewDTO>> GetReviewsByDrinkAndUser(int drinkId, Guid userId)
+        {
+            try
+            {
+                return await this.reviewsRepository.GetReviewsByDrinkIdAndUserId(drinkId, userId);
+            }
+            catch
+            {
+                return new List<ReviewDTO>();
+            }
+        }
     }
 }
