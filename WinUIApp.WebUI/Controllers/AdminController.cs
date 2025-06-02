@@ -1,13 +1,14 @@
-﻿using System.Diagnostics;
-using DataAccess.AutoChecker;
+﻿using DataAccess.AutoChecker;
 using DataAccess.Constants;
+using DataAccess.DTOModels;
+using DataAccess.Extensions;
 using DataAccess.Model.AdminDashboard;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using WebServer.Models;
 using WinUiApp.Data.Data;
-using DataAccess.DTOModels;
 using WinUIApp.WebAPI.Models;
 
 namespace WebServer.Controllers
@@ -92,8 +93,14 @@ namespace WebServer.Controllers
                     ViewBag.ErrorMessage = "Review not found. Please try again.";
                     return RedirectToAction("AdminDashboard");
                 }
+                User? user = await this.userService.GetUserById(review.UserId);
+                DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
 
-                // Map ReviewDTO to Review entity for AI check
+
+                Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+                regularDrink.UserDrinks = new List<UserDrink>();
+                regularDrink.Votes = new List<Vote>();
+                regularDrink.DrinkCategories = new List<DrinkCategory>();
                 var reviewEntity = new WinUiApp.Data.Data.Review
                 {
                     ReviewId = review.ReviewId,
@@ -103,8 +110,12 @@ namespace WebServer.Controllers
                     RatingValue = review.RatingValue,
                     CreatedDate = review.CreatedDate,
                     NumberOfFlags = review.NumberOfFlags,
-                    IsHidden = review.IsHidden
+                    IsHidden = review.IsHidden,
+                    Drink = regularDrink,
+                    User = user
                 };
+                // Map ReviewDTO to Review entity for AI check
+
 
                 this.checkersService.RunAICheckForOneReviewAsync(reviewEntity);
             }
@@ -113,6 +124,23 @@ namespace WebServer.Controllers
                 Debug.WriteLine("Couldn't run AiChecker. Make sure you have your token set correctly:", exception.Message);
             }
             return RedirectToAction("AdminDashboard");
+        }
+        public async Task PrepareReviewForCheck(Review review)
+        {
+            User? user = await this.userService.GetUserById(review.UserId);
+            DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
+
+            if (user == null || drink == null)
+            {
+                return;
+            }
+
+            Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+            regularDrink.UserDrinks = new List<UserDrink>();
+            regularDrink.Votes = new List<Vote>();
+            regularDrink.DrinkCategories = new List<DrinkCategory>();
+            review.User = user;
+            review.Drink = regularDrink;
         }
         public async Task<IActionResult> AutomaticallyCheckReviews()
         {
@@ -217,7 +245,8 @@ namespace WebServer.Controllers
             return RedirectToAction("AdminDashboard");
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId, Guid userId ) { 
+        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId, Guid userId)
+        {
             await drinkModificationRequestService.ApproveRequest(drinkModificationRequestId, userId);
             return RedirectToAction("AdminDashboard");
         }
