@@ -40,6 +40,7 @@
 </div>
 
 <div class="container app-container">
+    @Html.AntiForgeryToken()
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -178,7 +179,7 @@
                 @foreach (var review in Model.Reviews)
                 {
                     <div class="col-md-6 mb-4">
-                        <div class="review-card">
+                        <div class="review-card" oncontextmenu="showReviewMenu(event, @review.ReviewId); return false;">
                             <div class="review-header">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div class="rating-value">
@@ -298,5 +299,116 @@
                 }, 3000);
             }
         });
+
+        function hideReview(reviewId) {
+            $.post('/Drink/HideReview', { reviewId: reviewId }, function() {
+                // Refresh the page or update the UI
+                location.reload();
+            });
+        }
+
+        function aiCheckReview(reviewId) {
+            $.post('/Drink/AICheckReview', { reviewId: reviewId }, function() {
+                // Refresh the page or update the UI
+                location.reload();
+            });
+        }
+
+        function reportReview(reviewId) {
+            // Get the anti-forgery token
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            
+            $.ajax({
+                url: '/Drink/ReportReview',
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                data: JSON.stringify(reviewId),
+                contentType: 'application/json',
+                success: function() {
+                    showMessage('Review reported successfully');
+                    setTimeout(() => location.reload(), 2000);
+                },
+                error: function(xhr, status, error) {
+                    showMessage('Error reporting review: ' + error, 'danger');
+                }
+            });
+        }
+
+        // Add this helper function to show both success and error messages
+        function showMessage(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}-fill me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.reviews-section'));
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        function showReviewMenu(event, reviewId) {
+            event.preventDefault();
+            // Position the menu at cursor
+            const menu = document.getElementById('reviewContextMenu');
+            menu.style.display = 'block';
+            menu.style.left = event.pageX + 'px';
+            menu.style.top = event.pageY + 'px';
+            
+            // Store the current review ID for the actions
+            menu.dataset.reviewId = reviewId;
+        }
+
+        // Hide menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#reviewContextMenu')) {
+                document.getElementById('reviewContextMenu').style.display = 'none';
+            }
+        });
     </script>
+
+    <style>
+        .dropdown-menu {
+            z-index: 1000;
+            min-width: 10rem;
+            padding: 0.5rem 0;
+            background-color: #fff;
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 0.25rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.25rem 1rem;
+            clear: both;
+            font-weight: 400;
+            color: #212529;
+            text-align: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 }
+
+<div id="reviewContextMenu" class="dropdown-menu" style="display:none; position:absolute;">
+    @if (User.IsInRole("Admin"))
+    {
+        <button class="dropdown-item" onclick="hideReview(this.closest('#reviewContextMenu').dataset.reviewId)">Hide Review</button>
+        <button class="dropdown-item" onclick="aiCheckReview(this.closest('#reviewContextMenu').dataset.reviewId)">AI Check</button>
+    }
+    else
+    {
+        <button class="dropdown-item" onclick="reportReview(this.closest('#reviewContextMenu').dataset.reviewId)">Report Review</button>
+    }
+</div>

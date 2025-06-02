@@ -121,5 +121,23 @@ namespace WinUIApp.WebAPI.Controllers
             var averageRating = await reviewService.GetAverageRating(drinkId);
             return Ok(averageRating);
         }
+
+        [HttpPost("hide")]
+        public async Task<IActionResult> HideReview([FromBody] int reviewId)
+        {
+            await reviewService.HideReview(reviewId);
+            return Ok();
+        }
+
+        [HttpPost("report")]
+        public async Task<IActionResult> ReportReview([FromBody] int reviewId)
+        {
+            var review = await reviewService.GetReviewById(reviewId);
+            if (review != null)
+            {
+                await reviewService.UpdateNumberOfFlagsForReview(reviewId, review.NumberOfFlags + 1);
+            }
+            return Ok();
+        }
     }
 }

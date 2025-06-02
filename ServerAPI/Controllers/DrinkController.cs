@@ -2,8 +2,10 @@
 using DataAccess.DTORequests.Drink;
 using DataAccess.Service;
 using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WinUiApp.Data.Data;
 using WinUIApp.WebAPI.Models;
 using WinUIApp.WebAPI.Requests.Drink;
 using WinUIApp.WebAPI.Services;
@@ -17,12 +19,21 @@ namespace WinUIApp.WebAPI.Controllers
         private readonly IDrinkService drinkService;
         private readonly IUserService userService;
         private readonly IDrinkModificationRequestService drinkModificationRequestService;
+        private readonly IReviewService reviewService;
+        private readonly ICheckersService checkersService; // Add this dependency
 
-        public DrinkController(IDrinkService drinkService, IUserService userService, IDrinkModificationRequestService drinkModificationRequestService)
+        public DrinkController(
+            IDrinkService drinkService,
+            IUserService userService,
+            IDrinkModificationRequestService drinkModificationRequestService,
+            IReviewService reviewService,
+            ICheckersService checkersService) // Inject the dependency
         {
             this.drinkService = drinkService;
             this.userService = userService;
             this.drinkModificationRequestService = drinkModificationRequestService;
+            this.reviewService = reviewService;
+            this.checkersService = checkersService; // Assign the injected dependency
         }
 
         [HttpPost("get-all")]
@@ -171,6 +182,18 @@ namespace WinUIApp.WebAPI.Controllers
         public IActionResult DeleteFromUserPersonalDrinkList([FromBody] DeleteFromUserPersonalDrinkListRequest request)
         {
             return Ok(drinkService.DeleteFromUserPersonalDrinkList(request.userId, request.drinkId));
+        }
+
+        [HttpPost("ReportReview")]
+        public async Task<IActionResult> ReportReview([FromBody] int reviewId)
+        {
+            var review = await reviewService.GetReviewById(reviewId);
+            if (review != null)
+            {
+                await reviewService.UpdateNumberOfFlagsForReview(reviewId, review.NumberOfFlags + 1);
+                return Ok();
+            }
+            return NotFound();
         }
     }
 }

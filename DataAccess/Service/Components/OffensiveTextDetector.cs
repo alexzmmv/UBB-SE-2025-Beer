@@ -1,14 +1,15 @@
 ﻿namespace DataAccess.Service.Components
 {
+    using Microsoft.Extensions.Configuration;
+    using Newtonsoft.Json;
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
-    using Newtonsoft.Json;
 
     public static class OffensiveTextDetector
     {
@@ -23,6 +24,9 @@
                 .Build();
 
             HuggingFaceApiToken = configuration["HuggingFaceApiToken"] ?? string.Empty;
+
+            Debug.WriteLine($"API Token loaded: {!string.IsNullOrEmpty(HuggingFaceApiToken)}");
+            Debug.WriteLine($"API URL: {HuggingFaceApiUrl}");
         }
 
         public static string DetectOffensiveContent(string text)
@@ -48,6 +52,10 @@
 
         private static string TryApiRequest(string apiUrl, string text)
         {
+            Debug.WriteLine($"Making API request with token: {!string.IsNullOrEmpty(HuggingFaceApiToken)}");
+            Debug.WriteLine($"Using API URL: {apiUrl}");
+            Debug.WriteLine($"Request text: '{text}'");
+
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {HuggingFaceApiToken}");
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 DrinkDBApp");

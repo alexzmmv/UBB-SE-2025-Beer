@@ -1,4 +1,5 @@
-﻿using DataAccess.Service.Interfaces;
+﻿using DataAccess.Service;
+using DataAccess.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WinUiApp.Data.Data;
@@ -37,7 +38,7 @@ namespace WinUIApp.WebUI.Controllers
                     })]
                 };
                 return View(updateDrinkViewModel);
-            } 
+            }
             catch (Exception apiException)
             {
                 throw new Exception("API EXCEPTION: " + apiException.Message);
@@ -52,7 +53,7 @@ namespace WinUIApp.WebUI.Controllers
                 var categories = drinkService.GetDrinkCategories();
                 if (ModelState.IsValid)
                 {
-
+                    Guid userId = AuthenticationService.GetCurrentUserId();
                     drinkService.UpdateDrink(new DrinkDTO
                     {
                         DrinkId = updateDrinkViewModel.DrinkId,
@@ -64,8 +65,8 @@ namespace WinUIApp.WebUI.Controllers
                             }).OfType<Category>()],
                         AlcoholContent = updateDrinkViewModel.DrinkAlcoholPercentage,
                         DrinkBrand = drinkService.GetDrinkBrandNames().FirstOrDefault(brand => brand.BrandName == updateDrinkViewModel.DrinkBrandName)
-                    });
-                    return RedirectToAction("DrinkDetail", "Drink", new {id = updateDrinkViewModel.DrinkId});
+                    }, userId);
+                    return RedirectToAction("DrinkDetail", "Drink", new { id = updateDrinkViewModel.DrinkId });
                 }
                 else
                 {

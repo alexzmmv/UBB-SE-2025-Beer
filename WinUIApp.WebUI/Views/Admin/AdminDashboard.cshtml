@@ -36,6 +36,12 @@
                         <div>
                             <strong>@review.ReviewId</strong>: @review.Content
                         </div>
+                        @if (TempData[$"ReviewCheck_{review.ReviewId}"] != null)
+                        {
+                            <div class="alert @(TempData[$"ReviewCheck_{review.ReviewId}"].ToString().Contains("Warning") ? "alert-warning" : "alert-success") mt-2">
+                                @TempData[$"ReviewCheck_{review.ReviewId}"]
+                            </div>
+                        }
                         <div class="review-actions" id="actions-@review.ReviewId" style="display: none">
                             <div class="btn-group btn-group-sm mt-2" role="group">
                                 <form asp-controller="Admin" asp-action="AcceptReview" method="post" style="display: inline;">

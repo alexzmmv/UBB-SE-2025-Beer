@@ -9,6 +9,7 @@
     xmlns:components="using:WinUIApp.Views.Components"
     xmlns:votebutton="using:WinUIApp.Views.Components"
     xmlns:modals="using:WinUIApp.Views.Components.Modals"
+    xmlns:models="using:DataAccess.DTOModels"
     mc:Ignorable="d"
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
 
@@ -63,18 +64,38 @@
                 <Run Text="/ 5" />
                     </TextBlock>
                     <TextBlock Text="Reviews" FontSize="18" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    <ItemsControl ItemsSource="{Binding Reviews}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                    <ListView ItemsSource="{Binding Reviews}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:ReviewDTO">
                                 <Border BorderThickness="1" BorderBrush="Goldenrod" Padding="10" Margin="0 0 0 10">
                                     <StackPanel>
-                                        <TextBlock Text="{Binding Content}" TextWrapping="WrapWholeWords"/>
+                                        <TextBlock Text="{x:Bind Content}" TextWrapping="WrapWholeWords"/>
                                     </StackPanel>
+                                    <Border.ContextFlyout>
+                                        <MenuFlyout>
+                                            <!-- Admin options -->
+                                            <MenuFlyoutItem Text="Hide" 
+                                                            Click="HideReview_Click"
+                                                            Visibility="{Binding DataContext.IsCurrentUserAdmin, 
+                                                                         RelativeSource={RelativeSource Mode=TemplatedParent}, 
+                                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <MenuFlyoutItem Text="AI Check" 
+                                                            Click="AICheckReview_Click"
+                                                            Visibility="{Binding DataContext.IsCurrentUserAdmin, 
+                                                                         RelativeSource={RelativeSource Mode=TemplatedParent}, 
+                                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <!-- User option -->
+                                            <MenuFlyoutItem Text="Report" 
+                                                            Click="ReportReview_Click"
+                                                            Visibility="{Binding DataContext.IsCurrentUserAdmin, 
+                                                                         RelativeSource={RelativeSource Mode=TemplatedParent}, 
+                                                                         Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                        </MenuFlyout>
+                                    </Border.ContextFlyout>
                                 </Border>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
