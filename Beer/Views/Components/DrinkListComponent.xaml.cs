@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using DrinkDb_Auth;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinUiApp.Data.Data;
-using WinUIApp.ProxyServices.Models;
 using WinUIApp.Views.Pages;
 using WinUIApp.WebAPI.Models;
 

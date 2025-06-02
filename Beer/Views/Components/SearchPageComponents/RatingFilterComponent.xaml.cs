@@ -5,12 +5,12 @@ namespace WinUIApp.Views.Components.SearchPageComponents
 
     public sealed partial class RatingFilterComponent : UserControl
     {
-        private const int MaximumStarRating = 5;
-        private const string FiveStarsOption = "5 Stars";
-        private const string FourStarsOption = "4 Stars";
-        private const string ThreeStarsOption = "3 Stars";
-        private const string TwoStarsOption = "2 Stars";
-        private const string OneStarOption = "1 Star";
+        private const int MAXIMUM_STAR_RATING = 5;
+        private const string FIVE_STARS_OPTION = "5 Stars";
+        private const string FOUR_STARS_OPTION = "4 Stars";
+        private const string THREE_STARTS_OPTION = "3 Stars";
+        private const string TWO_STARS_OPTION = "2 Stars";
+        private const string ONE_STAR_OPTION = "1 Star";
 
         public RatingFilterComponent()
         {
@@ -23,19 +23,19 @@ namespace WinUIApp.Views.Components.SearchPageComponents
         {
             switch (sortField)
             {
-                case FiveStarsOption:
+                case RatingFilterComponent.FIVE_STARS_OPTION:
                     this.RatingComboBox.SelectedIndex = 0;
                     break;
-                case FourStarsOption:
+                case RatingFilterComponent.FOUR_STARS_OPTION:
                     this.RatingComboBox.SelectedIndex = 1;
                     break;
-                case ThreeStarsOption:
+                case RatingFilterComponent.THREE_STARTS_OPTION:
                     this.RatingComboBox.SelectedIndex = 2;
                     break;
-                case TwoStarsOption:
+                case RatingFilterComponent.TWO_STARS_OPTION:
                     this.RatingComboBox.SelectedIndex = 3;
                     break;
-                case OneStarOption:
+                case RatingFilterComponent.ONE_STAR_OPTION:
                     this.RatingComboBox.SelectedIndex = 4;
                     break;
             }
@@ -50,7 +50,7 @@ namespace WinUIApp.Views.Components.SearchPageComponents
         {
             if (this.RatingComboBox.SelectedItem is ComboBoxItem)
             {
-                float selectedStarRating = MaximumStarRating - this.RatingComboBox.SelectedIndex;
+                float selectedStarRating = RatingFilterComponent.MAXIMUM_STAR_RATING - this.RatingComboBox.SelectedIndex;
                 this.RatingChanged?.Invoke(this, selectedStarRating);
             }
         }

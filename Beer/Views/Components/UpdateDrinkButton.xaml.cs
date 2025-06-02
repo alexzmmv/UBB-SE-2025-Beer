@@ -1,9 +1,6 @@
 using System;
-using DataAccess.Service;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinUiApp.Data.Data;
-using WinUIApp.ProxyServices.Models;
 using WinUIApp.WebAPI.Models;
 
 namespace WinUIApp.Views.Components

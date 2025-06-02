@@ -48,12 +48,12 @@ namespace DrinkDb_Auth.View.Authentication
 
         public async void ShowAsync()
         {
-            await contentDialog?.ShowAsync();
+            await this.contentDialog?.ShowAsync();
         }
 
         public void Hide()
         {
-            contentDialog?.Hide();
+            this.contentDialog?.Hide();
         }
     }
 }

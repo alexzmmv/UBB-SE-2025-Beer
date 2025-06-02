@@ -1,7 +1,6 @@
 ﻿namespace WinUIApp.Views.Components.SearchPageComponents
 {
     using System;
-    using WinUiApp.Data.Data;
     using WinUIApp.WebAPI.Models;
 
     public class DrinkDisplayItem

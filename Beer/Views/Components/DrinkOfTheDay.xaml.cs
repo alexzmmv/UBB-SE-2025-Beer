@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinUiApp.Data.Data;
-using WinUIApp.ProxyServices.Models;
 
 namespace WinUIApp.Views.Components
 {
@@ -18,12 +17,12 @@ namespace WinUIApp.Views.Components
             DependencyProperty.Register("DrinkCategories", typeof(List<Category>), typeof(DrinkOfTheDayComponent), new PropertyMetadata(new List<Category>()));
 
         public static readonly DependencyProperty AlcoholContentProperty =
-            DependencyProperty.Register("AlcoholContent", typeof(float), typeof(DrinkOfTheDayComponent), new PropertyMetadata(DefaultFloatValue));
+            DependencyProperty.Register("AlcoholContent", typeof(float), typeof(DrinkOfTheDayComponent), new PropertyMetadata(DEFAULT_FLOAT_VALUE));
 
         public static readonly DependencyProperty ImageSourceProperty =
             DependencyProperty.Register("ImageSource", typeof(string), typeof(DrinkOfTheDayComponent), new PropertyMetadata(string.Empty));
 
-        private const float DefaultFloatValue = 0.0f;
+        private const float DEFAULT_FLOAT_VALUE = 0.0f;
 
         public DrinkOfTheDayComponent()
         {

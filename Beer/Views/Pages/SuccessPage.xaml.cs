@@ -19,14 +19,14 @@ namespace DrinkDb_Auth
         public SuccessPage()
         {
             this.InitializeComponent();
-            Loaded += SuccessPage_Loaded;
+            this.Loaded += this.SuccessPage_Loaded;
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
-            InitializeAdminStatus();
+            this.InitializeAdminStatus();
         }
 
         private async void InitializeAdminStatus()
         {
-            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+            this.isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

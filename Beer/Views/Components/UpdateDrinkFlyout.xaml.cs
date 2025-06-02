@@ -1,21 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DataAccess.Constants;
-using DataAccess.Service;
 using DataAccess.Service.Interfaces;
-using DrinkDb_Auth.ServiceProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinUiApp.Data.Data;
-using WinUIApp.ProxyServices;
-using WinUIApp.ProxyServices.Models;
 using WinUIApp.ViewModels;
 using WinUIApp.WebAPI.Models;
-using WinUIApp.WebAPI.Services;
 
 namespace WinUIApp.Views.Components
 {
@@ -35,9 +29,9 @@ namespace WinUIApp.Views.Components
         {
             this.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
             this.InitializeComponent();
-            drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
-            userService = App.Host.Services.GetRequiredService<IUserService>();
-            modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
+            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
+            this.userService = App.Host.Services.GetRequiredService<IUserService>();
+            this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
 
             this.Loaded += this.UpdateDrinkFlyout_LoadedAsync;
             this.CategoryList.SelectionChanged += this.CategoryList_SelectionChanged;
@@ -55,7 +49,7 @@ namespace WinUIApp.Views.Components
 
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
-                    foreach (var category in filteredCategories)
+                    foreach (string category in filteredCategories)
                     {
                         if (this.viewModel.SelectedCategoryNames.Contains(category))
                         {
@@ -74,16 +68,14 @@ namespace WinUIApp.Views.Components
 
         private async void UpdateDrinkFlyout_LoadedAsync(object sender, RoutedEventArgs eventArguments)
         {
-            isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+            this.isAdmin = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
-            var allBrands = drinkService.GetDrinkBrandNames();
-            var allCategories = drinkService.GetDrinkCategories();
+            List<Brand> allBrands = this.drinkService.GetDrinkBrandNames();
+            List<Category> allCategories = this.drinkService.GetDrinkCategories();
 
             this.viewModel = new UpdateDrinkMenuViewModel(
                 this.DrinkToUpdate,
-                drinkService,
-                userService,
-                modificationRequestService)
+                drinkService)
             {
                 AllBrands = allBrands,
                 AllCategoryObjects = allCategories,
@@ -151,11 +143,11 @@ namespace WinUIApp.Views.Components
                 this.viewModel.ValidateUpdatedDrinkDetails();
                 this.DrinkToUpdate.CategoryList = this.viewModel.GetSelectedCategories();
 
-                isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+                this.isAdmin = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
 
                 string message;
 
-                if (isAdmin)
+                if (this.isAdmin)
                 {
                     this.viewModel.InstantUpdateDrink();
                     message = "Drink updated successfully.";

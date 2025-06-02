@@ -25,91 +25,91 @@ namespace DrinkDb_Auth.ViewModel.Authentication
 
         public AuthenticationQRCodeAndTextBoxDigits(string keyCode = QRCodeDefaultKeyCode)
         {
-            firstDigit = string.Empty;
-            secondDigit = string.Empty;
-            thirdDigit = string.Empty;
-            fourthDigit = string.Empty;
-            fifthDigit = string.Empty;
-            sixthDigit = string.Empty;
+            this.firstDigit = string.Empty;
+            this.secondDigit = string.Empty;
+            this.thirdDigit = string.Empty;
+            this.fourthDigit = string.Empty;
+            this.fifthDigit = string.Empty;
+            this.sixthDigit = string.Empty;
 
             if (keyCode.CompareTo("none") != 0)
             {
-                CreateQRCode(keyCode);
+                this.CreateQRCode(keyCode);
             }
         }
 
         public string FirstDigit
         {
-            get => firstDigit;
+            get => this.firstDigit;
             set
             {
-                firstDigit = value;
-                OnPropertyChanged();
+                this.firstDigit = value;
+                this.OnPropertyChanged();
             }
         }
 
         public string SecondDigit
         {
-            get => secondDigit;
+            get => this.secondDigit;
             set
             {
-                secondDigit = value;
-                OnPropertyChanged();
+                this.secondDigit = value;
+                this.OnPropertyChanged();
             }
         }
 
         public string ThirdDigit
         {
-            get => thirdDigit;
+            get => this.thirdDigit;
             set
             {
-                thirdDigit = value;
-                OnPropertyChanged();
+                this.thirdDigit = value;
+                this.OnPropertyChanged();
             }
         }
 
         public string FourthDigit
         {
-            get => fourthDigit;
+            get => this.fourthDigit;
             set
             {
-                fourthDigit = value;
-                OnPropertyChanged();
+                this.fourthDigit = value;
+                this.OnPropertyChanged();
             }
         }
 
         public string FifthDigit
         {
-            get => fifthDigit;
+            get => this.fifthDigit;
             set
             {
-                fifthDigit = value;
-                OnPropertyChanged();
+                this.fifthDigit = value;
+                this.OnPropertyChanged();
             }
         }
 
         public string SixthDigit
         {
-            get => sixthDigit;
+            get => this.sixthDigit;
             set
             {
-                sixthDigit = value;
-                OnPropertyChanged();
+                this.sixthDigit = value;
+                this.OnPropertyChanged();
             }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public BitmapImage? QrCodeImage
         {
-            get => qrCodeImage;
+            get => this.qrCodeImage;
             set
             {
-                qrCodeImage = value;
-                OnPropertyChanged();
+                this.qrCodeImage = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -126,7 +126,7 @@ namespace DrinkDb_Auth.ViewModel.Authentication
                 stream.Position = 0;
                 qrCodeBitmapImage.SetSource(stream.AsRandomAccessStream());
             }
-            QrCodeImage = qrCodeBitmapImage;
+            this.QrCodeImage = qrCodeBitmapImage;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using DataAccess.Constants;
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using DataAccess.Constants;
 using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth;
@@ -7,14 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using WinUIApp.ProxyServices;
-using WinUIApp.ViewModels;
-using WinUIApp.Views.Components.Modals;
 using WinUIApp.Views.ViewModels;
-using WinUIApp.Views.Windows;
 
 namespace WinUIApp.Views.Pages
 {
@@ -24,7 +21,6 @@ namespace WinUIApp.Views.Pages
         private IDrinkReviewService drinkReviewService;
         private IUserService userService;
         private IReviewService reviewService;
-        private ICheckersService checkersService;
         private IDrinkModificationRequestService modificationRequestService;
         private RoleType userRole;
 
@@ -56,7 +52,6 @@ namespace WinUIApp.Views.Pages
             this.drinkReviewService = App.Host.Services.GetRequiredService<IDrinkReviewService>();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
-            this.checkersService = App.Host.Services.GetRequiredService<ICheckersService>();
             this.modificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
 
             this.ViewModel = new DrinkDetailPageViewModel(
@@ -83,8 +78,8 @@ namespace WinUIApp.Views.Pages
 
         private async void InitializeUserRole()
         {
-            UserRole = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) ?? RoleType.User;
-            ViewModel.IsAdmin = UserRole == RoleType.Admin;
+            this.UserRole = await this.userService.GetHighestRoleTypeForUser(App.CurrentUserId) ?? RoleType.User;
+            this.ViewModel.IsAdmin = this.UserRole == RoleType.Admin;
         }
 
         private void FlagReviewMenuItem_Click(object sender, RoutedEventArgs e)
@@ -93,12 +88,12 @@ namespace WinUIApp.Views.Pages
             {
                 try
                 {
-                    reviewService.UpdateNumberOfFlagsForReview(review.ReviewId, review.NumberOfFlags + 1);
-                    ViewModel.RefreshReviews();
+                    this.reviewService.UpdateNumberOfFlagsForReview(review.ReviewId, review.NumberOfFlags + 1);
+                    this.ViewModel.RefreshReviews();
                 }
                 catch (Exception ex)
                 {
-                    var dialog = new ContentDialog
+                    ContentDialog dialog = new ContentDialog
                     {
                         Title = "Error",
                         Content = "Failed to flag review: " + ex.Message,
@@ -116,12 +111,12 @@ namespace WinUIApp.Views.Pages
             {
                 try
                 {
-                    reviewService.HideReview(review.ReviewId);
-                    ViewModel.RefreshReviews();
+                    this.reviewService.HideReview(review.ReviewId);
+                    this.ViewModel.RefreshReviews();
                 }
                 catch (Exception ex)
                 {
-                    var dialog = new ContentDialog
+                    ContentDialog dialog = new ContentDialog
                     {
                         Title = "Error",
                         Content = "Failed to hide review: " + ex.Message,
@@ -137,29 +132,7 @@ namespace WinUIApp.Views.Pages
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewDTO review)
             {
-                //try
-                //{
-                //    var result = await reviewService.AICheckReview(review.ReviewId);
-                //    var dialog = new ContentDialog
-                //    {
-                //        Title = "AI Check Result",
-                //        Content = result,
-                //        CloseButtonText = "OK",
-                //        XamlRoot = this.XamlRoot
-                //    };
-                //    await dialog.ShowAsync();
-                //}
-                //catch (Exception ex)
-                //{
-                //    var dialog = new ContentDialog
-                //    {
-                //        Title = "Error",
-                //        Content = "Failed to perform AI check: " + ex.Message,
-                //        CloseButtonText = "OK",
-                //        XamlRoot = this.XamlRoot
-                //    };
-                //    await dialog.ShowAsync();
-                //}
+                // TO DO
             }
         }
 
@@ -220,12 +193,12 @@ namespace WinUIApp.Views.Pages
 
         private void OpenAddReviewModal(object sender, EventArgs e)
         {
-            AddReviewModalOverlay.Visibility = Visibility.Visible;
+            this.AddReviewModalOverlay.Visibility = Visibility.Visible;
         }
 
         private void CloseAddReviewModal(object sender,EventArgs e)
         {
-            AddReviewModalOverlay.Visibility = Visibility.Collapsed;
+            this.AddReviewModalOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void RefreshReviews(object sender, EventArgs e)

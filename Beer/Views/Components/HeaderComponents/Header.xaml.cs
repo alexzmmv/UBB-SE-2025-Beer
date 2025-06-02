@@ -26,7 +26,7 @@ namespace WinUIApp.Views.Components.HeaderComponents
             if (!isInitialized)
             {
                 this.NavMenu.Initialize();
-                isInitialized = true;
+                this.isInitialized = true;
             }
         }
 

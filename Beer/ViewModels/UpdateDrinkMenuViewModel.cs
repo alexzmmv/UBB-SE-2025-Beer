@@ -1,27 +1,21 @@
-﻿namespace WinUIApp.ViewModels
-{
-    using DataAccess.Constants;
-    using DataAccess.Service.Interfaces;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.ProxyServices.Models;
-    using WinUIApp.WebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using DataAccess.Service.Interfaces;
+using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
-    public partial class UpdateDrinkMenuViewModel(DrinkDTO drinkToUpdate, IDrinkService drinkService,
-        IUserService userService, IDrinkModificationRequestService modificationRequestService) : INotifyPropertyChanged
+namespace WinUIApp.ViewModels
+{
+    public partial class UpdateDrinkMenuViewModel(DrinkDTO drinkToUpdate, IDrinkService drinkService) : INotifyPropertyChanged
     {
         private const float MaxAlcoholContent = 100.0f;
         private const float MinAlcoholContent = 0.0f;
         private readonly IDrinkService drinkService = drinkService;
-        private readonly IUserService userService = userService;
-        private readonly IDrinkModificationRequestService modificationRequestService = modificationRequestService;
         private DrinkDTO drinkToUpdate = drinkToUpdate;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -151,11 +145,9 @@
                 this.DrinkToUpdate.DrinkBrand = this.FindBrandByName(this.BrandName);
                 this.DrinkToUpdate.CategoryList = (List<Category>)this.GetSelectedCategories();
                 this.drinkService.UpdateDrink(this.DrinkToUpdate, App.CurrentUserId);
-                Debug.WriteLine("Drink updated successfully (admin).");
             }
-            catch (Exception instantUpdateDrinkException)
+            catch
             {
-                Debug.WriteLine($"Error updating drinkToUpdate: {instantUpdateDrinkException.Message}");
             }
         }
 
@@ -168,30 +160,24 @@
                     throw new InvalidOperationException("No drink selected for update");
                 }
 
-                // Check if brand exists
                 List<Brand> existingBrands = this.drinkService.GetDrinkBrandNames();
                 Brand? brand = existingBrands.FirstOrDefault(b => b.BrandName.Equals(this.BrandName, StringComparison.OrdinalIgnoreCase));
-                
+
                 if (brand == null)
                 {
                     throw new ArgumentException($"Brand '{this.BrandName}' does not exist. Please select an existing brand.");
                 }
 
-                // Update the DrinkToUpdate object with the new values
                 this.DrinkToUpdate.DrinkName = this.DrinkName;
                 this.DrinkToUpdate.DrinkImageUrl = this.DrinkURL;
                 this.DrinkToUpdate.DrinkBrand = brand;
                 this.DrinkToUpdate.AlcoholContent = float.Parse(this.AlcoholContent);
                 this.DrinkToUpdate.CategoryList = this.GetSelectedCategories();
 
-                // Use the UpdateDrink API which handles the edit workflow properly
                 this.drinkService.UpdateDrink(this.DrinkToUpdate, App.CurrentUserId);
-
-                Debug.WriteLine("Drink update request sent to admin.");
             }
-            catch (Exception sendUpdateDrinkRequestException)
+            catch
             {
-                Debug.WriteLine($"Error sending update request: {sendUpdateDrinkRequestException.Message}");
                 throw;
             }
         }

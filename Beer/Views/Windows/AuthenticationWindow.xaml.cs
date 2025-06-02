@@ -6,11 +6,9 @@ namespace DrinkDb_Auth
     using DataAccess.AuthProviders.Github;
     using DataAccess.AuthProviders.LinkedIn;
     using DataAccess.AuthProviders.Twitter;
-    using DataAccess.Model.Authentication;
     using DataAccess.OAuthProviders;
     using DataAccess.Service.Interfaces;
     using DataAccess.Service;
-    using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.AuthProviders.Google;
     using DrinkDb_Auth.ViewModel.Authentication;
     using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +17,10 @@ namespace DrinkDb_Auth
     using Microsoft.UI.Windowing;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Quartz;
-    using Quartz.Impl;
     using Windows.Graphics;
     using WinUIApp;
     using WinUiApp.Data.Data;
     using Microsoft.UI.Xaml.Navigation;
-    using WinUIApp.Views.Pages;
-    using DrinkDb_Auth.View;
     using DataAccess.Constants;
 
     public sealed partial class AuthenticationWindow : Window
@@ -54,7 +48,7 @@ namespace DrinkDb_Auth
             this.userService = userService;
             this.twitterOAuth2Provider = twitterOAuth2Provider;
             this.googleOAuth2Provider = googleOAuth2Provider;
-            this.MainFrame.Navigated += FrameNavigated;
+            this.MainFrame.Navigated += this.FrameNavigated;
 
             this.Title = "Beer";
 
@@ -108,7 +102,6 @@ namespace DrinkDb_Auth
                     App.CurrentUserId = user.UserId;
                     App.CurrentSessionId = response.SessionId;
 
-                    // Initialize the header after successful 2FA
                     this.HeaderComponent.Initialize();
                     this.HeaderComponent.Visibility = Visibility.Visible;
 

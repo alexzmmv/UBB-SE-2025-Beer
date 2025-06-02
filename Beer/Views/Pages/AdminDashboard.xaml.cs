@@ -2,31 +2,25 @@ namespace DrinkDb_Auth.View
 {
     using System;
     using System.ComponentModel;
-    using DataAccess.Model.AdminDashboard;
-    using DataAccess.Model.Authentication;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using DataAccess.AutoChecker;
+    using DataAccess.Service.Interfaces;
     using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
     using DrinkDb_Auth.ViewModel.AdminDashboard;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Text;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Controls.Primitives;
-    using Microsoft.Extensions.DependencyInjection;
-    using DataAccess.AutoChecker;
-    using DataAccess.Service;
-    using DataAccess.Service.Interfaces;
+    using Microsoft.UI.Xaml.Navigation;
     using WinUIApp;
     using WinUiApp.Data.Data;
-    using System.Diagnostics;
-    using System.Threading.Tasks;
-    using DataAccess.DTOModels;
-    using Microsoft.UI.Xaml.Navigation;
-    using WinUIApp.Views.Components;
 
     public sealed partial class AdminPage : Page
     {
         public MainPageViewModel ViewModel { get; }
         private readonly IUserService userService;
-        private readonly IDrinkService drinkService;
         private readonly IReviewService reviewService;
         private readonly IUpgradeRequestsService upgradeRequestsService;
         private readonly IDrinkModificationRequestService drinkModificationRequestService;
@@ -35,7 +29,6 @@ namespace DrinkDb_Auth.View
         {
             this.InitializeComponent();
             this.userService = App.Host.Services.GetRequiredService<IUserService>();
-            this.drinkService = App.Host.Services.GetRequiredService<IDrinkService>();
             this.reviewService = App.Host.Services.GetRequiredService<IReviewService>();
             this.upgradeRequestsService = App.Host.Services.GetRequiredService<IUpgradeRequestsService>();
             this.drinkModificationRequestService = App.Host.Services.GetRequiredService<IDrinkModificationRequestService>();
@@ -49,7 +42,6 @@ namespace DrinkDb_Auth.View
             this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.Unloaded += MainPage_Unloaded;
 
-            // Load data after initialization
             this.Loaded += async (s, e) => await LoadInitialData();
         }
 
@@ -57,7 +49,6 @@ namespace DrinkDb_Auth.View
         {
             base.OnNavigatedTo(e);
             AuthenticationWindow.CurrentPage = typeof(AdminPage);
-            LoadDashboardData();
         }
 
         private async Task LoadInitialData()
@@ -66,10 +57,8 @@ namespace DrinkDb_Auth.View
             {
                 await this.ViewModel.LoadAllData();
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error loading initial data: {ex.Message}");
-                // Show error to user if needed
             }
         }
 
@@ -181,25 +170,25 @@ namespace DrinkDb_Auth.View
         {
             if (sender is Button button && button.Tag is int requestId)
             {
-                await ViewModel.HandleUpgradeRequest(false, requestId);
+                await this.ViewModel.HandleUpgradeRequest(false, requestId);
             }
         }
 
         private async void ReviewSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            await ViewModel.FilterReviews(this.ReviewSearchTextBox.Text);
+            await this.ViewModel.FilterReviews(this.ReviewSearchTextBox.Text);
         }
 
         private async void BannedUserSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            await ViewModel.FilterAppeals(this.BannedUserSearchTextBox.Text);
+            await this.ViewModel.FilterAppeals(this.BannedUserSearchTextBox.Text);
         }
 
         private void MenuFlyoutAllowReview_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewWithUsername reviewWithUsername)
             {
-                ViewModel.ResetReviewFlags(reviewWithUsername.Review.ReviewId);
+                this.ViewModel.ResetReviewFlags(reviewWithUsername.Review.ReviewId);
             }
         }
 
@@ -207,7 +196,7 @@ namespace DrinkDb_Auth.View
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewWithUsername reviewWithUsername)
             {
-                ViewModel.HideReview(reviewWithUsername.Review.ReviewId);
+                this.ViewModel.HideReview(reviewWithUsername.Review.ReviewId);
             }
         }
 
@@ -215,7 +204,7 @@ namespace DrinkDb_Auth.View
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is ReviewWithUsername reviewWithUsername)
             {
-                await ViewModel.RunAICheck(reviewWithUsername.Review);
+                await this.ViewModel.RunAICheck(reviewWithUsername.Review);
             }
         }
 
@@ -259,7 +248,7 @@ namespace DrinkDb_Auth.View
         {
             if (sender is Button button && button.Tag is int modificationRequestId)
             {
-                await ViewModel.ApproveDrinkModification(modificationRequestId);
+                await this.ViewModel.ApproveDrinkModification(modificationRequestId);
             }
         }
 
@@ -267,13 +256,8 @@ namespace DrinkDb_Auth.View
         {
             if (sender is Button button && button.Tag is int modificationRequestId)
             {
-                await ViewModel.DenyDrinkModification(modificationRequestId);
+                await this.ViewModel.DenyDrinkModification(modificationRequestId);
             }
-        }
-
-        private void LoadDashboardData()
-        {
-            // Implementation of LoadDashboardData method
         }
     }
 }

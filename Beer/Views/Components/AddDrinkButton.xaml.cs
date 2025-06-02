@@ -12,7 +12,7 @@ namespace WinUIApp.Views.Components
 
         private void AddDrinkButton_Click(object sender, RoutedEventArgs eventArguments)
         {
-            var flyout = new Flyout
+            Flyout flyout = new Flyout
             {
                 Content = new AddDrinkFlyout
                 {

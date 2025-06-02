@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace WinUIApp.ViewModels
 {
     public class AddReviewViewModel : ViewModelBase
     {
-        private const int BottleRatingToIndexOffset = 1;
+        private const int BOTTLE_RATING_TO_INDEX_OFFSET = 1;
 
         private ObservableCollection<BottleAsset> bottles;
         private int ratingScore;
@@ -58,10 +57,10 @@ namespace WinUIApp.ViewModels
         {
             foreach (int currentRatingBottle in Enumerable.Range(AddReviewViewModel.MINIMUM_RATING, AddReviewViewModel.MAXIMUM_RATING))
             {
-                int bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
+                int bottleIndex = currentRatingBottle - AddReviewViewModel.BOTTLE_RATING_TO_INDEX_OFFSET;
                 this.Bottles[bottleIndex].ImageSource = currentRatingBottle <= clickedBottleNumber
-                    ? AssetConstants.FilledBottlePath
-                    : AssetConstants.EmptyBottlePath;
+                    ? AssetConstants.FILLED_BOTTLE_PATH
+                    : AssetConstants.EMPTY_BOTTLE_PATH;
             }
 
             this.RatingScore = clickedBottleNumber;
@@ -71,7 +70,7 @@ namespace WinUIApp.ViewModels
         {
             if (this.RatingScore < AddReviewViewModel.MINIMUM_RATING)
             {
-                return ERROR_ON_VALIDATION;
+                return AddReviewViewModel.ERROR_ON_VALIDATION;
             }
 
             ReviewDTO newReview = new ReviewDTO
@@ -93,12 +92,11 @@ namespace WinUIApp.ViewModels
         {
             this.Bottles.Clear();
 
-            // Create exactly 5 bottles (for 1-5 rating scale)
-            for (int i = MINIMUM_RATING; i <= MAXIMUM_RATING; i++)
+            for (int i = AddReviewViewModel.MINIMUM_RATING; i <= AddReviewViewModel.MAXIMUM_RATING; i++)
             {
                 this.Bottles.Add(new BottleAsset
                 {
-                    ImageSource = AssetConstants.EmptyBottlePath
+                    ImageSource = AssetConstants.EMPTY_BOTTLE_PATH
                 });
             }
         }

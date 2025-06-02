@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,7 +11,6 @@ using DataAccess.Constants;
 using DataAccess.DTOModels;
 using DataAccess.Extensions;
 using DataAccess.Model.AdminDashboard;
-using DataAccess.Model.Authentication;
 using DataAccess.Service.Interfaces;
 using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
@@ -56,7 +54,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
         // Constructor of warnings
         public MainPageViewModel(IReviewService reviewsService, IUserService userService,
-            IUpgradeRequestsService upgradeRequestsService, ICheckersService checkersService, 
+            IUpgradeRequestsService upgradeRequestsService, ICheckersService checkersService,
             IDrinkModificationRequestService drinkModificationRequestService)
         {
             this.reviewsService = reviewsService;
@@ -278,16 +276,15 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             try
             {
-                await LoadFlaggedReviews();
-                await LoadAppeals();
-                await LoadRoleRequests();
-                await LoadOffensiveWords();
-                await LoadDrinkModificationRequests();
-                await LoadUsersWithHiddenReviews();
+                await this.LoadFlaggedReviews();
+                await this.LoadAppeals();
+                await this.LoadRoleRequests();
+                await this.LoadOffensiveWords();
+                await this.LoadDrinkModificationRequests();
+                await this.LoadUsersWithHiddenReviews();
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error loading data: {ex.Message}");
             }
         }
 
@@ -297,7 +294,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             this.FlaggedReviews = new ObservableCollection<ReviewDTO>(reviews);
 
             List<ReviewWithUsername> reviewsWithUsernames = new List<ReviewWithUsername>();
-            foreach (var review in reviews)
+            foreach (ReviewDTO review in reviews)
             {
                 string username = await this.GetUsernameById(review.UserId);
                 reviewsWithUsernames.Add(new ReviewWithUsername
@@ -319,7 +316,6 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading appeals: {ex.Message}");
                 this.AppealsUsers = new ObservableCollection<User>();
             }
         }
@@ -333,7 +329,6 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading role requests: {ex.Message}");
                 this.UpgradeRequests = new ObservableCollection<UpgradeRequest>();
             }
         }
@@ -342,12 +337,11 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             try
             {
-                var words = await checkersService.GetOffensiveWordsList();
+                HashSet<string> words = await checkersService.GetOffensiveWordsList();
                 this.OffensiveWords = new ObservableCollection<string>(words);
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error loading offensive words: {ex.Message}");
             }
         }
 
@@ -357,43 +351,36 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             {
                 IEnumerable<DrinkModificationRequestDTO> allRequests = await this.drinkModificationRequestService.GetAllModificationRequests();
 
-                // Filter out temporary "Add" requests that are part of "Edit" operations
                 List<DrinkModificationRequestDTO> filteredRequests = allRequests
                     .Where(request =>
                     {
-                        // Keep all requests except "Add" requests that have a corresponding "Edit" request
                         if (request.ModificationType == DrinkModificationRequestType.Add)
                         {
-                            // Check if this "Add" request is part of an "Edit" operation
-                            // by looking for an "Edit" request with the same NewDrinkId as this request's NewDrinkId
                             bool isPartOfEdit = allRequests.Any(editRequest =>
                                 editRequest.ModificationType == DrinkModificationRequestType.Edit &&
                                 editRequest.NewDrinkId == request.NewDrinkId);
 
-                            return !isPartOfEdit; // Only include "Add" requests that are NOT part of an edit
+                            return !isPartOfEdit;
                         }
 
-                        return true; // Include all "Edit" and "Remove" requests
-                    })
-                    .ToList();
+                        return true;
+                    }).ToList();
 
-                // Create wrapper objects with usernames
-                var requestsWithUsernames = new List<DrinkModificationRequestWithUsername>();
-                foreach (var request in filteredRequests)
+                List<DrinkModificationRequestWithUsername> requestsWithUsernames = new List<DrinkModificationRequestWithUsername>();
+                foreach (DrinkModificationRequestDTO request in filteredRequests)
                 {
-                    var username = await GetUsernameById(request.RequestingUserId);
-                    requestsWithUsernames.Add(new DrinkModificationRequestWithUsername 
-                    { 
-                        Request = request, 
-                        Username = username 
+                    string username = await this.GetUsernameById(request.RequestingUserId);
+                    requestsWithUsernames.Add(new DrinkModificationRequestWithUsername
+                    {
+                        Request = request,
+                        Username = username
                     });
                 }
 
                 this.DrinkModificationRequests = new ObservableCollection<DrinkModificationRequestWithUsername>(requestsWithUsernames);
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error loading drink modification requests: {ex.Message}");
                 this.DrinkModificationRequests = new ObservableCollection<DrinkModificationRequestWithUsername>();
             }
         }
@@ -530,10 +517,10 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
         {
             try
             {
-                await requestsService.ProcessUpgradeRequest(isAccepted, requestId);
+                await this.requestsService.ProcessUpgradeRequest(isAccepted, requestId);
                 Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread()?.TryEnqueue(async () =>
                 {
-                    List<UpgradeRequest> requests = await requestsService.RetrieveAllUpgradeRequests();
+                    List<UpgradeRequest> requests = await this.requestsService.RetrieveAllUpgradeRequests();
 
                     UpgradeRequests = new ObservableCollection<UpgradeRequest>(requests);
 
@@ -734,9 +721,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 {
                     await this.KeepBanForUser(this.SelectedAppealUser);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error in KeepBanCommand: {ex.Message}");
                 }
             });
             this.AcceptAppealCommand = new RelayCommand(async () =>
@@ -745,9 +731,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 {
                     await this.AcceptAppealForUser(this.SelectedAppealUser);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error in AcceptAppealCommand: {ex.Message}");
                 }
             });
             this.CloseAppealCaseCommand = new RelayCommand(() => this.CloseAppealCase(this.SelectedAppealUser));
@@ -775,9 +760,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                         Console.WriteLine(message);
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error in RunAutoCheckCommand: {ex.Message}");
                 }
             });
 
@@ -819,9 +803,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
                 users = users.Where(u => u.AssignedRole != RoleType.Admin && u.AssignedRole != RoleType.Banned).ToList();
                 this.UsersWithHiddenReviews = new ObservableCollection<User>(users);
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error loading users with hidden reviews: {ex.Message}");
                 this.UsersWithHiddenReviews = new ObservableCollection<User>();
             }
         }
@@ -847,9 +830,8 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
 
                 this.OnPropertyChanged(nameof(UsersWithHiddenReviews));
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error banning user: {ex.Message}");
             }
         }
 
@@ -858,11 +840,10 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             try
             {
                 await this.drinkModificationRequestService.ApproveRequest(modificationRequestId, App.CurrentUserId);
-                await LoadDrinkModificationRequests(); // Refresh the list
+                await this.LoadDrinkModificationRequests();
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error approving drink modification: {ex.Message}");
             }
         }
 
@@ -871,11 +852,10 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             try
             {
                 await this.drinkModificationRequestService.DenyRequest(modificationRequestId, App.CurrentUserId);
-                await LoadDrinkModificationRequests(); // Refresh the list
+                await this.LoadDrinkModificationRequests();
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.WriteLine($"Error denying drink modification: {ex.Message}");
             }
         }
 
@@ -895,7 +875,7 @@ namespace DrinkDb_Auth.ViewModel.AdminDashboard
             return type switch
             {
                 DrinkModificationRequestType.Add => "Add",
-                DrinkModificationRequestType.Edit => "Update", 
+                DrinkModificationRequestType.Edit => "Update",
                 DrinkModificationRequestType.Remove => "Remove",
                 _ => type.ToString()
             };

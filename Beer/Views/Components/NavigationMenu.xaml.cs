@@ -33,8 +33,8 @@ namespace WinUIApp.Views.Components
         {
             if (App.CurrentUserId != Guid.Empty)
             {
-                isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
-                IsAdmin = isAdmin;
+                this.isAdmin = await userService.GetHighestRoleTypeForUser(App.CurrentUserId) == RoleType.Admin;
+                this.IsAdmin = isAdmin;
             }
         }
 

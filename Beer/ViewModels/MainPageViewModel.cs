@@ -1,16 +1,13 @@
-﻿namespace WinUIApp.ViewModels
-{
-    using DataAccess.Service.Interfaces;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using WinUiApp.Data.Data;
-    using WinUIApp.ProxyServices;
-    using WinUIApp.ProxyServices.Models;
-    using WinUIApp.WebAPI.Models;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using DataAccess.Service.Interfaces;
+using WinUiApp.Data.Data;
+using WinUIApp.WebAPI.Models;
 
+namespace WinUIApp.ViewModels
+{
     internal class MainPageViewModel
     {
         private IDrinkService drinkService;
@@ -62,7 +59,7 @@
 
         public void LoadDrinkOfTheDayData()
         {
-            var drink = this.drinkService.GetDrinkOfTheDay();
+            DrinkDTO drink = this.drinkService.GetDrinkOfTheDay();
 
             this.ImageSource = drink.DrinkImageUrl;
             this.DrinkName = drink.DrinkName;
