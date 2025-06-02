@@ -21,9 +21,9 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task UpdateUserRole_Success()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var newRole = RoleType.Admin;
-            var user = new User
+            Guid userId = Guid.NewGuid();
+            RoleType newRole = RoleType.Admin;
+            User user = new User
             {
                 UserId = userId,
                 Username = "user",
@@ -31,19 +31,19 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            userRepositoryMock.Setup(x => x.GetUserById(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ReturnsAsync(user);
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            this.userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ReturnsAsync(true);
 
             // Act
-            await userService.UpdateUserRole(userId, newRole);
+            await this.userService.UpdateUserRole(userId, newRole);
 
             // Assert
-            userRepositoryMock.Verify(x => x.GetUserById(userId), Times.Once);
-            userRepositoryMock.Verify(x => x.UpdateUser(It.Is<User>(u => 
-                u.UserId == userId && 
-                u.AssignedRole == newRole)), 
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetUserById(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.Is<User>(userEntity => 
+                userEntity.UserId == userId && 
+                userEntity.AssignedRole == newRole)), 
                 Times.Once);
         }
 
@@ -54,15 +54,15 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             var userId = Guid.NewGuid();
             var newRole = RoleType.Admin;
 
-            userRepositoryMock.Setup(x => x.GetUserById(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ReturnsAsync((User?)null);
 
             // Act
             await userService.UpdateUserRole(userId, newRole);
 
             // Assert
-            userRepositoryMock.Verify(x => x.GetUserById(userId), Times.Once);
-            userRepositoryMock.Verify(x => x.UpdateUser(It.IsAny<User>()), Times.Never);
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetUserById(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
@@ -79,19 +79,19 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            userRepositoryMock.Setup(x => x.GetUserById(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ReturnsAsync(user);
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            this.userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ReturnsAsync(false);
 
             // Act
             await userService.UpdateUserRole(userId, newRole);
 
             // Assert
-            userRepositoryMock.Verify(x => x.GetUserById(userId), Times.Once);
-            userRepositoryMock.Verify(x => x.UpdateUser(It.Is<User>(u => 
-                u.UserId == userId && 
-                u.AssignedRole == newRole)), 
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetUserById(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.Is<User>(userEntity => 
+                userEntity.UserId == userId && 
+                userEntity.AssignedRole == newRole)), 
                 Times.Once);
         }
 
@@ -109,19 +109,19 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            userRepositoryMock.Setup(x => x.GetUserById(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ReturnsAsync(user);
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            this.userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
             await userService.UpdateUserRole(userId, newRole);
 
             // Assert
-            userRepositoryMock.Verify(x => x.GetUserById(userId), Times.Once);
-            userRepositoryMock.Verify(x => x.UpdateUser(It.Is<User>(u => 
-                u.UserId == userId && 
-                u.AssignedRole == newRole)), 
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetUserById(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.Is<User>(userEntity => 
+                userEntity.UserId == userId && 
+                userEntity.AssignedRole == newRole)), 
                 Times.Once);
         }
 
@@ -132,15 +132,15 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             var userId = Guid.NewGuid();
             var newRole = RoleType.Admin;
 
-            userRepositoryMock.Setup(x => x.GetUserById(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
             await userService.UpdateUserRole(userId, newRole);
 
             // Assert
-            userRepositoryMock.Verify(x => x.GetUserById(userId), Times.Once);
-            userRepositoryMock.Verify(x => x.UpdateUser(It.IsAny<User>()), Times.Never);
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetUserById(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.IsAny<User>()), Times.Never);
         }
     }
 } 

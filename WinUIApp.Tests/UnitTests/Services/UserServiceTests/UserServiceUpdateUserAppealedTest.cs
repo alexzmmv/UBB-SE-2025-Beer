@@ -31,16 +31,16 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 HasSubmittedAppeal = false
             };
 
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ReturnsAsync(true);
 
             // Act
             await userService.UpdateUserAppleaed(user, true);
 
             // Assert
-            userRepositoryMock.Verify(x => x.UpdateUser(It.Is<User>(u => 
-                u.UserId == userId && 
-                u.HasSubmittedAppeal)), 
+            userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.Is<User>(userEntity => 
+                userEntity.UserId == userId && 
+                userEntity.HasSubmittedAppeal)), 
                 Times.Once);
         }
 
@@ -54,7 +54,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             await userService.UpdateUserAppleaed(user, true);
 
             // Assert
-            userRepositoryMock.Verify(x => x.UpdateUser(It.IsAny<User>()), Times.Never);
+            userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
@@ -71,16 +71,16 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 HasSubmittedAppeal = false
             };
 
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ReturnsAsync(false);
 
             // Act
             await userService.UpdateUserAppleaed(user, true);
 
             // Assert
-            userRepositoryMock.Verify(x => x.UpdateUser(It.Is<User>(u => 
-                u.UserId == userId && 
-                u.HasSubmittedAppeal)), 
+            userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.Is<User>(userEntity => 
+                userEntity.UserId == userId && 
+                userEntity.HasSubmittedAppeal)), 
                 Times.Once);
         }
 
@@ -98,16 +98,16 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 HasSubmittedAppeal = false
             };
 
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
             await userService.UpdateUserAppleaed(user, true);
 
             // Assert
-            userRepositoryMock.Verify(x => x.UpdateUser(It.Is<User>(u => 
-                u.UserId == userId && 
-                u.HasSubmittedAppeal)), 
+            userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.Is<User>(userEntity => 
+                userEntity.UserId == userId && 
+                userEntity.HasSubmittedAppeal)), 
                 Times.Once);
         }
 
@@ -122,7 +122,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             await userService.UpdateUserAppleaed(user, true);
 
             // Assert
-            userRepositoryMock.Verify(x => x.UpdateUser(It.IsAny<User>()), Times.Never);
+            userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.IsAny<User>()), Times.Never);
         }
     }
 } 

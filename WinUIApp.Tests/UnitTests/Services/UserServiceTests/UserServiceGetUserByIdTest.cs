@@ -21,8 +21,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUserById_ExistingUser_ReturnsUser()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var expectedUser = new User
+            Guid userId = Guid.NewGuid();
+            User expectedUser = new User
             {
                 UserId = userId,
                 Username = "testuser",
@@ -30,7 +30,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            this.userRepositoryMock.Setup(x => x.GetUserById(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ReturnsAsync(expectedUser);
 
             // Act
@@ -48,8 +48,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUserById_NonExistingUser_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            this.userRepositoryMock.Setup(x => x.GetUserById(userId))
+            Guid userId = Guid.NewGuid();
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ReturnsAsync((User?)null);
 
             // Act
@@ -63,8 +63,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUserById_Exception_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            this.userRepositoryMock.Setup(x => x.GetUserById(userId))
+            Guid userId = Guid.NewGuid();
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserById(userId))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

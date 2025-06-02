@@ -17,81 +17,81 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
 
         public UserRepositoryDeleteUserTest()
         {
-            users = new List<User>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Users).Returns(dbSetMock.Object);
-            userRepository = new UserRepository(dbContextMock.Object);
+            this.users = new List<User>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(this.dbSetMock.Object);
+            this.userRepository = new UserRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task DeleteUser_ExistingUser_ReturnsTrue()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var user = new User { UserId = userId, Username = "testUser" };
-            users.Add(user);
+            Guid userId = Guid.NewGuid();
+            User user = new User { UserId = userId, Username = "testUser" };
+            this.users.Add(user);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(databaseContext => databaseContext.SaveChangesAsync()).ReturnsAsync(1);
 
             // Act
-            var result = await userRepository.DeleteUser(userId);
+            bool result = await this.userRepository.DeleteUser(userId);
 
             // Assert
             Assert.True(result);
-            localDbSetMock.Verify(x => x.Remove(user), Times.Once);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            localDbSetMock.Verify(databaseSet => databaseSet.Remove(user), Times.Once);
+            this.dbContextMock.Verify(databaseContext => databaseContext.SaveChangesAsync(), Times.Once);
         }
 
         [Fact]
         public async Task DeleteUser_NonExistentUser_ReturnsFalse()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Guid userId = Guid.NewGuid();
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.DeleteUser(userId);
+            bool result = await this.userRepository.DeleteUser(userId);
 
             // Assert
             Assert.False(result);
-            localDbSetMock.Verify(x => x.Remove(It.IsAny<User>()), Times.Never);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Never);
+            localDbSetMock.Verify(databaseSet => databaseSet.Remove(It.IsAny<User>()), Times.Never);
+            this.dbContextMock.Verify(databaseContext => databaseContext.SaveChangesAsync(), Times.Never);
         }
 
         [Fact]
         public async Task DeleteUser_SaveChangesFails_ReturnsFalse()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var user = new User { UserId = userId, Username = "testUser" };
-            users.Add(user);
+            Guid userId = Guid.NewGuid();
+            User user = new User { UserId = userId, Username = "testUser" };
+            this.users.Add(user);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(0);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(databaseContext => databaseContext.SaveChangesAsync()).ReturnsAsync(0);
 
             // Act
-            var result = await userRepository.DeleteUser(userId);
+            bool result = await this.userRepository.DeleteUser(userId);
 
             // Assert
             Assert.False(result);
-            localDbSetMock.Verify(x => x.Remove(user), Times.Once);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            localDbSetMock.Verify(databaseSet => databaseSet.Remove(user), Times.Once);
+            this.dbContextMock.Verify(databaseContext => databaseContext.SaveChangesAsync(), Times.Once);
         }
 
         [Fact]
         public async Task DeleteUser_DbSetThrowsException_Throws()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            dbContextMock.Setup(x => x.Users).Throws(new Exception("Test exception"));
+            Guid userId = Guid.NewGuid();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => userRepository.DeleteUser(userId));
+            await Assert.ThrowsAsync<Exception>(() => this.userRepository.DeleteUser(userId));
         }
     }
 } 

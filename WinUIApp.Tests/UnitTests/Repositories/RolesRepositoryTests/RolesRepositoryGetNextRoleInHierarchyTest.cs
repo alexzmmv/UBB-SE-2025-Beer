@@ -17,32 +17,32 @@ namespace WinUIApp.Tests.UnitTests.Repositories.RolesRepositoryTests
 
         public RolesRepositoryGetNextRoleInHierarchyTest()
         {
-            roles = new List<Role>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(roles);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Roles).Returns(dbSetMock.Object);
-            rolesRepository = new RolesRepository(dbContextMock.Object);
+            this.roles = new List<Role>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.roles);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Roles).Returns(this.dbSetMock.Object);
+            this.rolesRepository = new RolesRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task GetNextRoleInHierarchy_EmptyDatabase_CreatesDefaultRolesAndReturnsNext()
         {
             // Arrange
-            var rolesList = new List<Role>();
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(rolesList);
-            dbContextMock.Setup(x => x.Roles).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChanges()).Callback(() => {
+            List<Role> rolesList = new List<Role>();
+            Mock<DbSet<Role>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(rolesList);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Roles).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.SaveChanges()).Callback(() => {
                 // Simulate EF Core: roles are added to the in-memory list
-                if (!rolesList.Any(r => r.RoleType == RoleType.Banned))
+                if (!rolesList.Any(roleItem => roleItem.RoleType == RoleType.Banned))
                     rolesList.Add(new Role(RoleType.Banned, "Banned"));
-                else if (!rolesList.Any(r => r.RoleType == RoleType.User))
+                else if (!rolesList.Any(roleItem => roleItem.RoleType == RoleType.User))
                     rolesList.Add(new Role(RoleType.User, "User"));
-                else if (!rolesList.Any(r => r.RoleType == RoleType.Admin))
+                else if (!rolesList.Any(roleItem => roleItem.RoleType == RoleType.Admin))
                     rolesList.Add(new Role(RoleType.Admin, "Admin"));
             }).Returns(1);
 
             // Act
-            var result = await rolesRepository.GetNextRoleInHierarchy(RoleType.Banned);
+            Role? result = await this.rolesRepository.GetNextRoleInHierarchy(RoleType.Banned);
 
             // Assert
             Assert.NotNull(result);
@@ -53,17 +53,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.RolesRepositoryTests
         public async Task GetNextRoleInHierarchy_HasExistingRoles_ReturnsNextRole()
         {
             // Arrange
-            var existingRoles = new List<Role>
+            List<Role> existingRoles = new List<Role>
             {
                 new Role(RoleType.Banned, "Banned"),
                 new Role(RoleType.User, "User"),
                 new Role(RoleType.Admin, "Admin")
             };
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(existingRoles);
-            dbContextMock.Setup(x => x.Roles).Returns(localDbSetMock.Object);
+            Mock<DbSet<Role>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(existingRoles);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Roles).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await rolesRepository.GetNextRoleInHierarchy(RoleType.User);
+            Role? result = await this.rolesRepository.GetNextRoleInHierarchy(RoleType.User);
 
             // Assert
             Assert.NotNull(result);
@@ -74,17 +74,17 @@ namespace WinUIApp.Tests.UnitTests.Repositories.RolesRepositoryTests
         public async Task GetNextRoleInHierarchy_AdminRole_ReturnsAdmin()
         {
             // Arrange
-            var existingRoles = new List<Role>
+            List<Role> existingRoles = new List<Role>
             {
                 new Role(RoleType.Banned, "Banned"),
                 new Role(RoleType.User, "User"),
                 new Role(RoleType.Admin, "Admin")
             };
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(existingRoles);
-            dbContextMock.Setup(x => x.Roles).Returns(localDbSetMock.Object);
+            Mock<DbSet<Role>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(existingRoles);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Roles).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await rolesRepository.GetNextRoleInHierarchy(RoleType.Admin);
+            Role? result = await this.rolesRepository.GetNextRoleInHierarchy(RoleType.Admin);
 
             // Assert
             Assert.NotNull(result);
@@ -95,10 +95,10 @@ namespace WinUIApp.Tests.UnitTests.Repositories.RolesRepositoryTests
         public async Task GetNextRoleInHierarchy_DbSetThrowsException_Throws()
         {
             // Arrange
-            dbContextMock.Setup(x => x.Roles).Throws(new Exception("Test exception"));
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Roles).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => rolesRepository.GetNextRoleInHierarchy(RoleType.User));
+            await Assert.ThrowsAsync<Exception>(() => this.rolesRepository.GetNextRoleInHierarchy(RoleType.User));
         }
     }
 } 

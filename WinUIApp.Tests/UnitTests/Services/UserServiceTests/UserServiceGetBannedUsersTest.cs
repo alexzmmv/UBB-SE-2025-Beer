@@ -21,7 +21,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetBannedUsers_HasBannedUsers_ReturnsBannedUsersList()
         {
             // Arrange
-            var expectedUsers = new List<User>
+            List<User> expectedUsers = new List<User>
             {
                 new User
                 {
@@ -39,7 +39,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 }
             };
 
-            this.userRepositoryMock.Setup(x => x.GetUsersByRoleType(RoleType.Banned))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersByRoleType(RoleType.Banned))
                 .ReturnsAsync(expectedUsers);
 
             // Act
@@ -51,14 +51,14 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             Assert.Equal(expectedUsers[0].Username, result[0].Username);
             Assert.Equal(expectedUsers[1].UserId, result[1].UserId);
             Assert.Equal(expectedUsers[1].Username, result[1].Username);
-            Assert.All(result, user => Assert.Equal(RoleType.Banned, user.AssignedRole));
+            Assert.All(result, userEntity => Assert.Equal(RoleType.Banned, userEntity.AssignedRole));
         }
 
         [Fact]
         public async Task GetBannedUsers_NoBannedUsers_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetUsersByRoleType(RoleType.Banned))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersByRoleType(RoleType.Banned))
                 .ReturnsAsync(new List<User>());
 
             // Act
@@ -72,7 +72,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetBannedUsers_Exception_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetUsersByRoleType(RoleType.Banned))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersByRoleType(RoleType.Banned))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

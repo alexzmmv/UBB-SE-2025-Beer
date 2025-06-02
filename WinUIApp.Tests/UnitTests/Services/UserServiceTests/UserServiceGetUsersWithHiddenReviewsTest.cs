@@ -21,7 +21,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUsersWithHiddenReviews_HasUsers_ReturnsUsersList()
         {
             // Arrange
-            var expectedUsers = new List<User>
+            List<User> expectedUsers = new List<User>
             {
                 new User
                 {
@@ -39,7 +39,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 }
             };
 
-            this.userRepositoryMock.Setup(x => x.GetUsersWithHiddenReviews())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersWithHiddenReviews())
                 .ReturnsAsync(expectedUsers);
 
             // Act
@@ -57,7 +57,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUsersWithHiddenReviews_NoUsers_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetUsersWithHiddenReviews())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersWithHiddenReviews())
                 .ReturnsAsync(new List<User>());
 
             // Act
@@ -71,7 +71,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUsersWithHiddenReviews_Exception_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetUsersWithHiddenReviews())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersWithHiddenReviews())
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

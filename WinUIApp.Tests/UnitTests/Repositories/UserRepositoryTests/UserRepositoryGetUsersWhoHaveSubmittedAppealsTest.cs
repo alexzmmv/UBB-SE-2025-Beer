@@ -17,26 +17,26 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
 
         public UserRepositoryGetUsersWhoHaveSubmittedAppealsTest()
         {
-            users = new List<User>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Users).Returns(dbSetMock.Object);
-            userRepository = new UserRepository(dbContextMock.Object);
+            this.users = new List<User>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(this.dbSetMock.Object);
+            this.userRepository = new UserRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task GetUsersWhoHaveSubmittedAppeals_Success_ReturnsUsers()
         {
             // Arrange
-            var user1 = new User { UserId = Guid.NewGuid(), HasSubmittedAppeal = true };
-            var user2 = new User { UserId = Guid.NewGuid(), HasSubmittedAppeal = false };
-            users.AddRange(new[] { user1, user2 });
+            User user1 = new User { UserId = Guid.NewGuid(), HasSubmittedAppeal = true };
+            User user2 = new User { UserId = Guid.NewGuid(), HasSubmittedAppeal = false };
+            this.users.AddRange(new[] { user1, user2 });
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersWhoHaveSubmittedAppeals();
+            List<User> result = await this.userRepository.GetUsersWhoHaveSubmittedAppeals();
 
             // Assert
             Assert.Single(result);
@@ -47,14 +47,14 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersWhoHaveSubmittedAppeals_NoUsers_ReturnsEmptyList()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), HasSubmittedAppeal = false };
-            users.Add(user);
+            User user = new User { UserId = Guid.NewGuid(), HasSubmittedAppeal = false };
+            this.users.Add(user);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersWhoHaveSubmittedAppeals();
+            List<User> result = await this.userRepository.GetUsersWhoHaveSubmittedAppeals();
 
             // Assert
             Assert.Empty(result);
@@ -64,10 +64,10 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersWhoHaveSubmittedAppeals_DbSetThrowsException_Throws()
         {
             // Arrange
-            dbContextMock.Setup(x => x.Users).Throws(new Exception("Test exception"));
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => userRepository.GetUsersWhoHaveSubmittedAppeals());
+            await Assert.ThrowsAsync<Exception>(() => this.userRepository.GetUsersWhoHaveSubmittedAppeals());
         }
     }
 } 

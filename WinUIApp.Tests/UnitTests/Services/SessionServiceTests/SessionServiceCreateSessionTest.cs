@@ -20,14 +20,14 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task CreateSessionAsync_Success_ReturnsSession()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var expectedSession = new Session(Guid.NewGuid(), userId);
+            Guid userId = Guid.NewGuid();
+            Session expectedSession = new Session(Guid.NewGuid(), userId);
 
-            this.sessionRepositoryMock.Setup(x => x.CreateSession(userId))
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.CreateSession(userId))
                 .ReturnsAsync(expectedSession);
 
             // Act
-            var result = await this.sessionService.CreateSessionAsync(userId);
+            Session? result = await this.sessionService.CreateSessionAsync(userId);
 
             // Assert
             Assert.NotNull(result);
@@ -39,12 +39,12 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task CreateSessionAsync_Exception_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            this.sessionRepositoryMock.Setup(x => x.CreateSession(userId))
+            Guid userId = Guid.NewGuid();
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.CreateSession(userId))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await this.sessionService.CreateSessionAsync(userId);
+            Session? result = await this.sessionService.CreateSessionAsync(userId);
 
             // Assert
             Assert.Null(result);

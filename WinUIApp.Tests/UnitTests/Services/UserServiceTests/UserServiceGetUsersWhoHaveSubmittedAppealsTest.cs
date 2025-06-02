@@ -21,7 +21,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUsersWhoHaveSubmittedAppeals_HasUsers_ReturnsUsersList()
         {
             // Arrange
-            var expectedUsers = new List<User>
+            List<User> expectedUsers = new List<User>
             {
                 new User
                 {
@@ -41,7 +41,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 }
             };
 
-            this.userRepositoryMock.Setup(x => x.GetUsersWhoHaveSubmittedAppeals())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersWhoHaveSubmittedAppeals())
                 .ReturnsAsync(expectedUsers);
 
             // Act
@@ -53,14 +53,14 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             Assert.Equal(expectedUsers[0].Username, result[0].Username);
             Assert.Equal(expectedUsers[1].UserId, result[1].UserId);
             Assert.Equal(expectedUsers[1].Username, result[1].Username);
-            Assert.All(result, user => Assert.True(user.HasSubmittedAppeal));
+            Assert.All(result, userEntity => Assert.True(userEntity.HasSubmittedAppeal));
         }
 
         [Fact]
         public async Task GetUsersWhoHaveSubmittedAppeals_NoUsers_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetUsersWhoHaveSubmittedAppeals())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersWhoHaveSubmittedAppeals())
                 .ReturnsAsync(new List<User>());
 
             // Act
@@ -74,7 +74,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUsersWhoHaveSubmittedAppeals_Exception_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetUsersWhoHaveSubmittedAppeals())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersWhoHaveSubmittedAppeals())
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

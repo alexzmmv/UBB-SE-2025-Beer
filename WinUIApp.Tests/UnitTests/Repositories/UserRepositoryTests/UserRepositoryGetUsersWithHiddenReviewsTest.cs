@@ -25,8 +25,8 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
             usersDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
             reviewsDbSetMock = AsyncQueryableHelper.CreateDbSetMock(reviews);
             dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Users).Returns(usersDbSetMock.Object);
-            dbContextMock.Setup(x => x.Reviews).Returns(reviewsDbSetMock.Object);
+            dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(usersDbSetMock.Object);
+            dbContextMock.Setup(databaseContext => databaseContext.Reviews).Returns(reviewsDbSetMock.Object);
             userRepository = new UserRepository(dbContextMock.Object);
         }
 
@@ -34,21 +34,21 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersWithHiddenReviews_Success_ReturnsUsers()
         {
             // Arrange
-            var user1 = new User { UserId = Guid.NewGuid(), Username = "user1" };
-            var user2 = new User { UserId = Guid.NewGuid(), Username = "user2" };
-            var review1 = new Review { ReviewId = 1, UserId = user1.UserId, IsHidden = true, User = user1 };
-            var review2 = new Review { ReviewId = 2, UserId = user2.UserId, IsHidden = false, User = user2 };
+            User user1 = new User { UserId = Guid.NewGuid(), Username = "user1" };
+            User user2 = new User { UserId = Guid.NewGuid(), Username = "user2" };
+            Review review1 = new Review { ReviewId = 1, UserId = user1.UserId, IsHidden = true, User = user1 };
+            Review review2 = new Review { ReviewId = 2, UserId = user2.UserId, IsHidden = false, User = user2 };
 
-            users.AddRange(new[] { user1, user2 });
-            reviews.AddRange(new[] { review1, review2 });
+            this.users.AddRange(new[] { user1, user2 });
+            this.reviews.AddRange(new[] { review1, review2 });
 
-            var localUsersDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            var localReviewsDbSetMock = AsyncQueryableHelper.CreateDbSetMock(reviews);
-            dbContextMock.Setup(x => x.Users).Returns(localUsersDbSetMock.Object);
-            dbContextMock.Setup(x => x.Reviews).Returns(localReviewsDbSetMock.Object);
+            Mock<DbSet<User>> localUsersDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            Mock<DbSet<Review>> localReviewsDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.reviews);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localUsersDbSetMock.Object);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Reviews).Returns(localReviewsDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersWithHiddenReviews();
+            List<User> result = await this.userRepository.GetUsersWithHiddenReviews();
 
             // Assert
             Assert.Single(result);
@@ -59,19 +59,19 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersWithHiddenReviews_NoHiddenReviews_ReturnsEmptyList()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), Username = "user" };
-            var review = new Review { ReviewId = 1, UserId = user.UserId, IsHidden = false };
+            User user = new User { UserId = Guid.NewGuid(), Username = "user" };
+            Review review = new Review { ReviewId = 1, UserId = user.UserId, IsHidden = false };
 
-            users.Add(user);
-            reviews.Add(review);
+            this.users.Add(user);
+            this.reviews.Add(review);
 
-            var localUsersDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            var localReviewsDbSetMock = AsyncQueryableHelper.CreateDbSetMock(reviews);
-            dbContextMock.Setup(x => x.Users).Returns(localUsersDbSetMock.Object);
-            dbContextMock.Setup(x => x.Reviews).Returns(localReviewsDbSetMock.Object);
+            Mock<DbSet<User>> localUsersDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            Mock<DbSet<Review>> localReviewsDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.reviews);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localUsersDbSetMock.Object);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Reviews).Returns(localReviewsDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersWithHiddenReviews();
+            List<User> result = await this.userRepository.GetUsersWithHiddenReviews();
 
             // Assert
             Assert.Empty(result);
@@ -81,10 +81,10 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersWithHiddenReviews_DbSetThrowsException_Throws()
         {
             // Arrange
-            dbContextMock.Setup(x => x.Reviews).Throws(new Exception("Test exception"));
+            dbContextMock.Setup(databaseContext => databaseContext.Reviews).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => userRepository.GetUsersWithHiddenReviews());
+            await Assert.ThrowsAsync<Exception>(() => this.userRepository.GetUsersWithHiddenReviews());
         }
     }
 } 

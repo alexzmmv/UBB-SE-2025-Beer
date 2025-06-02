@@ -16,83 +16,83 @@ namespace WinUIApp.Tests.UnitTests.Repositories.SessionRepositoryTests
 
         public SessionRepositoryEndSessionTest()
         {
-            sessions = new List<Session>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(sessions);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Sessions).Returns(dbSetMock.Object);
-            sessionRepository = new SessionRepository(dbContextMock.Object);
+            this.sessions = new List<Session>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.sessions);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(this.dbSetMock.Object);
+            this.sessionRepository = new SessionRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task EndSession_ExistingSession_ReturnsTrue()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var session = new Session { SessionId = sessionId, UserId = userId };
-            sessions.Add(session);
+            Guid sessionId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
+            Session session = new Session { SessionId = sessionId, UserId = userId };
+            this.sessions.Add(session);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(sessions);
-            dbContextMock.Setup(x => x.Sessions).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            Mock<DbSet<Session>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.sessions);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.SaveChangesAsync()).ReturnsAsync(1);
 
             // Act
-            var result = await sessionRepository.EndSession(sessionId);
+            bool result = await this.sessionRepository.EndSession(sessionId);
 
             // Assert
             Assert.True(result);
-            localDbSetMock.Verify(x => x.Remove(session), Times.Once);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            localDbSetMock.Verify(dbSetMockObject => dbSetMockObject.Remove(session), Times.Once);
+            this.dbContextMock.Verify(dbContextMockObject => dbContextMockObject.SaveChangesAsync(), Times.Once);
         }
 
         [Fact]
         public async Task EndSession_NonExistentSession_ReturnsTrue()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<Session>());
-            dbContextMock.Setup(x => x.Sessions).Returns(localDbSetMock.Object);
+            Guid sessionId = Guid.NewGuid();
+            Mock<DbSet<Session>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<Session>());
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await sessionRepository.EndSession(sessionId);
+            bool result = await this.sessionRepository.EndSession(sessionId);
 
             // Assert
             Assert.True(result);
-            localDbSetMock.Verify(x => x.Remove(It.IsAny<Session>()), Times.Never);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Never);
+            localDbSetMock.Verify(dbSetMockObject => dbSetMockObject.Remove(It.IsAny<Session>()), Times.Never);
+            this.dbContextMock.Verify(dbContextMockObject => dbContextMockObject.SaveChangesAsync(), Times.Never);
         }
 
         [Fact]
         public async Task EndSession_SaveChangesFails_ReturnsFalse()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var session = new Session { SessionId = sessionId, UserId = userId };
-            sessions.Add(session);
+            Guid sessionId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
+            Session session = new Session { SessionId = sessionId, UserId = userId };
+            this.sessions.Add(session);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(sessions);
-            dbContextMock.Setup(x => x.Sessions).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(0);
+            Mock<DbSet<Session>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.sessions);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.SaveChangesAsync()).ReturnsAsync(0);
 
             // Act
-            var result = await sessionRepository.EndSession(sessionId);
+            bool result = await this.sessionRepository.EndSession(sessionId);
 
             // Assert
             Assert.False(result);
-            localDbSetMock.Verify(x => x.Remove(session), Times.Once);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            localDbSetMock.Verify(dbSetMockObject => dbSetMockObject.Remove(session), Times.Once);
+            this.dbContextMock.Verify(dbContextMockObject => dbContextMockObject.SaveChangesAsync(), Times.Once);
         }
 
         [Fact]
         public async Task EndSession_ThrowsException_Throws()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            dbContextMock.Setup(x => x.Sessions).Throws(new Exception("Test exception"));
+            Guid sessionId = Guid.NewGuid();
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => sessionRepository.EndSession(sessionId));
+            await Assert.ThrowsAsync<Exception>(() => this.sessionRepository.EndSession(sessionId));
         }
     }
 } 

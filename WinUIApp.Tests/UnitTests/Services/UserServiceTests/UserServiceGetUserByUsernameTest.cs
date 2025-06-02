@@ -21,8 +21,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUserByUsername_ExistingUser_ReturnsUser()
         {
             // Arrange
-            var username = "testuser";
-            var expectedUser = new User
+            string username = "testuser";
+            User expectedUser = new User
             {
                 UserId = Guid.NewGuid(),
                 Username = username,
@@ -30,7 +30,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            this.userRepositoryMock.Setup(x => x.GetUserByUsername(username))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserByUsername(username))
                 .ReturnsAsync(expectedUser);
 
             // Act
@@ -48,8 +48,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUserByUsername_NonExistingUser_ReturnsNull()
         {
             // Arrange
-            var username = "nonexistentuser";
-            this.userRepositoryMock.Setup(x => x.GetUserByUsername(username))
+            string username = "nonexistentuser";
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserByUsername(username))
                 .ReturnsAsync((User?)null);
 
             // Act
@@ -63,8 +63,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetUserByUsername_Exception_ReturnsNull()
         {
             // Arrange
-            var username = "testuser";
-            this.userRepositoryMock.Setup(x => x.GetUserByUsername(username))
+            string username = "testuser";
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUserByUsername(username))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

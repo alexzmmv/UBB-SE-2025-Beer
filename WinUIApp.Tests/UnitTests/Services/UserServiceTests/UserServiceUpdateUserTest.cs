@@ -21,7 +21,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task UpdateUser_Success_ReturnsTrue()
         {
             // Arrange
-            var user = new User
+            User user = new User
             {
                 UserId = Guid.NewGuid(),
                 Username = "user",
@@ -29,33 +29,33 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            this.userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ReturnsAsync(true);
 
             // Act
-            var result = await userService.UpdateUser(user);
+            bool result = await this.userService.UpdateUser(user);
 
             // Assert
             Assert.True(result);
-            userRepositoryMock.Verify(x => x.UpdateUser(user), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(user), Times.Once);
         }
 
         [Fact]
         public async Task UpdateUser_NullUser_ReturnsFalse()
         {
             // Act
-            var result = await userService.UpdateUser(null);
+            bool result = await this.userService.UpdateUser(null);
 
             // Assert
             Assert.False(result);
-            userRepositoryMock.Verify(x => x.UpdateUser(It.IsAny<User>()), Times.Never);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
         public async Task UpdateUser_UpdateFails_ReturnsFalse()
         {
             // Arrange
-            var user = new User
+            User user = new User
             {
                 UserId = Guid.NewGuid(),
                 Username = "user",
@@ -63,22 +63,22 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            this.userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ReturnsAsync(false);
 
             // Act
-            var result = await userService.UpdateUser(user);
+            bool result = await this.userService.UpdateUser(user);
 
             // Assert
             Assert.False(result);
-            userRepositoryMock.Verify(x => x.UpdateUser(user), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(user), Times.Once);
         }
 
         [Fact]
         public async Task UpdateUser_Exception_ReturnsFalse()
         {
             // Arrange
-            var user = new User
+            User user = new User
             {
                 UserId = Guid.NewGuid(),
                 Username = "user",
@@ -86,15 +86,15 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 AssignedRole = RoleType.User
             };
 
-            userRepositoryMock.Setup(x => x.UpdateUser(It.IsAny<User>()))
+            this.userRepositoryMock.Setup(userRepository => userRepository.UpdateUser(It.IsAny<User>()))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await userService.UpdateUser(user);
+            bool result = await this.userService.UpdateUser(user);
 
             // Assert
             Assert.False(result);
-            userRepositoryMock.Verify(x => x.UpdateUser(user), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.UpdateUser(user), Times.Once);
         }
     }
 } 

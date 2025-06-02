@@ -24,26 +24,26 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task ChangeRoleToUser_Success()
         {
             // Arrange
-            var userId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
 
             // Act
-            await userService.ChangeRoleToUser(userId, userRole);
+            await this.userService.ChangeRoleToUser(userId, this.userRole);
 
             // Assert
-            userRepositoryMock.Verify(x => x.ChangeRoleToUser(userId, userRole), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.ChangeRoleToUser(userId, this.userRole), Times.Once);
         }
 
         [Fact]
         public async Task ChangeRoleToUser_RepositoryThrowsException_HandlesGracefully()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            userRepositoryMock.Setup(x => x.ChangeRoleToUser(userId, userRole))
+            Guid userId = Guid.NewGuid();
+            this.userRepositoryMock.Setup(userRepository => userRepository.ChangeRoleToUser(userId, this.userRole))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act & Assert
-            await userService.ChangeRoleToUser(userId, userRole);
-            userRepositoryMock.Verify(x => x.ChangeRoleToUser(userId, userRole), Times.Once);
+            await this.userService.ChangeRoleToUser(userId, this.userRole);
+            this.userRepositoryMock.Verify(userRepository => userRepository.ChangeRoleToUser(userId, this.userRole), Times.Once);
         }
     }
 } 

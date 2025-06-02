@@ -21,18 +21,18 @@ namespace WinUIApp.Tests.UnitTests.Services.RolesServiceTests
         public async Task GetAllRolesAsync_Success_ReturnsRolesList()
         {
             // Arrange
-            var expectedRoles = new List<Role>
+            List<Role> expectedRoles = new List<Role>
             {
                 new Role(RoleType.Banned, "Banned"),
                 new Role(RoleType.User, "User"),
                 new Role(RoleType.Admin, "Admin")
             };
 
-            this.rolesRepositoryMock.Setup(x => x.GetAllRoles())
+            this.rolesRepositoryMock.Setup(rolesRepository => rolesRepository.GetAllRoles())
                 .ReturnsAsync(expectedRoles);
 
             // Act
-            var result = await this.rolesService.GetAllRolesAsync();
+            List<Role> result = await this.rolesService.GetAllRolesAsync();
 
             // Assert
             Assert.Equal(expectedRoles.Count, result.Count);
@@ -45,11 +45,11 @@ namespace WinUIApp.Tests.UnitTests.Services.RolesServiceTests
         public async Task GetAllRolesAsync_Exception_ReturnsEmptyList()
         {
             // Arrange
-            this.rolesRepositoryMock.Setup(x => x.GetAllRoles())
+            this.rolesRepositoryMock.Setup(rolesRepository => rolesRepository.GetAllRoles())
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await this.rolesService.GetAllRolesAsync();
+            List<Role> result = await this.rolesService.GetAllRolesAsync();
 
             // Assert
             Assert.Empty(result);

@@ -21,22 +21,22 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task CreateUser_Success_ReturnsTrue()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
-            userRepositoryMock.Setup(x => x.CreateUser(user)).ReturnsAsync(true);
+            User user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
+            this.userRepositoryMock.Setup(userRepository => userRepository.CreateUser(user)).ReturnsAsync(true);
 
             // Act
-            var result = await userService.CreateUser(user);
+            bool result = await this.userService.CreateUser(user);
 
             // Assert
             Assert.True(result);
-            userRepositoryMock.Verify(x => x.CreateUser(user), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.CreateUser(user), Times.Once);
         }
 
         [Fact]
         public async Task CreateUser_NullUser_ReturnsFalse()
         {
             // Act
-            var result = await userService.CreateUser(null!);
+            bool result = await this.userService.CreateUser(null!);
 
             // Assert
             Assert.False(result);
@@ -46,31 +46,31 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task CreateUser_RepositoryFails_ReturnsFalse()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
-            this.userRepositoryMock.Setup(x => x.CreateUser(user))
+            User user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
+            this.userRepositoryMock.Setup(userRepository => userRepository.CreateUser(user))
                 .ReturnsAsync(false);
 
             // Act
-            var result = await this.userService.CreateUser(user);
+            bool result = await this.userService.CreateUser(user);
 
             // Assert
             Assert.False(result);
-            this.userRepositoryMock.Verify(x => x.CreateUser(user), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.CreateUser(user), Times.Once);
         }
 
         [Fact]
         public async Task CreateUser_RepositoryThrowsException_ReturnsFalse()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
-            userRepositoryMock.Setup(x => x.CreateUser(user)).ThrowsAsync(new Exception("Test exception"));
+            User user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
+            this.userRepositoryMock.Setup(userRepository => userRepository.CreateUser(user)).ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await userService.CreateUser(user);
+            bool result = await this.userService.CreateUser(user);
 
             // Assert
             Assert.False(result);
-            userRepositoryMock.Verify(x => x.CreateUser(user), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.CreateUser(user), Times.Once);
         }
     }
 } 

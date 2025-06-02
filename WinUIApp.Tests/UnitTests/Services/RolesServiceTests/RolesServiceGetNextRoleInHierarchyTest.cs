@@ -21,14 +21,14 @@ namespace WinUIApp.Tests.UnitTests.Services.RolesServiceTests
         public async Task GetNextRoleInHierarchyAsync_Success_ReturnsNextRole()
         {
             // Arrange
-            var currentRole = RoleType.User;
-            var expectedNextRole = new Role(RoleType.Admin, "Admin");
+            RoleType currentRole = RoleType.User;
+            Role expectedNextRole = new Role(RoleType.Admin, "Admin");
 
-            this.rolesRepositoryMock.Setup(x => x.GetNextRoleInHierarchy(currentRole))
+            this.rolesRepositoryMock.Setup(rolesRepository => rolesRepository.GetNextRoleInHierarchy(currentRole))
                 .ReturnsAsync(expectedNextRole);
 
             // Act
-            var result = await this.rolesService.GetNextRoleInHierarchyAsync(currentRole);
+            Role? result = await this.rolesService.GetNextRoleInHierarchyAsync(currentRole);
 
             // Assert
             Assert.NotNull(result);
@@ -40,14 +40,14 @@ namespace WinUIApp.Tests.UnitTests.Services.RolesServiceTests
         public async Task GetNextRoleInHierarchyAsync_AdminRole_ReturnsAdminRole()
         {
             // Arrange
-            var currentRole = RoleType.Admin;
-            var expectedRole = new Role(RoleType.Admin, "Admin");
+            RoleType currentRole = RoleType.Admin;
+            Role expectedRole = new Role(RoleType.Admin, "Admin");
 
-            this.rolesRepositoryMock.Setup(x => x.GetNextRoleInHierarchy(currentRole))
+            this.rolesRepositoryMock.Setup(rolesRepository => rolesRepository.GetNextRoleInHierarchy(currentRole))
                 .ReturnsAsync(expectedRole);
 
             // Act
-            var result = await this.rolesService.GetNextRoleInHierarchyAsync(currentRole);
+            Role? result = await this.rolesService.GetNextRoleInHierarchyAsync(currentRole);
 
             // Assert
             Assert.NotNull(result);
@@ -59,12 +59,12 @@ namespace WinUIApp.Tests.UnitTests.Services.RolesServiceTests
         public async Task GetNextRoleInHierarchyAsync_Exception_ReturnsNull()
         {
             // Arrange
-            var currentRole = RoleType.User;
-            this.rolesRepositoryMock.Setup(x => x.GetNextRoleInHierarchy(currentRole))
+            RoleType currentRole = RoleType.User;
+            this.rolesRepositoryMock.Setup(rolesRepository => rolesRepository.GetNextRoleInHierarchy(currentRole))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await this.rolesService.GetNextRoleInHierarchyAsync(currentRole);
+            Role? result = await this.rolesService.GetNextRoleInHierarchyAsync(currentRole);
 
             // Assert
             Assert.Null(result);

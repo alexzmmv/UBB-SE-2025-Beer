@@ -21,10 +21,10 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetHighestRoleTypeForUser_Success_ReturnsRoleType()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var expectedRoleType = RoleType.Admin;
+            Guid userId = Guid.NewGuid();
+            RoleType expectedRoleType = RoleType.Admin;
 
-            userRepositoryMock.Setup(x => x.GetRoleTypeForUser(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetRoleTypeForUser(userId))
                 .ReturnsAsync(expectedRoleType);
 
             // Act
@@ -32,16 +32,16 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
 
             // Assert
             Assert.Equal(expectedRoleType, result);
-            userRepositoryMock.Verify(x => x.GetRoleTypeForUser(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetRoleTypeForUser(userId), Times.Once);
         }
 
         [Fact]
         public async Task GetHighestRoleTypeForUser_UserNotFound_ReturnsBannedRole()
         {
             // Arrange
-            var userId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
 
-            userRepositoryMock.Setup(x => x.GetRoleTypeForUser(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetRoleTypeForUser(userId))
                 .ReturnsAsync((RoleType?)null);
 
             // Act
@@ -49,16 +49,16 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
 
             // Assert
             Assert.Null(result);
-            userRepositoryMock.Verify(x => x.GetRoleTypeForUser(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetRoleTypeForUser(userId), Times.Once);
         }
 
         [Fact]
         public async Task GetHighestRoleTypeForUser_Exception_ReturnsBannedRole()
         {
             // Arrange
-            var userId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
 
-            userRepositoryMock.Setup(x => x.GetRoleTypeForUser(userId))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetRoleTypeForUser(userId))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
@@ -66,7 +66,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
 
             // Assert
             Assert.Null(result);
-            userRepositoryMock.Verify(x => x.GetRoleTypeForUser(userId), Times.Once);
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetRoleTypeForUser(userId), Times.Once);
         }
     }
 } 

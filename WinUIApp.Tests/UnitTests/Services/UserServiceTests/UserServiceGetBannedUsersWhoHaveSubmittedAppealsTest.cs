@@ -21,7 +21,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetBannedUsersWhoHaveSubmittedAppeals_HasUsers_ReturnsUsersList()
         {
             // Arrange
-            var expectedUsers = new List<User>
+            List<User> expectedUsers = new List<User>
             {
                 new User
                 {
@@ -41,11 +41,11 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 }
             };
 
-            this.userRepositoryMock.Setup(x => x.GetBannedUsersWhoHaveSubmittedAppeals())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetBannedUsersWhoHaveSubmittedAppeals())
                 .ReturnsAsync(expectedUsers);
 
             // Act
-            var result = await this.userService.GetBannedUsersWhoHaveSubmittedAppeals();
+            List<User> result = await this.userService.GetBannedUsersWhoHaveSubmittedAppeals();
 
             // Assert
             Assert.Equal(expectedUsers.Count, result.Count);
@@ -53,10 +53,10 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             Assert.Equal(expectedUsers[0].Username, result[0].Username);
             Assert.Equal(expectedUsers[1].UserId, result[1].UserId);
             Assert.Equal(expectedUsers[1].Username, result[1].Username);
-            Assert.All(result, user => 
+            Assert.All(result, userEntity => 
             {
-                Assert.Equal(RoleType.Banned, user.AssignedRole);
-                Assert.True(user.HasSubmittedAppeal);
+                Assert.Equal(RoleType.Banned, userEntity.AssignedRole);
+                Assert.True(userEntity.HasSubmittedAppeal);
             });
         }
 
@@ -64,7 +64,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetBannedUsersWhoHaveSubmittedAppeals_NoUsers_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetBannedUsersWhoHaveSubmittedAppeals())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetBannedUsersWhoHaveSubmittedAppeals())
                 .ReturnsAsync(new List<User>());
 
             // Act
@@ -78,7 +78,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetBannedUsersWhoHaveSubmittedAppeals_Exception_ReturnsEmptyList()
         {
             // Arrange
-            this.userRepositoryMock.Setup(x => x.GetBannedUsersWhoHaveSubmittedAppeals())
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetBannedUsersWhoHaveSubmittedAppeals())
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

@@ -11,11 +11,11 @@ namespace WinUIApp.Tests.UnitTests.TestHelpers
 {
     internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {
-        private readonly IQueryProvider _inner;
+        private readonly IQueryProvider innerQueryProvider;
 
-        internal TestAsyncQueryProvider(IQueryProvider inner)
+        internal TestAsyncQueryProvider(IQueryProvider innerQueryProvider)
         {
-            _inner = inner;
+            this.innerQueryProvider = innerQueryProvider;
         }
 
         public IQueryable CreateQuery(Expression expression)
@@ -30,12 +30,12 @@ namespace WinUIApp.Tests.UnitTests.TestHelpers
 
         public object Execute(Expression expression)
         {
-            return _inner.Execute(expression);
+            return this.innerQueryProvider.Execute(expression);
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
-            return _inner.Execute<TResult>(expression);
+            return this.innerQueryProvider.Execute<TResult>(expression);
         }
 
         public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
@@ -45,8 +45,8 @@ namespace WinUIApp.Tests.UnitTests.TestHelpers
 
         public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
         {
-            var expectedResultType = typeof(TResult).GetGenericArguments()[0];
-            var executionResult = typeof(IQueryProvider)
+            Type expectedResultType = typeof(TResult).GetGenericArguments()[0];
+            object executionResult = typeof(IQueryProvider)
                 .GetMethod(
                     name: nameof(IQueryProvider.Execute),
                     genericParameterCount: 1,
@@ -62,21 +62,21 @@ namespace WinUIApp.Tests.UnitTests.TestHelpers
 
     internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
-        private readonly IQueryProvider _provider;
-        private readonly Expression _expression;
+        private readonly IQueryProvider provider;
+        private readonly Expression expression;
 
         public TestAsyncEnumerable(IEnumerable<T> enumerable)
             : base(enumerable)
         {
-            _provider = new TestAsyncQueryProvider<T>(enumerable.AsQueryable().Provider);
-            _expression = enumerable.AsQueryable().Expression;
+            this.provider = new TestAsyncQueryProvider<T>(enumerable.AsQueryable().Provider);
+            this.expression = enumerable.AsQueryable().Expression;
         }
 
         public TestAsyncEnumerable(Expression expression)
             : base(expression)
         {
-            _provider = new TestAsyncQueryProvider<T>(this);
-            _expression = expression;
+            this.provider = new TestAsyncQueryProvider<T>(this);
+            this.expression = expression;
         }
 
         public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
@@ -84,29 +84,29 @@ namespace WinUIApp.Tests.UnitTests.TestHelpers
             return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
 
-        IQueryProvider IQueryable.Provider => _provider;
-        public Expression Expression => _expression;
+        IQueryProvider IQueryable.Provider => this.provider;
+        public Expression Expression => this.expression;
     }
 
     internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
     {
-        private readonly IEnumerator<T> _inner;
+        private readonly IEnumerator<T> innerEnumerator;
 
-        public TestAsyncEnumerator(IEnumerator<T> inner)
+        public TestAsyncEnumerator(IEnumerator<T> innerEnumerator)
         {
-            _inner = inner;
+            this.innerEnumerator = innerEnumerator;
         }
 
-        public T Current => _inner.Current;
+        public T Current => this.innerEnumerator.Current;
 
         public ValueTask<bool> MoveNextAsync()
         {
-            return new ValueTask<bool>(_inner.MoveNext());
+            return new ValueTask<bool>(this.innerEnumerator.MoveNext());
         }
 
         public ValueTask DisposeAsync()
         {
-            _inner.Dispose();
+            this.innerEnumerator.Dispose();
             return new ValueTask();
         }
     }
@@ -115,18 +115,18 @@ namespace WinUIApp.Tests.UnitTests.TestHelpers
     {
         public static Mock<DbSet<T>> CreateDbSetMock<T>(IEnumerable<T> elements) where T : class
         {
-            var elementsAsQueryable = elements.AsQueryable();
-            var dbSetMock = new Mock<DbSet<T>>();
+            IQueryable<T> elementsAsQueryable = elements.AsQueryable();
+            Mock<DbSet<T>> dbSetMock = new Mock<DbSet<T>>();
 
-            var asyncEnumerable = new TestAsyncEnumerable<T>(elements);
+            TestAsyncEnumerable<T> asyncEnumerable = new TestAsyncEnumerable<T>(elements);
             dbSetMock.As<IAsyncEnumerable<T>>()
-                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+                .Setup(mockDbSet => mockDbSet.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
                 .Returns(new TestAsyncEnumerator<T>(elements.GetEnumerator()));
 
-            dbSetMock.As<IQueryable<T>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<T>(elements.AsQueryable().Provider));
-            dbSetMock.As<IQueryable<T>>().Setup(m => m.Expression).Returns(asyncEnumerable.Expression);
-            dbSetMock.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(elementsAsQueryable.ElementType);
-            dbSetMock.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(elements.GetEnumerator());
+            dbSetMock.As<IQueryable<T>>().Setup(mockDbSet => mockDbSet.Provider).Returns(new TestAsyncQueryProvider<T>(elements.AsQueryable().Provider));
+            dbSetMock.As<IQueryable<T>>().Setup(mockDbSet => mockDbSet.Expression).Returns(asyncEnumerable.Expression);
+            dbSetMock.As<IQueryable<T>>().Setup(mockDbSet => mockDbSet.ElementType).Returns(elementsAsQueryable.ElementType);
+            dbSetMock.As<IQueryable<T>>().Setup(mockDbSet => mockDbSet.GetEnumerator()).Returns(elements.GetEnumerator());
 
             return dbSetMock;
         }

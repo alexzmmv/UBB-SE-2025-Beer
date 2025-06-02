@@ -20,15 +20,15 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task GetSessionByUserIdAsync_Success_ReturnsSession()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var sessionId = Guid.NewGuid();
-            var expectedSession = new Session(sessionId, userId);
+            Guid userId = Guid.NewGuid();
+            Guid sessionId = Guid.NewGuid();
+            Session expectedSession = new Session(sessionId, userId);
 
-            this.sessionRepositoryMock.Setup(x => x.GetSessionByUserId(userId))
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.GetSessionByUserId(userId))
                 .ReturnsAsync(expectedSession);
 
             // Act
-            var result = await this.sessionService.GetSessionByUserIdAsync(userId);
+            Session? result = await this.sessionService.GetSessionByUserIdAsync(userId);
 
             // Assert
             Assert.NotNull(result);
@@ -40,12 +40,12 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task GetSessionByUserIdAsync_NotFound_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            this.sessionRepositoryMock.Setup(x => x.GetSessionByUserId(userId))
+            Guid userId = Guid.NewGuid();
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.GetSessionByUserId(userId))
                 .ReturnsAsync((Session?)null);
 
             // Act
-            var result = await this.sessionService.GetSessionByUserIdAsync(userId);
+            Session? result = await this.sessionService.GetSessionByUserIdAsync(userId);
 
             // Assert
             Assert.Null(result);
@@ -55,12 +55,12 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task GetSessionByUserIdAsync_Exception_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            this.sessionRepositoryMock.Setup(x => x.GetSessionByUserId(userId))
+            Guid userId = Guid.NewGuid();
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.GetSessionByUserId(userId))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await this.sessionService.GetSessionByUserIdAsync(userId);
+            Session? result = await this.sessionService.GetSessionByUserIdAsync(userId);
 
             // Assert
             Assert.Null(result);

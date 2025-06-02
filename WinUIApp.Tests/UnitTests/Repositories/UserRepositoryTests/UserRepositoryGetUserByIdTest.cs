@@ -17,26 +17,26 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
 
         public UserRepositoryGetUserByIdTest()
         {
-            users = new List<User>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Users).Returns(dbSetMock.Object);
-            userRepository = new UserRepository(dbContextMock.Object);
+            this.users = new List<User>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(this.dbSetMock.Object);
+            this.userRepository = new UserRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task GetUserById_Success_ReturnsUser()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var user = new User { UserId = userId, Username = "testUser" };
-            users.Add(user);
+            Guid userId = Guid.NewGuid();
+            User user = new User { UserId = userId, Username = "testUser" };
+            this.users.Add(user);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUserById(userId);
+            User? result = await this.userRepository.GetUserById(userId);
 
             // Assert
             Assert.NotNull(result);
@@ -47,12 +47,12 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUserById_NonExistentUser_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Guid userId = Guid.NewGuid();
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUserById(userId);
+            User? result = await this.userRepository.GetUserById(userId);
 
             // Assert
             Assert.Null(result);
@@ -62,11 +62,11 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUserById_DbSetThrowsException_Throws()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            dbContextMock.Setup(x => x.Users).Throws(new Exception("Test exception"));
+            Guid userId = Guid.NewGuid();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => userRepository.GetUserById(userId));
+            await Assert.ThrowsAsync<Exception>(() => this.userRepository.GetUserById(userId));
         }
     }
 } 

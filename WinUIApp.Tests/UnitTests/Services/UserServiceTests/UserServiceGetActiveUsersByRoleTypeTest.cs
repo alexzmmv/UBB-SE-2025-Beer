@@ -21,8 +21,8 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         public async Task GetActiveUsersByRoleType_ValidRole_ReturnsUsersList()
         {
             // Arrange
-            var roleType = RoleType.Admin;
-            var expectedUsers = new List<User>
+            RoleType roleType = RoleType.Admin;
+            List<User> expectedUsers = new List<User>
             {
                 new User
                 {
@@ -40,11 +40,11 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
                 }
             };
 
-            this.userRepositoryMock.Setup(x => x.GetUsersByRoleType(roleType))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersByRoleType(roleType))
                 .ReturnsAsync(expectedUsers);
 
             // Act
-            var result = await this.userService.GetActiveUsersByRoleType(roleType);
+            List<User> result = await this.userService.GetActiveUsersByRoleType(roleType);
 
             // Assert
             Assert.Equal(expectedUsers.Count, result.Count);
@@ -52,7 +52,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
             Assert.Equal(expectedUsers[0].Username, result[0].Username);
             Assert.Equal(expectedUsers[1].UserId, result[1].UserId);
             Assert.Equal(expectedUsers[1].Username, result[1].Username);
-            Assert.All(result, user => Assert.Equal(roleType, user.AssignedRole));
+            Assert.All(result, userEntity => Assert.Equal(roleType, userEntity.AssignedRole));
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
 
             // Assert
             Assert.Empty(result);
-            this.userRepositoryMock.Verify(x => x.GetUsersByRoleType(It.IsAny<RoleType>()), Times.Never);
+            this.userRepositoryMock.Verify(userRepository => userRepository.GetUsersByRoleType(It.IsAny<RoleType>()), Times.Never);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace WinUIApp.Tests.UnitTests.Services.UserServiceTests
         {
             // Arrange
             var roleType = RoleType.Admin;
-            this.userRepositoryMock.Setup(x => x.GetUsersByRoleType(roleType))
+            this.userRepositoryMock.Setup(userRepository => userRepository.GetUsersByRoleType(roleType))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act

@@ -17,26 +17,26 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
 
         public UserRepositoryGetUsersByRoleTypeTest()
         {
-            users = new List<User>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Users).Returns(dbSetMock.Object);
-            userRepository = new UserRepository(dbContextMock.Object);
+            this.users = new List<User>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(this.dbSetMock.Object);
+            this.userRepository = new UserRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task GetUsersByRoleType_Success_ReturnsFilteredUsers()
         {
             // Arrange
-            var adminUser = new User { UserId = Guid.NewGuid(), Username = "admin", AssignedRole = RoleType.Admin };
-            var userUser = new User { UserId = Guid.NewGuid(), Username = "user", AssignedRole = RoleType.User };
-            users.AddRange(new[] { adminUser, userUser });
+            User adminUser = new User { UserId = Guid.NewGuid(), Username = "admin", AssignedRole = RoleType.Admin };
+            User userUser = new User { UserId = Guid.NewGuid(), Username = "user", AssignedRole = RoleType.User };
+            this.users.AddRange(new[] { adminUser, userUser });
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersByRoleType(RoleType.Admin);
+            List<User> result = await this.userRepository.GetUsersByRoleType(RoleType.Admin);
 
             // Assert
             Assert.Single(result);
@@ -48,14 +48,14 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersByRoleType_NoUsersWithRole_ReturnsEmptyList()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), Username = "user", AssignedRole = RoleType.User };
-            users.Add(user);
+            User user = new User { UserId = Guid.NewGuid(), Username = "user", AssignedRole = RoleType.User };
+            this.users.Add(user);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersByRoleType(RoleType.Admin);
+            List<User> result = await this.userRepository.GetUsersByRoleType(RoleType.Admin);
 
             // Assert
             Assert.Empty(result);
@@ -65,11 +65,11 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersByRoleType_EmptyDatabase_ReturnsEmptyList()
         {
             // Arrange
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await userRepository.GetUsersByRoleType(RoleType.Admin);
+            List<User> result = await this.userRepository.GetUsersByRoleType(RoleType.Admin);
 
             // Assert
             Assert.Empty(result);
@@ -79,10 +79,10 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
         public async Task GetUsersByRoleType_DbSetThrowsException_Throws()
         {
             // Arrange
-            dbContextMock.Setup(x => x.Users).Throws(new Exception("Test exception"));
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => userRepository.GetUsersByRoleType(RoleType.Admin));
+            await Assert.ThrowsAsync<Exception>(() => this.userRepository.GetUsersByRoleType(RoleType.Admin));
         }
     }
 } 

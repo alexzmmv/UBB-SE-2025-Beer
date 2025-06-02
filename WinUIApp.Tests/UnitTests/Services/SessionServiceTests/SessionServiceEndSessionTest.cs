@@ -19,12 +19,12 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task EndSessionAsync_Success_ReturnsTrue()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            this.sessionRepositoryMock.Setup(x => x.EndSession(sessionId))
+            Guid sessionId = Guid.NewGuid();
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.EndSession(sessionId))
                 .ReturnsAsync(true);
 
             // Act
-            var result = await this.sessionService.EndSessionAsync(sessionId);
+            bool result = await this.sessionService.EndSessionAsync(sessionId);
 
             // Assert
             Assert.True(result);
@@ -34,12 +34,12 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task EndSessionAsync_Failure_ReturnsFalse()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            this.sessionRepositoryMock.Setup(x => x.EndSession(sessionId))
+            Guid sessionId = Guid.NewGuid();
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.EndSession(sessionId))
                 .ReturnsAsync(false);
 
             // Act
-            var result = await this.sessionService.EndSessionAsync(sessionId);
+            bool result = await this.sessionService.EndSessionAsync(sessionId);
 
             // Assert
             Assert.False(result);
@@ -49,12 +49,12 @@ namespace WinUIApp.Tests.UnitTests.Services.SessionServiceTests
         public async Task EndSessionAsync_Exception_ReturnsFalse()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            this.sessionRepositoryMock.Setup(x => x.EndSession(sessionId))
+            Guid sessionId = Guid.NewGuid();
+            this.sessionRepositoryMock.Setup(sessionRepository => sessionRepository.EndSession(sessionId))
                 .ThrowsAsync(new Exception("Test exception"));
 
             // Act
-            var result = await this.sessionService.EndSessionAsync(sessionId);
+            bool result = await this.sessionService.EndSessionAsync(sessionId);
 
             // Assert
             Assert.False(result);

@@ -16,27 +16,27 @@ namespace WinUIApp.Tests.UnitTests.Repositories.SessionRepositoryTests
 
         public SessionRepositoryGetSessionByUserIdTest()
         {
-            sessions = new List<Session>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(sessions);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Sessions).Returns(dbSetMock.Object);
-            sessionRepository = new SessionRepository(dbContextMock.Object);
+            this.sessions = new List<Session>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.sessions);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(this.dbSetMock.Object);
+            this.sessionRepository = new SessionRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task GetSessionByUserId_ExistingSession_ReturnsSession()
         {
             // Arrange
-            var sessionId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var session = new Session { SessionId = sessionId, UserId = userId };
-            sessions.Add(session);
+            Guid sessionId = Guid.NewGuid();
+            Guid userId = Guid.NewGuid();
+            Session session = new Session { SessionId = sessionId, UserId = userId };
+            this.sessions.Add(session);
 
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(sessions);
-            dbContextMock.Setup(x => x.Sessions).Returns(localDbSetMock.Object);
+            Mock<DbSet<Session>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.sessions);
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await sessionRepository.GetSessionByUserId(userId);
+            Session? result = await this.sessionRepository.GetSessionByUserId(userId);
 
             // Assert
             Assert.NotNull(result);
@@ -48,12 +48,12 @@ namespace WinUIApp.Tests.UnitTests.Repositories.SessionRepositoryTests
         public async Task GetSessionByUserId_NonExistentSession_ReturnsNull()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<Session>());
-            dbContextMock.Setup(x => x.Sessions).Returns(localDbSetMock.Object);
+            Guid userId = Guid.NewGuid();
+            Mock<DbSet<Session>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<Session>());
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Returns(localDbSetMock.Object);
 
             // Act
-            var result = await sessionRepository.GetSessionByUserId(userId);
+            Session? result = await this.sessionRepository.GetSessionByUserId(userId);
 
             // Assert
             Assert.Null(result);
@@ -63,11 +63,11 @@ namespace WinUIApp.Tests.UnitTests.Repositories.SessionRepositoryTests
         public async Task GetSessionByUserId_DbSetThrowsException_Throws()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            dbContextMock.Setup(x => x.Sessions).Throws(new Exception("Test exception"));
+            Guid userId = Guid.NewGuid();
+            this.dbContextMock.Setup(dbContextMockObject => dbContextMockObject.Sessions).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => sessionRepository.GetSessionByUserId(userId));
+            await Assert.ThrowsAsync<Exception>(() => this.sessionRepository.GetSessionByUserId(userId));
         }
     }
 } 

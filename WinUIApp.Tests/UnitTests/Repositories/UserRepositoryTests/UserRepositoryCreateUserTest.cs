@@ -17,71 +17,71 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
 
         public UserRepositoryCreateUserTest()
         {
-            users = new List<User>();
-            dbSetMock = AsyncQueryableHelper.CreateDbSetMock(users);
-            dbContextMock = new Mock<IAppDbContext>();
-            dbContextMock.Setup(x => x.Users).Returns(dbSetMock.Object);
-            userRepository = new UserRepository(dbContextMock.Object);
+            this.users = new List<User>();
+            this.dbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock = new Mock<IAppDbContext>();
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(this.dbSetMock.Object);
+            this.userRepository = new UserRepository(this.dbContextMock.Object);
         }
 
         [Fact]
         public async Task CreateUser_Success_ReturnsTrue()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var user = new User { UserId = userId, Username = "testUser" };
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            Guid userId = Guid.NewGuid();
+            User user = new User { UserId = userId, Username = "testUser" };
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
+            this.dbContextMock.Setup(context => context.Users).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(context => context.SaveChangesAsync()).ReturnsAsync(1);
 
             // Act
-            var result = await userRepository.CreateUser(user);
+            bool result = await this.userRepository.CreateUser(user);
 
             // Assert
             Assert.True(result);
-            localDbSetMock.Verify(x => x.Add(user), Times.Once);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            localDbSetMock.Verify(dbSet => dbSet.Add(user), Times.Once);
+            this.dbContextMock.Verify(context => context.SaveChangesAsync(), Times.Once);
         }
 
         [Fact]
         public async Task CreateUser_NullUser_ThrowsException()
         {
             // Arrange
-            dbSetMock.Setup(x => x.Add(null!)).Throws(new NullReferenceException());
-            dbContextMock.Setup(x => x.Users).Returns(dbSetMock.Object);
+            this.dbSetMock.Setup(databaseSet => databaseSet.Add(null!)).Throws(new NullReferenceException());
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(this.dbSetMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<NullReferenceException>(() => userRepository.CreateUser(null!));
+            await Assert.ThrowsAsync<NullReferenceException>(() => this.userRepository.CreateUser(null!));
         }
 
         [Fact]
         public async Task CreateUser_SaveChangesFails_ReturnsFalse()
         {
             // Arrange
-            var userId = Guid.NewGuid();
-            var user = new User { UserId = userId, Username = "testUser" };
-            var localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
-            dbContextMock.Setup(x => x.Users).Returns(localDbSetMock.Object);
-            dbContextMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(0);
+            Guid userId = Guid.NewGuid();
+            User user = new User { UserId = userId, Username = "testUser" };
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(new List<User>());
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(databaseContext => databaseContext.SaveChangesAsync()).ReturnsAsync(0);
 
             // Act
-            var result = await userRepository.CreateUser(user);
+            bool result = await this.userRepository.CreateUser(user);
 
             // Assert
             Assert.False(result);
-            localDbSetMock.Verify(x => x.Add(user), Times.Once);
-            dbContextMock.Verify(x => x.SaveChangesAsync(), Times.Once);
+            localDbSetMock.Verify(databaseSet => databaseSet.Add(user), Times.Once);
+            this.dbContextMock.Verify(databaseContext => databaseContext.SaveChangesAsync(), Times.Once);
         }
 
         [Fact]
         public async Task CreateUser_ThrowsException_ReturnsFalse()
         {
             // Arrange
-            var user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
-            dbContextMock.Setup(x => x.Users.Add(user)).Throws(new Exception("Test exception"));
+            User user = new User { UserId = Guid.NewGuid(), Username = "testUser" };
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users.Add(user)).Throws(new Exception("Test exception"));
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => userRepository.CreateUser(user));
+            await Assert.ThrowsAsync<Exception>(() => this.userRepository.CreateUser(user));
         }
     }
 } 
