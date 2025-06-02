@@ -13,102 +13,122 @@
 </div>
 
 <div class="container-fluid app-container">
-    <div class="row">
-        <div class="col-lg-3 mb-4">
-            <form asp-action="Index" method="get" class="filter-sidebar">
-                <h3>
-                    <i class="bi bi-funnel me-2"></i>
-                    Filter Drinks
-                </h3>
-                
-                <div class="mb-4">
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent border-end-0">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input name="searchKeyword" type="search" class="form-control border-start-0" placeholder="Search drinks..." aria-label="Search">
-                    </div>
+        <div class="row">
+       <div class="col-lg-3 mb-4">
+        <form asp-action="Index" method="get" class="filter-sidebar">
+            <h3>
+                <i class="bi bi-funnel me-2"></i>
+                Filter Drinks
+            </h3>
+            
+            <div class="mb-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input name="searchKeyword" type="search" class="form-control border-start-0" 
+                           placeholder="Search drinks..." aria-label="Search" 
+                           value="@Model.SearchKeyword">
                 </div>
-                
-                <div class="filter-section">
-                    <label class="fw-semibold">
-                        <i class="bi bi-tags me-2"></i>
-                        Categories
+            </div>
+            
+            <div class="filter-section">
+                <label class="fw-semibold">
+                    <i class="bi bi-tags me-2"></i>
+                    Categories
+                </label>
+                <div id="checkboxListCategories" class="checkbox-list">
+                    @foreach (var category in Model.drinkCategories)
+                    {
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="SelectedCategories" 
+                                   value="@category.CategoryName" 
+                                   id="cat-@category.CategoryName.Replace(" ", "-")"
+                                   @(Model.SelectedCategories != null && Model.SelectedCategories.Contains(category.CategoryName) ? "checked" : "")/>
+                            <label class="form-check-label" for="cat-@category.CategoryName.Replace(" ", "-")">
+                                @category.CategoryName
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <label class="fw-semibold">
+                    <i class="bi bi-shop me-2"></i>
+                    Brands
+                </label>
+                <div id="checkboxListBrands" class="checkbox-list">
+                    @foreach (var brand in Model.drinkBrands)
+                    {
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="SelectedBrandNames" 
+                                   value="@brand.BrandName" 
+                                   id="brand-@brand.BrandName.Replace(" ", "-")"
+                                   @(Model.SelectedBrandNames != null && Model.SelectedBrandNames.Contains(brand.BrandName) ? "checked" : "")/>
+                            <label class="form-check-label" for="brand-@brand.BrandName.Replace(" ", "-")">
+                                @brand.BrandName
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <label class="fw-semibold">
+                    <i class="bi bi-percent me-2"></i>
+                    Alcohol Content
+                </label>
+                <div class="mb-3">
+                    <label class="d-flex justify-content-between">
+                        <span>Minimum Alcohol</span>
+                        <span id="minValueDisplay" class="badge bg-primary">@((Model.MinValue ?? 0).ToString("F1"))%</span>
                     </label>
-                    <div id="checkboxListCategories" class="checkbox-list">
-                        @foreach (var category in Model.drinkCategories)
-                        {
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="SelectedCategories" value="@category.CategoryName" id="cat-@category.CategoryName.Replace(" ", "-")"/>
-                                <label class="form-check-label" for="cat-@category.CategoryName.Replace(" ", "-")">@category.CategoryName</label>
-                            </div>
-                        }
-                    </div>
+                    <input name="minValue" id="minValue" type="range" class="form-range" 
+                           min="0" max="100" step="0.1" 
+                           value="@(Model.MinValue ?? 0)" 
+                           oninput="updateSliderValue('minValue')">
                 </div>
-                
-                <div class="filter-section">
-                    <label class="fw-semibold">
-                        <i class="bi bi-shop me-2"></i>
-                        Brands
+                <div class="mb-3">
+                    <label class="d-flex justify-content-between">
+                        <span>Maximum Alcohol</span>
+                        <span id="maxValueDisplay" class="badge bg-primary">@((Model.MaxValue ?? 100).ToString("F1"))%</span>
                     </label>
-                    <div id="checkboxListBrands" class="checkbox-list">
-                        @foreach (var brand in Model.drinkBrands)
-                        {
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="SelectedBrandNames" value="@brand.BrandName" id="brand-@brand.BrandName.Replace(" ", "-")"/>
-                                <label class="form-check-label" for="brand-@brand.BrandName.Replace(" ", "-")">@brand.BrandName</label>
-                            </div>
-                        }
-                    </div>
+                    <input name="maxValue" id="maxValue" type="range" class="form-range" 
+                           min="0" max="100" step="0.1" 
+                           value="@(Model.MaxValue ?? 100)" 
+                           oninput="updateSliderValue('maxValue')">
                 </div>
-                
-                <div class="filter-section">
-                    <label class="fw-semibold">
-                        <i class="bi bi-percent me-2"></i>
-                        Alcohol Content
-                    </label>
-                    <div class="mb-3">
-                        <label class="d-flex justify-content-between">
-                            <span>Minimum Alcohol</span>
-                            <span id="minValueDisplay" class="badge bg-primary">0.0%</span>
-                        </label>
-                        <input name="minValue" id="minValue" type="range" class="form-range" min="0" max="100" step="0.1" value="0" oninput="updateSliderValue('minValue')">
-                    </div>
-                    <div class="mb-3">
-                        <label class="d-flex justify-content-between">
-                            <span>Maximum Alcohol</span>
-                            <span id="maxValueDisplay" class="badge bg-primary">100.0%</span>
-                        </label>
-                        <input name="maxValue" id="maxValue" type="range" class="form-range" min="0" max="100" step="0.1" value="100" oninput="updateSliderValue('maxValue')">
-                    </div>
-                </div>
-                
-                <div class="filter-section">
-                    <label for="minStars" class="fw-semibold">
-                        <i class="bi bi-star-fill me-2"></i>
-                        Rating
-                    </label>
-                    <select type="number" name="minStars" id="minStars" class="form-select" aria-label="Minimum Stars">
-                        <option value="">Any rating</option>
-                        <option value="1">1+ stars</option>
-                        <option value="2">2+ stars</option>
-                        <option value="3">3+ stars</option>
-                        <option value="4">4+ stars</option>
-                        <option value="5">5 stars</option>
-                    </select>
-                </div>
-                
-                <div class="filter-actions">
-                    <button type="button" class="btn btn-outline-secondary flex-grow-1">
-                        <i class="bi bi-x-circle me-1"></i> Clear
-                    </button>
-                    <button type="submit" class="btn btn-primary flex-grow-1">
-                        <i class="bi bi-funnel-fill me-1"></i> Filter
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
 
+            <div class="filter-section">
+                <label for="minStars" class="fw-semibold">
+                    <i class="bi bi-star-fill me-2"></i>
+                    Rating
+                </label>
+                <select name="minStars" id="minStars" class="form-select" aria-label="Minimum Stars">
+                        @{
+                            var selectedStars = Model.MinStars?.ToString() ?? "";
+                        }
+                        <option value="0" selected="@(selectedStars == "" ? "selected" : null)">Any rating</option>
+                        <option value="1" selected="@(selectedStars == "1" ? "selected" : null)">1+ stars</option>
+                        <option value="2" selected="@(selectedStars == "2" ? "selected" : null)">2+ stars</option>
+                        <option value="3" selected="@(selectedStars == "3" ? "selected" : null)">3+ stars</option>
+                        <option value="4" selected="@(selectedStars == "4" ? "selected" : null)">4+ stars</option>
+                        <option value="5" selected="@(selectedStars == "5" ? "selected" : null)">5 stars</option>
+                </select>
+            </div>
+            
+            <div class="filter-actions">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary flex-grow-1">
+                    <i class="bi bi-x-circle me-1"></i> Clear
+                </a>
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
         <div class="col-lg-9">
             <div class="drink-of-day-section text-center">
                 <div class="mb-3">
@@ -154,4 +174,5 @@
         updateSliderValue('minValue');
         updateSliderValue('maxValue');
     });
+    }
 </script>
