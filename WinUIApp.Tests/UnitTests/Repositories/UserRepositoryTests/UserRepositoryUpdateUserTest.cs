@@ -85,5 +85,30 @@ namespace WinUIApp.Tests.UnitTests.Repositories.UserRepositoryTests
             Assert.True(result); // >= 0 returns true
             this.dbContextMock.Verify(databaseContext => databaseContext.SaveChangesAsync(), Times.Once);
         }
+
+        [Fact]
+        public async Task UpdateUser_TwoFASecretChanged_UpdatesSecret()
+        {
+            // Arrange
+            Guid userId = Guid.NewGuid();
+            string? originalSecret = "oldSecret";
+            string? newSecret = "newSecret";
+            User dbUser = new User { UserId = userId, Username = "testUser", TwoFASecret = originalSecret };
+            User updateUser = new User { UserId = userId, Username = "testUser", TwoFASecret = newSecret };
+            this.users.Add(dbUser);
+
+            Mock<DbSet<User>> localDbSetMock = AsyncQueryableHelper.CreateDbSetMock(this.users);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users).Returns(localDbSetMock.Object);
+            this.dbContextMock.Setup(databaseContext => databaseContext.Users.FindAsync(userId)).ReturnsAsync(dbUser);
+            this.dbContextMock.Setup(databaseContext => databaseContext.SaveChangesAsync()).ReturnsAsync(1);
+
+            // Act
+            bool result = await this.userRepository.UpdateUser(updateUser);
+
+            // Assert
+            Assert.True(result);
+            Assert.Equal(newSecret, dbUser.TwoFASecret);
+            this.dbContextMock.Verify(databaseContext => databaseContext.SaveChangesAsync(), Times.Once);
+        }
     }
 } 
