@@ -132,7 +132,7 @@ namespace DataAccess.Service
             }
         }
 
-        private async Task SendEmail(int upgradeRequestIdentifier)
+        public async virtual Task SendEmail(int upgradeRequestIdentifier)
         {
             UpgradeRequest? currentUpgradeRequest = await this.upgradeRequestsRepository.RetrieveUpgradeRequestByIdentifier(upgradeRequestIdentifier);
 
