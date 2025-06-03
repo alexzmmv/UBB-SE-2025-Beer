@@ -9,11 +9,14 @@ using DataAccess.Service;
 
 namespace WinUIApp.WebUI.Controllers
 {
-    public class UpdateController(IDrinkService drinkService) : Controller
+    public class UpdateController(IDrinkService drinkService, IUserService userService) : Controller
     {
         [HttpGet]
         public IActionResult Drink(int id)
         {
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (CurrentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
             try
             {
                 var drink = drinkService.GetDrinkById(id);
@@ -24,6 +27,8 @@ namespace WinUIApp.WebUI.Controllers
                 }
                 var updateDrinkViewModel = new UpdateDrinkViewModel
                 {
+                    UserRole = userService.GetUserById(CurrentUserId).Result.AssignedRole,
+
                     DrinkId = id,
                     //OldDrink = drink,
                     DrinkName = drink.DrinkName ?? string.Empty,
@@ -49,12 +54,15 @@ namespace WinUIApp.WebUI.Controllers
         [HttpPost]
         public IActionResult Drink(int id, UpdateDrinkViewModel updateDrinkViewModel)
         {
+
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
             try
             {
                 var categories = drinkService.GetDrinkCategories();
                 if (ModelState.IsValid)
                 {
-                    Guid currentUserId = AuthenticationService.GetCurrentUserId();
                     drinkService.UpdateDrink(new DrinkDTO
                     {
                         DrinkId = updateDrinkViewModel.DrinkId,
@@ -73,6 +81,8 @@ namespace WinUIApp.WebUI.Controllers
                 {
                     var newUpdateDrinkViewModel = new UpdateDrinkViewModel
                     {
+                        UserRole = userService.GetUserById(currentUserId).Result.AssignedRole,
+
                         DrinkId = id,
                         DrinkName = updateDrinkViewModel.DrinkName,
                         DrinkBrandName = updateDrinkViewModel.DrinkBrandName,

@@ -45,7 +45,6 @@
 
                 <div class="text-center mb-3">
                     <h4 id="NameTextBlock" class="fw-bold">@Model.CurrentUser.Username</h4>
-                    <p id="UsernameTextBlock" class="text-muted">@Model.CurrentUser.EmailAddress</p>
                 </div>
 
                 <div class="text-center mb-3">
@@ -117,7 +116,8 @@
                     <ul>
                         @foreach (ReviewDTO review in Model.CurrentUserReviews)
                         {
-                            <li class="list-group-item list-group-item-action">
+                            <li class="list-group-item list-group-item-action"
+                                ondblclick="window.location.href='@Url.Action("DrinkDetail", "Drink", new { id = review.DrinkId })'">
                                 <a href="@Url.Action("DrinkDetail", "Drink", new { id = review.DrinkId })" class="text-decoration-none text-dark">
                                     <strong>@review.RatingValue</strong><br />
                                     <span>@review.Content</span>
@@ -128,10 +128,9 @@
                 </div>
             </div>
 
-            
+			<h4 class="fw-bold">Favorite Drinks</h4>
             @if (Model.FavoriteDrinks != null && Model.FavoriteDrinks.Any())
             {
-                <h4 class="fw-bold">Favorite Drinks</h4>
                 <div id="FavoriteDrinksItemsControl" class="list-group">
                     <ul>
                         @foreach (var drink in Model.FavoriteDrinks)

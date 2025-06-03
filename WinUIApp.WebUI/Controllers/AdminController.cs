@@ -34,15 +34,26 @@ namespace WebServer.Controllers
             this.drinkService = drinkService;
         }
 
-        public async Task<IActionResult> AdminDashboard()
+        public async Task<IActionResult> AdminDashboard(string? search)
         {
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+
             IEnumerable<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                reviews = reviews.Where(r => r.Content.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
             IEnumerable<UpgradeRequest> upgradeRequests = await this.upgradeRequestService.RetrieveAllUpgradeRequests();
             IEnumerable<string> offensiveWords = await this.checkersService.GetOffensiveWordsList();
             List<User> users = await this.userService.GetAllUsers();
             IEnumerable<User> appealeadUsers = users.Where(user => user.HasSubmittedAppeal && user.AssignedRole == RoleType.Banned);
             IEnumerable<DrinkModificationRequestDTO> drinkModificationRequests = await this.drinkModificationRequestService.GetAllModificationRequests();
             IEnumerable<DrinkDTO> drinks = this.drinkService.GetDrinks(string.Empty, new List<string>(), new List<string>(), 0, 100, new Dictionary<string, bool>());
+            IEnumerable<User> usersWithHiddenReviews = userService.GetUsersWithHiddenReviews().Result.Where(user=>user.AssignedRole==RoleType.User);
 
             AdminDashboardViewModel adminDashboardViewModel = new AdminDashboardViewModel()
             {
@@ -51,7 +62,8 @@ namespace WebServer.Controllers
                 OffensiveWords = offensiveWords,
                 AppealsList = appealeadUsers,
                 DrinkModificationRequests = drinkModificationRequests,
-                Drinks = drinks
+                Drinks = drinks,
+                UsersWithHiddenReviews = usersWithHiddenReviews.ToList()
             };
 
             List<AppealDetailsViewModel> appealsWithDetails = new List<AppealDetailsViewModel>();
@@ -82,6 +94,7 @@ namespace WebServer.Controllers
             return RedirectToAction("AdminDashboard");
         }
 
+        [HttpPost]
         public async Task<IActionResult> AICheckReview(int reviewId)
         {
             try
@@ -145,18 +158,32 @@ namespace WebServer.Controllers
         public async Task<IActionResult> AutomaticallyCheckReviews()
         {
             List<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
-            var reviewEntities = reviews.Select(review => new WinUiApp.Data.Data.Review
+            var reviewEntities = new List<Review>();
+            foreach (var review in reviews)
             {
-                ReviewId = review.ReviewId,
-                DrinkId = review.DrinkId,
-                UserId = review.UserId,
-                Content = review.Content,
-                RatingValue = review.RatingValue,
-                CreatedDate = review.CreatedDate,
-                NumberOfFlags = review.NumberOfFlags,
-                IsHidden = review.IsHidden
-            }).ToList();
-            List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviewEntities));
+                User? user = await this.userService.GetUserById(review.UserId);
+                DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
+                Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+                regularDrink.UserDrinks = new List<UserDrink>();
+                regularDrink.Votes = new List<Vote>();
+                regularDrink.DrinkCategories = new List<DrinkCategory>();
+                var reviewEntity = new WinUiApp.Data.Data.Review
+                {
+                    ReviewId = review.ReviewId,
+                    DrinkId = review.DrinkId,
+                    UserId = review.UserId,
+                    Content = review.Content,
+                    RatingValue = review.RatingValue,
+                    CreatedDate = review.CreatedDate,
+                    NumberOfFlags = review.NumberOfFlags,
+                    IsHidden = review.IsHidden,
+                    Drink = regularDrink,
+                    User = user
+                };
+                reviewEntities.Add(reviewEntity);
+            }
+           
+            this.checkersService.RunAutoCheck(reviewEntities);
 
             return RedirectToAction("AdminDashboard");
         }
@@ -245,16 +272,29 @@ namespace WebServer.Controllers
             return RedirectToAction("AdminDashboard");
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId, Guid userId)
+        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId)
         {
-            await drinkModificationRequestService.ApproveRequest(drinkModificationRequestId, userId);
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            await drinkModificationRequestService.ApproveRequest(drinkModificationRequestId, currentUserId);
             return RedirectToAction("AdminDashboard");
         }
         [HttpPost]
-        public async Task<IActionResult> DenyDrinkModification(int drinkModificationRequestId, Guid userId)
+        public async Task<IActionResult> DenyDrinkModification(int drinkModificationRequestId)
         {
-            await drinkModificationRequestService.DenyRequest(drinkModificationRequestId, userId);
+
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            await drinkModificationRequestService.DenyRequest(drinkModificationRequestId, currentUserId);
             return RedirectToAction("AdminDashboard");
+        }
+        [HttpPost]
+        public async Task<IActionResult> BanUser(Guid UserId) {
+            userService.UpdateUserRole(UserId, RoleType.Banned);
+            return RedirectToAction("AdminDashboard");
+
         }
     }
 }

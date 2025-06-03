@@ -20,7 +20,9 @@ namespace WinUIApp.WebUI.Controllers
 
         public async Task<IActionResult> FavoriteDrinks()
         {
-            Guid CurrentUserId = AuthenticationService.GetCurrentUserId();
+            Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (CurrentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
 
             var favoriteDrinks = this.drinkService.GetUserPersonalDrinkList(CurrentUserId);
             var drinkViewModels = new List<DrinkElementViewModel>();

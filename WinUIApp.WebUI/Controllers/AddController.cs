@@ -14,16 +14,23 @@ namespace WinUIApp.WebUI.Controllers
     public class AddController : Controller
     {
         private IDrinkService drinkService;
-        public AddController(IDrinkService drinkService)
+        private IUserService userService;
+        public AddController(IDrinkService drinkService, IUserService userService)
         {
             this.drinkService = drinkService;
+            this.userService = userService;
         }
 
         [HttpGet]
         public IActionResult Drink()
         {
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+
             var addViewModel = new AddDrinkViewModel
             {
+                UserRole = userService.GetUserById(currentUserId).Result.AssignedRole,
                 AvailableCategories = [.. drinkService.GetDrinkCategories()
                     .Select(c => new SelectListItem
                     {
@@ -38,10 +45,14 @@ namespace WinUIApp.WebUI.Controllers
         [HttpPost]
         public IActionResult Drink(AddDrinkViewModel addViewModel)
         {
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId")??Guid.Empty.ToString());
+                if(currentUserId==Guid.Empty)
+                    return RedirectToAction("AuthenticationPage", "Auth");
+
             if (ModelState.IsValid)
             {
                 var categories = drinkService.GetDrinkCategories();
-                Guid currentUserId = AuthenticationService.GetCurrentUserId();
+           
                 drinkService.AddDrink(
                     addViewModel.DrinkName,
                     addViewModel.DrinkImagePath,
@@ -55,8 +66,7 @@ namespace WinUIApp.WebUI.Controllers
                     }).OfType<Category>()],
                     addViewModel.DrinkBrandName,
                     addViewModel.DrinkAlcoholPercentage,
-                    currentUserId,
-                    false
+                    currentUserId
                     );
                 return RedirectToAction("Index", "HomePage");
             }
@@ -64,6 +74,7 @@ namespace WinUIApp.WebUI.Controllers
             {
                 var newViewModel = new AddDrinkViewModel
                 {
+                    UserRole = userService.GetUserById(currentUserId).Result.AssignedRole,
                     AvailableCategories = [.. drinkService.GetDrinkCategories()
                         .Select(c => new SelectListItem
                         {

@@ -23,6 +23,7 @@ namespace WebServer.Models
         public required IEnumerable<DrinkDTO> Drinks { get; set; } = new List<DrinkDTO>();
         public string SearchBarContent { get; set; } = string.Empty;
 
+        public required List<User> UsersWithHiddenReviews { get; set; }
         public AdminDashboardViewModel()
         {
             this.AppealsWithDetails = new List<AppealDetailsViewModel>();
