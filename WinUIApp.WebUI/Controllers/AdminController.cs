@@ -94,6 +94,7 @@ namespace WebServer.Controllers
             return RedirectToAction("AdminDashboard");
         }
 
+        [HttpPost]
         public async Task<IActionResult> AICheckReview(int reviewId)
         {
             try
@@ -157,18 +158,32 @@ namespace WebServer.Controllers
         public async Task<IActionResult> AutomaticallyCheckReviews()
         {
             List<ReviewDTO> reviews = await this.reviewService.GetFlaggedReviews();
-            var reviewEntities = reviews.Select(review => new WinUiApp.Data.Data.Review
+            var reviewEntities = new List<Review>();
+            foreach (var review in reviews)
             {
-                ReviewId = review.ReviewId,
-                DrinkId = review.DrinkId,
-                UserId = review.UserId,
-                Content = review.Content,
-                RatingValue = review.RatingValue,
-                CreatedDate = review.CreatedDate,
-                NumberOfFlags = review.NumberOfFlags,
-                IsHidden = review.IsHidden
-            }).ToList();
-            List<string> messages = await Task.Run(() => this.checkersService.RunAutoCheck(reviewEntities));
+                User? user = await this.userService.GetUserById(review.UserId);
+                DrinkDTO? drink = this.drinkService.GetDrinkById(review.DrinkId);
+                Drink regularDrink = DrinkExtensions.ConvertDTOToEntity(drink);
+                regularDrink.UserDrinks = new List<UserDrink>();
+                regularDrink.Votes = new List<Vote>();
+                regularDrink.DrinkCategories = new List<DrinkCategory>();
+                var reviewEntity = new WinUiApp.Data.Data.Review
+                {
+                    ReviewId = review.ReviewId,
+                    DrinkId = review.DrinkId,
+                    UserId = review.UserId,
+                    Content = review.Content,
+                    RatingValue = review.RatingValue,
+                    CreatedDate = review.CreatedDate,
+                    NumberOfFlags = review.NumberOfFlags,
+                    IsHidden = review.IsHidden,
+                    Drink = regularDrink,
+                    User = user
+                };
+                reviewEntities.Add(reviewEntity);
+            }
+           
+            this.checkersService.RunAutoCheck(reviewEntities);
 
             return RedirectToAction("AdminDashboard");
         }

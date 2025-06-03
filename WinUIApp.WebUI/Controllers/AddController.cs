@@ -66,8 +66,7 @@ namespace WinUIApp.WebUI.Controllers
                     }).OfType<Category>()],
                     addViewModel.DrinkBrandName,
                     addViewModel.DrinkAlcoholPercentage,
-                    currentUserId,
-                    false
+                    currentUserId
                     );
                 return RedirectToAction("Index", "HomePage");
             }
