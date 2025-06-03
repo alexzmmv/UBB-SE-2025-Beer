@@ -55,7 +55,7 @@
                                     </form>
                                     <form asp-controller="Admin" asp-action="HideReview" method="post" style="display: inline;">
                                         <input type="hidden" name="reviewId" value="@review.ReviewId" />
-                                        <button type="submit" class="btn btn-warning btn-sm">Hide</button>
+                                        <button type="submit" class="btn btn-warning btn-sm mx-3">Hide</button>
                                     </form>
                                     <form asp-controller="Admin" asp-action="AICheckReview" method="post" style="display: inline;">
                                         <input type="hidden" name="reviewId" value="@review.ReviewId" />
@@ -97,7 +97,7 @@
                         <div class="btn-group" role="group" style="height:38px;">
                             <form asp-controller="Admin" asp-action="Accept" method="post" style="display: inline;">
                                 <input type="hidden" name="id" value="@request.UpgradeRequestId" />
-                                <button type="submit" class="btn btn-success btn-sm fw-semibold"
+                                <button type="submit" class="btn btn-success btn-sm fw-semibold mx-3"
                                         style="border-top-right-radius:0; border-bottom-right-radius:0; height:100%;">
                                     Accept
                                 </button>
@@ -143,6 +143,9 @@
                             <div class="mb-2">
                                 <strong>Type:</strong> Edit<br>
                                 <div class="row">
+                                    User with id <strong>@drinkModification.RequestingUserId</strong> wants to modify a drink.
+
+                                    @* <!--
                                     <div class="col-6">
                                         <strong>Old Info:</strong><br>
                                         Name: @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.OldDrinkId).First().DrinkName <br>
@@ -155,6 +158,8 @@
                                         Brand: @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkBrand <br>
                                         Alcohol:  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().AlcoholContent%
                                     </div>
+                                    --> *@
+
                                 </div>
                             </div>
                         }
@@ -162,9 +167,13 @@
                         @if (drinkModification.ModificationType == DataAccess.Constants.DrinkModificationRequestType.Add)
                         {
                             <div class="mb-2">
+                                User with id <strong>@drinkModification.RequestingUserId</strong> wants to add a new drink.
+
+                              @*   <!--
                                 <strong>Drink Name:</strong> @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkName <br>
                                 <strong>Brand:</strong>  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().DrinkBrand<br>
                                 <strong>Alcohol Content:</strong>  @Model.Drinks.Where(drink => drink.DrinkId == drinkModification.NewDrinkId).First().AlcoholContent%
+                                --> *@
                             </div>
                         }
 
@@ -272,9 +281,6 @@
                             <div class="me-3">
                                 <strong>Email:</strong> @userWithHidden.EmailAddress
                             </div>
-                            <span class="badge bg-warning text-dark">
-                                @userWithHidden.NumberOfDeletedReviews hidden reviews
-                            </span>
                         </div>
                         <div class="text-muted small">
                             User ID: @userWithHidden.UserId

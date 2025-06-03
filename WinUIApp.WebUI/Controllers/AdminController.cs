@@ -272,15 +272,22 @@ namespace WebServer.Controllers
             return RedirectToAction("AdminDashboard");
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId, Guid userId)
+        public async Task<IActionResult> AcceptDrinkModification(int drinkModificationRequestId)
         {
-            await drinkModificationRequestService.ApproveRequest(drinkModificationRequestId, userId);
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            await drinkModificationRequestService.ApproveRequest(drinkModificationRequestId, currentUserId);
             return RedirectToAction("AdminDashboard");
         }
         [HttpPost]
-        public async Task<IActionResult> DenyDrinkModification(int drinkModificationRequestId, Guid userId)
+        public async Task<IActionResult> DenyDrinkModification(int drinkModificationRequestId)
         {
-            await drinkModificationRequestService.DenyRequest(drinkModificationRequestId, userId);
+
+            Guid currentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
+            if (currentUserId == Guid.Empty)
+                return RedirectToAction("AuthenticationPage", "Auth");
+            await drinkModificationRequestService.DenyRequest(drinkModificationRequestId, currentUserId);
             return RedirectToAction("AdminDashboard");
         }
         [HttpPost]

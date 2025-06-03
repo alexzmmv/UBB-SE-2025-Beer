@@ -56,7 +56,8 @@ namespace WinUIApp.ProxyServices
             }
             catch (Exception exception)
             {
-                throw new Exception($"Error happened while getting drink with ID {drinkId}:", exception);
+                return null;
+                //throw new Exception($"Error happened while getting drink with ID {drinkId}:", exception);
             }
         }
 
