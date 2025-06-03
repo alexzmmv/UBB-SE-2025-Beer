@@ -8,6 +8,7 @@ using System.Windows.Input;
 using DataAccess.Constants;
 using DataAccess.DTOModels;
 using DataAccess.Service.Interfaces;
+using DrinkDb_Auth.Service.AdminDashboard.Interfaces;
 using DrinkDb_Auth.ViewModel.AdminDashboard.Components;
 using WinUiApp.Data.Data;
 using WinUIApp.ProxyServices;
@@ -159,7 +160,7 @@ namespace WinUIApp.Views.ViewModels
             }
         }
 
-        public ObservableCollection<ReviewDTO> Reviews { get; set; } = new ObservableCollection<ReviewDTO>();
+        public ObservableCollection<ReviewWithUserDTO> Reviews { get; set; } = new ObservableCollection<ReviewWithUserDTO>();
 
         public void LoadDrink(int drinkId)
         {
@@ -174,7 +175,7 @@ namespace WinUIApp.Views.ViewModels
             this.AllCategories = categories.Select(c => c.CategoryName).ToList();
         }
 
-        public void RefreshReviews()
+        public async void RefreshReviews()
         {
             if (this.Drink == null)
             {
@@ -182,9 +183,10 @@ namespace WinUIApp.Views.ViewModels
             }
 
             this.AverageReviewScore = (float)Math.Round(this.reviewService.GetReviewAverageByDrinkID(this.Drink.DrinkId), DrinkDetailPageViewModel.NUMBER_OF_DECIMALS_DISPLAYED);
-            List<ReviewDTO> reviews = this.reviewService.GetReviewsByDrinkID(this.Drink.DrinkId).Where(review => !review.IsHidden).ToList();
+            List<ReviewWithUserDTO> reviews = await this.reviewService.GetReviewsWithUserInfoByDrink(this.Drink.DrinkId);
+            reviews = reviews.Where(review => !review.IsHidden).ToList();
             this.Reviews.Clear();
-            foreach (ReviewDTO review in reviews)
+            foreach (ReviewWithUserDTO review in reviews)
             {
                 this.Reviews.Add(review);
             }

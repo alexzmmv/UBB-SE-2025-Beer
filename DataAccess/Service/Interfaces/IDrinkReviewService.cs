@@ -25,5 +25,12 @@ namespace WinUIApp.ProxyServices
         /// <param name="drinkID"> Drink id. </param>
         /// <returns> All reviews. </returns>
         List<ReviewDTO> GetReviewsByDrinkID(int drinkID);
+
+        /// <summary>
+        /// Retrieves all reviews with user information for a specific drink by its ID.
+        /// </summary>
+        /// <param name="drinkID"> Drink id. </param>
+        /// <returns> All reviews with username. </returns>
+        Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrink(int drinkId);
     }
 }
