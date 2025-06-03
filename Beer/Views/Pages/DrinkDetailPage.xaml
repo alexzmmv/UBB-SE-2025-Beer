@@ -200,7 +200,10 @@
                                                 </TextBlock>
                                             </Grid>
                                         </Border>
-                                        <TextBlock Text="{Binding Content}" TextWrapping="WrapWholeWords" VerticalAlignment="Center"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{Binding Username}"  FontWeight="Bold" FontSize="12" TextWrapping="WrapWholeWords" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Content}" TextWrapping="WrapWholeWords" VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>

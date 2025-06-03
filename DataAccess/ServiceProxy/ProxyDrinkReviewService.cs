@@ -60,5 +60,19 @@ namespace WinUIApp.ProxyServices
                 throw new Exception($"Error happened while getting reviews for drink with ID {drinkID}:", exception);
             }
         }
+
+        public async Task<List<ReviewWithUserDTO>> GetReviewsWithUserInfoByDrink(int drinkId)
+        {
+            try
+            {
+                HttpResponseMessage response = await this.httpClient.GetAsync($"api/reviews/get-reviews-with-user-info-by-drink?drinkId={drinkId}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<ReviewWithUserDTO>>() ?? new List<ReviewWithUserDTO>();
+            }
+            catch (Exception exception)
+            {
+                throw new Exception($"Error happened while getting reviews with user info for drink with ID {drinkId}:", exception);
+            }
+        }
     }
 }
