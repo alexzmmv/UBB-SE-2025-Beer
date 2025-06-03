@@ -31,7 +31,7 @@ namespace WinUIApp.WebUI.Controllers
             this.checkersService = checkersService;
         }
 
-        public IActionResult DrinkDetail(int id)
+        public async Task<IActionResult> DrinkDetail(int id)
         {
 
             var drink = drinkService.GetDrinkById(id);
@@ -41,7 +41,8 @@ namespace WinUIApp.WebUI.Controllers
             }
 
             // Get all reviews for this drink
-            var reviews = reviewService.GetReviewsByDrink(id).Result.Where(review=>review.IsHidden==false).ToList();
+            var reviews = await reviewService.GetReviewsWithUserInfoByDrink(id);
+            reviews= reviews.Where(review=>review.IsHidden==false).ToList();
             double averageRating = reviews.Count > 0 ? reviews.Average(r => r.RatingValue ?? 0) : 0;
             Guid CurrentUserId = Guid.Parse(HttpContext.Session.GetString("UserId") ?? Guid.Empty.ToString());
             if (CurrentUserId == Guid.Empty)

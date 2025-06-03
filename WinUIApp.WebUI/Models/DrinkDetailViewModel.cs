@@ -12,14 +12,14 @@ namespace WinUIApp.WebUI.Models
     {
         public DrinkDetailViewModel()
         {
-            Reviews = new List<DataAccess.DTOModels.ReviewDTO>();
+            Reviews = new List<DataAccess.DTOModels.ReviewWithUserDTO>();
             NewReview = new RatingReviewViewModel();
         }
 
         public required DrinkDTO Drink { get; set; }
         public required string CategoriesDisplay { get; set; }
         public double AverageRatingScore { get; set; }
-        public List<DataAccess.DTOModels.ReviewDTO> Reviews { get; set; }
+        public List<DataAccess.DTOModels.ReviewWithUserDTO> Reviews { get; set; }
         public bool IsInFavorites { get; set; }
         public RoleType UserRole { get; set; }
 
