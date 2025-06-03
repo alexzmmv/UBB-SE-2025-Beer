@@ -29,7 +29,7 @@ namespace WinUIApp.Tests.UnitTests.Services.ReviewsServiceTests
         }
 
         [Fact]
-        public async Task RemoveReviewById_WhenCalledWithEXISTING_REVIEW_ID_CallsRepositoryRemove()
+        public async Task RemoveReviewById_WhenCalledWithExistingReviewId_CallsRepositoryRemove()
         {
             // Act
             await this.reviewsService.RemoveReviewById(EXISTING_REVIEW_ID);
