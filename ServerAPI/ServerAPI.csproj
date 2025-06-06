@@ -59,10 +59,4 @@
 		<PackageReference Remove="Microsoft.WindowsAppSDK" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
 </Project>
